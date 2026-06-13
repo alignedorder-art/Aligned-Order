@@ -474,7 +474,24 @@ async function fetchLeads(){
 function normaliseRows(rows) {
   return rows.map(row => {
     let comps = {};
-    try { comps = typeof row.components==='string' ? JSON.parse(row.components) : (row.components||{}); } catch(e) {}
+    try {
+      // Handle double-escaped JSON from GAS
+      let compStr = row.components || '{}';
+      if(typeof compStr === 'string') {
+        // Remove escaped quotes if present
+        compStr = compStr.replace(/\\"/g, '"').replace(/\"/g, '"');
+        if(!compStr.startsWith('{')) compStr = '{}';
+        comps = JSON.parse(compStr);
+      } else {
+        comps = compStr;
+      }
+    } catch(e) { comps = {}; }
+    
+    // Handle qualified field - GAS returns TRUE/FALSE as boolean or string
+    const qual = row.qualified === true || 
+                 row.qualified === 'true' || 
+                 String(row.qualified).toLowerCase() === 'true';
+    
     return {
       id:        String(row.created_at || Math.random()),
       firstName: String(row.first_name || ''),
@@ -483,12 +500,12 @@ function normaliseRows(rows) {
       phone:     String(row.phone      || ''),
       score:     parseInt(row.score)   || 0,
       profile:   String(row.profile    || ''),
-      qualified: row.qualified === 'true' || row.qualified === true,
+      qualified: qual,
       date:      String(row.created_at || ''),
       components: comps,
       analysis:  String(row.analysis   || '')
     };
-  });
+  }).filter(r => r.firstName || r.email); // remove empty rows
 }
 
 // ── LOAD & REFRESH ────────────────────────────────
