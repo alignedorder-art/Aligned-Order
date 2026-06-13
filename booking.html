@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Book a Session</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080808;--surface:#111;--surface2:#181818;
+  --border:#2a2a2a;--gold:#c9a96e;--gold-dim:rgba(201,169,110,0.12);
+  --gold-border:rgba(201,169,110,0.28);--text:#f0ede8;--muted:#666;--muted2:#999;
+  --green:#4caf7d;--green-dim:rgba(76,175,125,0.12);
+}
+body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 16px 80px;}
+body::before{content:'';position:fixed;top:-120px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,0.07) 0%,transparent 65%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-100px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(201,169,110,0.04) 0%,transparent 65%);pointer-events:none;z-index:0;}
+.wrapper{width:100%;max-width:580px;position:relative;z-index:1;}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:48px;animation:fadeUp 0.7s ease both;}
+.logo{display:flex;justify-content:center;margin-bottom:14px;}
+.brand{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;font-weight:600;}
+h1{font-family:'Cinzel',serif;font-size:clamp(24px,5vw,36px);font-weight:700;line-height:1.2;color:var(--text);margin-bottom:14px;}
+h1 em{font-style:italic;color:var(--gold);}
+.subtitle{font-size:14px;color:var(--muted2);line-height:1.8;max-width:420px;margin:0 auto;}
+
+/* SESSION TYPE CARDS */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
+.type-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;overflow:hidden;}
+.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);opacity:0;transition:opacity 0.2s;}
+.type-card:hover{border-color:var(--gold-border);background:rgba(201,169,110,0.04);}
+.type-card:hover::before{opacity:1;}
+.type-card.selected{border-color:var(--gold);background:var(--gold-dim);}
+.type-card.selected::before{opacity:1;}
+.type-icon{font-size:28px;margin-bottom:12px;}
+.type-name{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;letter-spacing:0.04em;}
+.type-desc{font-size:11.5px;color:var(--muted2);line-height:1.6;}
+.type-badge{display:inline-block;background:var(--gold-dim);color:var(--gold);font-size:10px;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:10px;border:1px solid var(--gold-border);}
+
+/* FORM CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;margin-bottom:16px;position:relative;overflow:hidden;animation:fadeUp 0.5s ease both;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);}
+.card-title{font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--text);margin-bottom:20px;letter-spacing:0.04em;}
+
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-text-fill-color:#1a1a1a;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,110,0.12);}
+.form-input::placeholder,.form-textarea::placeholder{color:#aaa;}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;}
+.form-textarea{resize:vertical;min-height:100px;line-height:1.6;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* SUBMIT */
+.submit-btn{width:100%;padding:16px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#c9a96e,#a07830);color:#080808;box-shadow:0 4px 24px rgba(201,169,110,0.35);transition:all 0.2s;letter-spacing:0.02em;margin-top:8px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,169,110,0.45);}
+.submit-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+
+/* SUCCESS */
+.success-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 32px;text-align:center;display:none;animation:fadeUp 0.6s ease both;}
+.success-icon{font-size:48px;margin-bottom:20px;animation:floatBounce 3s ease-in-out infinite;}
+@keyframes floatBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.success-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.success-title em{color:var(--gold);font-style:italic;}
+.success-msg{font-size:14px;color:var(--muted2);line-height:1.8;max-width:380px;margin:0 auto 24px;}
+.success-detail{background:var(--surface2);border-radius:14px;padding:18px 20px;text-align:left;margin-bottom:24px;border:1px solid var(--border);}
+.success-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);}
+.success-row:last-child{border-bottom:none;}
+.success-row span:first-child{color:var(--muted);}
+.success-row span:last-child{color:var(--text);font-weight:600;}
+.back-btn{padding:12px 28px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted2);transition:all 0.2s;}
+.back-btn:hover{border-color:var(--gold-border);color:var(--gold);}
+
+/* PRIVACY */
+.privacy{display:flex;align-items:flex-start;gap:10px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:12px;padding:13px 16px;margin-top:16px;font-size:12px;color:var(--muted2);line-height:1.6;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.type-grid{grid-template-columns:1fr}.form-row{grid-template-columns:1fr}.card{padding:24px 18px}}
+</style>
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="header">
+    <div class="logo">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+        <circle cx="30" cy="30" r="28" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="30,8 50,44 10,44" fill="none" stroke="#c9a96e" stroke-width="1.6"/>
+        <polygon points="30,26 42,44 18,44" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1.1"/>
+        <polygon points="30,7 33,14 27,14" fill="#c9a96e"/>
+        <line x1="30" y1="8" x2="30" y2="44" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="brand">Aligned Order</div>
+    <h1>Book Your <em>Session</em></h1>
+    <p class="subtitle">You've been selected based on your assessment results. Choose your session type below and we'll confirm your booking personally.</p>
+  </div>
+
+  <!-- SESSION TYPE -->
+  <div class="type-grid" id="typeGrid">
+    <div class="type-card" onclick="selectType('discovery')" id="type-discovery">
+      <div class="type-icon">📞</div>
+      <div class="type-name">Discovery Call</div>
+      <div class="type-desc">A free 30-minute conversation to explore where you are and what's possible.</div>
+      <div class="type-badge">FREE · 30 min</div>
+    </div>
+    <div class="type-card" onclick="selectType('session')" id="type-session">
+      <div class="type-icon">🔥</div>
+      <div class="type-name">Coaching Session</div>
+      <div class="type-desc">A deep 60-minute working session focused on your specific triggers and patterns.</div>
+      <div class="type-badge">PAID · 60 min</div>
+    </div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div class="card" id="formCard">
+    <div class="card-title">Your Details</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" id="fFirst" type="text" placeholder="Your first name" autocomplete="given-name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" id="fLast" type="text" placeholder="Your last name" autocomplete="family-name">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" id="fEmail" type="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">WhatsApp / Phone</label>
+      <input class="form-input" id="fPhone" type="tel" placeholder="+1 000 000 0000" autocomplete="tel">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Your Timezone</label>
+      <select class="form-select" id="fTimezone">
+        <option value="">Select your timezone…</option>
+        <option>GMT (London)</option>
+        <option>GMT+1 (Paris, Berlin)</option>
+        <option>GMT+2 (Cairo, Johannesburg)</option>
+        <option>GMT+3 (Dubai, Nairobi)</option>
+        <option>GMT+4 (Abu Dhabi)</option>
+        <option>GMT+5:30 (Mumbai, Delhi)</option>
+        <option>GMT+8 (Singapore, Hong Kong)</option>
+        <option>GMT+10 (Sydney)</option>
+        <option>GMT-5 (New York, Toronto)</option>
+        <option>GMT-6 (Chicago)</option>
+        <option>GMT-7 (Denver)</option>
+        <option>GMT-8 (Los Angeles, Vancouver)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">What's the #1 thing you want from this session?</label>
+      <textarea class="form-textarea" id="fGoal" placeholder="Be specific — the more honest you are, the more we can help…"></textarea>
+    </div>
+
+    <div class="privacy">
+      <span>🔒</span>
+      <span>Your details are kept completely private. We'll review your request and confirm your booking via email or WhatsApp within 24 hours.</span>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitBooking()">Request My Session →</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✦</div>
+    <div class="success-title">You're <em>Booked In</em></div>
+    <div class="success-msg">Your session request has been received. We'll review it personally and confirm your time via email or WhatsApp within 24 hours.</div>
+    <div class="success-detail" id="successDetail"></div>
+    <button class="back-btn" onclick="resetForm()">← Book Another Session</button>
+  </div>
+
+</div>
+
+<script>
+const SHEETDB = 'https://script.google.com/macros/s/AKfycby_cX5hecM9YE5cns8I1BKSDR_WqbMoVarOGAY-JtqVIs-0_iGzd9OfIOam_ly5wOE/exec';
+let selectedType = '';
+
+function selectType(type) {
+  selectedType = type;
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('type-' + type).classList.add('selected');
+}
+
+async function submitBooking() {
+  const first    = document.getElementById('fFirst').value.trim();
+  const last     = document.getElementById('fLast').value.trim();
+  const email    = document.getElementById('fEmail').value.trim();
+  const phone    = document.getElementById('fPhone').value.trim();
+  const timezone = document.getElementById('fTimezone').value;
+  const goal     = document.getElementById('fGoal').value.trim();
+
+  if (!selectedType) { alert('Please select a session type.'); return; }
+  if (!first)        { alert('Please enter your first name.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Please enter a valid email.'); return; }
+  if (!timezone)     { alert('Please select your timezone.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const booking = {
+    first_name:    first,
+    last_name:     last,
+    email:         email,
+    phone:         phone,
+    session_type:  selectedType === 'discovery' ? 'Discovery Call (Free · 30 min)' : 'Coaching Session (Paid · 60 min)',
+    timezone:      timezone,
+    goal:          goal,
+    status:        'Pending',
+    created_at:    new Date().toISOString()
+  };
+
+  try {
+    // Save to SheetDB bookings sheet
+    await fetch(SHEETDB, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(booking)
+    });
+  } catch(e) {
+    console.warn('Save error:', e);
+  }
+
+  // Open correct Calendly based on session type
+  const calendlyUrl = selectedType === 'discovery' ? 'https://calendly.com/alignedorder/30min' : 'https://calendly.com/alignedorder/paid-session';
+  if(typeof Calendly !== 'undefined') {
+    Calendly.initPopupWidget({url: calendlyUrl});
+  } else {
+    window.open(calendlyUrl, '_blank');
+  }
+
+  // Show success
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('typeGrid').style.display = 'none';
+  const sc = document.getElementById('successCard');
+  sc.style.display = 'block';
+  document.getElementById('successDetail').innerHTML = `
+    <div class="success-row"><span>Name</span><span>${first} ${last}</span></div>
+    <div class="success-row"><span>Email</span><span>${email}</span></div>
+    <div class="success-row"><span>Session</span><span>${booking.session_type}</span></div>
+    <div class="success-row"><span>Timezone</span><span>${timezone}</span></div>
+    <div class="success-row"><span>Status</span><span style="color:var(--gold)">⏳ Pending confirmation</span></div>`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  selectedType = '';
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  ['fFirst','fLast','fEmail','fPhone','fGoal'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fTimezone').value = '';
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('submitBtn').textContent = 'Request My Session →';
+  document.getElementById('successCard').style.display = 'none';
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('typeGrid').style.display = 'grid';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Sessions</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0a;color:#f0ede8;font-family:'Raleway',sans-serif;min-height:100vh;}
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:#111;border-right:1px solid #222;display:flex;flex-direction:column;}
+.logo-area{padding:20px 18px;border-bottom:1px solid #222;display:flex;align-items:center;gap:12px;}
+.logo-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#c9a96e;letter-spacing:0.1em;}
+.logo-sub{font-size:9px;color:#555;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
+.nav{padding:12px 0;flex:1;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:13px;color:#666;cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;text-decoration:none;}
+.nav-item:hover{color:#f0ede8;background:#1a1a1a;}
+.nav-item.active{color:#c9a96e;background:rgba(201,169,110,0.1);border-left-color:#c9a96e;}
+.sidebar-bottom{padding:14px 18px;border-top:1px solid #222;font-size:11px;color:#444;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{background:#111;border-bottom:1px solid #222;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;flex-shrink:0;}
+.topbar-title{font-family:'Cinzel',serif;font-size:15px;color:#f0ede8;letter-spacing:0.04em;}
+.topbar-sub{font-size:11px;color:#555;margin-top:2px;}
+.topbar-actions{display:flex;gap:8px;align-items:center;}
+.btn{padding:8px 16px;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(201,169,110,0.3);background:rgba(201,169,110,0.1);color:#c9a96e;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+.btn:hover{background:rgba(201,169,110,0.2);}
+.btn.green{border-color:rgba(76,175,125,0.3);background:rgba(76,175,125,0.1);color:#4caf7d;}
+.btn.green:hover{background:rgba(76,175,125,0.2);}
+
+.content{padding:24px;flex:1;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.metric{background:#111;border:1px solid #222;border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+.metric::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0;}
+.metric.gold::after{background:linear-gradient(90deg,#a07830,#c9a96e);}
+.metric.green::after{background:#4caf7d;}
+.metric.blue::after{background:#5b8dd9;}
+.metric.amber::after{background:#e8a84a;}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:#555;margin-bottom:8px;font-weight:600;}
+.metric-value{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:#f0ede8;line-height:1;margin-bottom:4px;}
+.metric-sub{font-size:11px;color:#444;}
+
+/* SECTION */
+.section{margin-bottom:28px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:11px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;}
+
+/* SESSION CARDS */
+.sessions-grid{display:flex;flex-direction:column;gap:10px;}
+.session-card{background:#111;border:1px solid #222;border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;transition:border-color 0.15s;cursor:pointer;}
+.session-card:hover{border-color:rgba(201,169,110,0.25);}
+.session-card.pending{border-left:3px solid #e8a84a;}
+.session-card.confirmed{border-left:3px solid #4caf7d;}
+.session-card.completed{border-left:3px solid #555;}
+.session-card.cancelled{border-left:3px solid #e05a5a;opacity:0.6;}
+.sess-avatar{width:40px;height:40px;border-radius:50%;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#c9a96e;flex-shrink:0;font-family:'Cinzel',serif;}
+.sess-body{flex:1;min-width:0;}
+.sess-name{font-size:13.5px;font-weight:600;color:#f0ede8;margin-bottom:3px;}
+.sess-meta{font-size:11.5px;color:#555;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sess-type{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;}
+.sess-type.discovery{background:rgba(91,141,217,0.12);color:#5b8dd9;}
+.sess-type.session{background:rgba(201,169,110,0.12);color:#c9a96e;}
+.status-badge{padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.05em;}
+.status-badge.pending{background:rgba(232,168,74,0.12);color:#e8a84a;border:1px solid rgba(232,168,74,0.25);}
+.status-badge.confirmed{background:rgba(76,175,125,0.12);color:#4caf7d;border:1px solid rgba(76,175,125,0.25);}
+.status-badge.completed{background:rgba(255,255,255,0.05);color:#666;border:1px solid #2a2a2a;}
+.status-badge.cancelled{background:rgba(224,90,90,0.1);color:#e05a5a;border:1px solid rgba(224,90,90,0.2);}
+.sess-actions{display:flex;gap:6px;flex-shrink:0;}
+.sess-btn{padding:7px 14px;border-radius:8px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #2a2a2a;background:#1a1a1a;color:#666;transition:all 0.15s;}
+.sess-btn:hover{border-color:rgba(201,169,110,0.3);color:#c9a96e;}
+.sess-btn.primary{border-color:rgba(76,175,125,0.3);background:rgba(76,175,125,0.1);color:#4caf7d;}
+.sess-btn.primary:hover{background:rgba(76,175,125,0.2);}
+.sess-btn.danger{border-color:rgba(224,90,90,0.2);color:#e05a5a;}
+.sess-btn.danger:hover{background:rgba(224,90,90,0.1);}
+
+.empty{padding:48px 24px;text-align:center;background:#111;border:1px solid #222;border-radius:14px;}
+.empty-icon{font-size:32px;opacity:0.3;margin-bottom:12px;}
+.empty-title{font-size:14px;font-weight:600;color:#444;margin-bottom:6px;}
+.empty-sub{font-size:12px;color:#333;line-height:1.7;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:#111;border:1px solid #2a2a2a;border-radius:18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;}
+.modal-head{background:linear-gradient(135deg,#111,#161616);padding:24px;border-bottom:1px solid #222;position:relative;}
+.modal-head::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);border-radius:18px 18px 0 0;}
+.modal-title{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#f0ede8;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:#555;}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:#555;cursor:pointer;font-size:20px;}
+.modal-body{padding:24px;}
+.modal-section{margin-bottom:22px;}
+.modal-section-title{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:#c9a96e;font-weight:700;margin-bottom:12px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:#666;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:7px;}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid #2a2a2a;border-radius:10px;padding:11px 14px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;outline:none;transition:border-color 0.2s;-webkit-text-fill-color:#1a1a1a;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,0.1);}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#fff;padding-right:36px;}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.modal-btn{padding:13px;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.modal-btn.gold{background:rgba(201,169,110,0.12);color:#c9a96e;border:1px solid rgba(201,169,110,0.25);}
+.modal-btn.gold:hover{background:rgba(201,169,110,0.22);}
+.modal-btn.green{background:rgba(76,175,125,0.12);color:#4caf7d;border:1px solid rgba(76,175,125,0.25);}
+.modal-btn.green:hover{background:rgba(76,175,125,0.2);}
+.modal-btn.primary{background:linear-gradient(135deg,#c9a96e,#a07830);color:#080808;font-weight:800;}
+.modal-btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,169,110,0.3);}
+
+/* INVITE MODAL lead search */
+.lead-search{margin-bottom:14px;}
+.lead-results{max-height:180px;overflow-y:auto;border:1px solid #2a2a2a;border-radius:10px;background:#0d0d0d;}
+.lead-result-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid #1a1a1a;transition:background 0.12s;display:flex;align-items:center;gap:10px;}
+.lead-result-item:last-child{border-bottom:none;}
+.lead-result-item:hover{background:#1a1a1a;}
+.lead-result-item.selected{background:rgba(201,169,110,0.08);}
+.lri-avatar{width:30px;height:30px;border-radius:50%;background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#c9a96e;flex-shrink:0;}
+.lri-name{font-size:13px;font-weight:600;color:#f0ede8;}
+.lri-score{font-size:11px;color:#c9a96e;font-weight:700;}
+.lri-email{font-size:11px;color:#555;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin 0.7s linear infinite;display:inline-block;}
+
+@media(max-width:768px){.sidebar{display:none;}.metrics{grid-template-columns:1fr 1fr;}.content{padding:16px;}.form-row{grid-template-columns:1fr;}}
+</style>
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+</head>
+<body>
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo-area">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16.5" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="18,4 30,26 6,26" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+        <polygon points="18,16 25,26 11,26" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1"/>
+        <polygon points="18,3 20,8 16,8" fill="#c9a96e"/>
+        <line x1="18" y1="4" x2="18" y2="26" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      </svg>
+      <div>
+        <div class="logo-name">Aligned Order</div>
+        <div class="logo-sub">Sessions</div>
+      </div>
+    </div>
+    <div class="nav">
+      <a class="nav-item" href="dashboard.html">◈ Overview</a>
+      <a class="nav-item" href="dashboard.html">◉ All Leads</a>
+      <a class="nav-item" href="dashboard.html">★ Qualified</a>
+      <a class="nav-item active" href="sessions.html">◷ Sessions</a>
+      <a class="nav-item" href="booking.html" target="_blank">↗ Booking Page</a>
+    </div>
+    <div class="sidebar-bottom">Sessions Manager v1.0</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Sessions</div>
+        <div class="topbar-sub" id="topbarSub">Manage your calls and coaching sessions</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" onclick="refresh()">↺ Refresh</button>
+        <button class="btn green" onclick="openCalendly('discovery')">+ Schedule Session</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- METRICS -->
+      <div class="metrics">
+        <div class="metric gold">
+          <div class="metric-label">Total Sessions</div>
+          <div class="metric-value" id="mTotal">0</div>
+          <div class="metric-sub">all time</div>
+        </div>
+        <div class="metric amber">
+          <div class="metric-label">Pending</div>
+          <div class="metric-value" id="mPending">0</div>
+          <div class="metric-sub">awaiting confirmation</div>
+        </div>
+        <div class="metric green">
+          <div class="metric-label">Confirmed</div>
+          <div class="metric-value" id="mConfirmed">0</div>
+          <div class="metric-sub">upcoming sessions</div>
+        </div>
+        <div class="metric blue">
+          <div class="metric-label">Completed</div>
+          <div class="metric-value" id="mCompleted">0</div>
+          <div class="metric-sub">sessions done</div>
+        </div>
+      </div>
+
+      <!-- PENDING -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">⏳ Pending Requests <span id="pendingCount" style="color:#e8a84a;margin-left:6px;"></span></div>
+        </div>
+        <div class="sessions-grid" id="pendingList"></div>
+      </div>
+
+      <!-- CONFIRMED -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">✅ Confirmed Sessions <span id="confirmedCount" style="color:#4caf7d;margin-left:6px;"></span></div>
+          <button class="btn green" onclick="openCalendly()">+ Schedule</button>
+        </div>
+        <div class="sessions-grid" id="confirmedList"></div>
+      </div>
+
+      <!-- COMPLETED -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">◎ Completed Sessions</div>
+        </div>
+        <div class="sessions-grid" id="completedList"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- INVITE / SCHEDULE MODAL -->
+<div class="overlay" id="inviteOverlay" onclick="closeInvite(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeInvite()">✕</button>
+      <div class="modal-title">Schedule a Session</div>
+      <div class="modal-sub">Set the details and we'll notify the client</div>
+    </div>
+    <div class="modal-body">
+
+      <div class="modal-section">
+        <div class="modal-section-title">Select Lead</div>
+        <input class="form-input lead-search" id="leadSearch" placeholder="Search qualified leads by name…" oninput="searchLeads()">
+        <div class="lead-results" id="leadResults"></div>
+        <div id="selectedLeadInfo" style="display:none;margin-top:10px;background:rgba(201,169,110,0.06);border:1px solid rgba(201,169,110,0.2);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:12px;color:#c9a96e;font-weight:700;margin-bottom:4px;">Selected</div>
+          <div id="selectedLeadName" style="font-size:13px;font-weight:600;color:#f0ede8;"></div>
+          <div id="selectedLeadEmail" style="font-size:11.5px;color:#666;"></div>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Session Details</div>
+        <div class="form-group">
+          <label class="form-label">Session Type</label>
+          <select class="form-select" id="iType">
+            <option value="">Select type…</option>
+            <option value="Discovery Call (Free · 30 min)">Discovery Call — Free · 30 min</option>
+            <option value="Coaching Session (Paid · 60 min)">Coaching Session — Paid · 60 min</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date</label>
+            <input class="form-input" id="iDate" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Time</label>
+            <input class="form-input" id="iTime" type="time">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meeting Link (Zoom / Google Meet)</label>
+          <input class="form-input" id="iLink" type="url" placeholder="https://zoom.us/j/…">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes for client (optional)</label>
+          <textarea class="form-textarea" id="iNotes" placeholder="What to prepare, what to expect…"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn gold" onclick="closeInvite()">Cancel</button>
+        <button class="modal-btn primary" onclick="scheduleSession()">Confirm Session →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION DETAIL MODAL -->
+<div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+      <div class="modal-title" id="detailTitle">Session Details</div>
+      <div class="modal-sub" id="detailSub"></div>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+const SHEETDB = 'https://script.google.com/macros/s/AKfycby_cX5hecM9YE5cns8I1BKSDR_WqbMoVarOGAY-JtqVIs-0_iGzd9OfIOam_ly5wOE/exec';
+const SESSIONS_KEY = 'ao_sessions_v1';
+let sessions = [];
+let qualifiedLeads = [];
+let selectedLead = null;
+
+// ── STORAGE ──────────────────────────────────────
+function loadSessions() {
+  try {
+    const r = localStorage.getItem(SESSIONS_KEY);
+    return r ? JSON.parse(r) : [];
+  } catch(e) { return []; }
+}
+function saveSessions() {
+  localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+}
+
+// ── LEADS ─────────────────────────────────────────
+async function loadLeads() {
+  try {
+    const r = await fetch(SHEETDB + '?limit=500', { headers: { 'Accept': 'application/json' } });
+    if (!r.ok) return;
+    const rows = await r.json();
+    qualifiedLeads = rows
+      .filter(row => row.qualified === 'true' || row.qualified === true)
+      .map(row => ({
+        id: row.id || String(Math.random()),
+        firstName: row.first_name || '',
+        lastName: row.last_name || '',
+        email: row.email || '',
+        phone: row.phone || '',
+        score: parseInt(row.score) || 0,
+        profile: row.profile || ''
+      }));
+  } catch(e) { console.warn('Lead load error:', e); }
+}
+
+// ── RENDER ────────────────────────────────────────
+function initials(s) { return ((s.firstName||'')[0] + (s.lastName||'')[0]).toUpperCase(); }
+function fmtDate(iso) {
+  if (!iso) return '—';
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short' }) + ' at ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  } catch(e) { return iso; }
+}
+
+function renderMetrics() {
+  document.getElementById('mTotal').textContent = sessions.length;
+  document.getElementById('mPending').textContent = sessions.filter(s => s.status === 'pending').length;
+  document.getElementById('mConfirmed').textContent = sessions.filter(s => s.status === 'confirmed').length;
+  document.getElementById('mCompleted').textContent = sessions.filter(s => s.status === 'completed').length;
+}
+
+function renderSection(listId, status) {
+  const el = document.getElementById(listId);
+  const items = sessions.filter(s => s.status === status);
+  if (!items.length) {
+    const msgs = {
+      pending: ['No pending requests', 'New booking requests from the booking page will appear here.'],
+      confirmed: ['No confirmed sessions', 'Click "+ Schedule" to invite a qualified lead.'],
+      completed: ['No completed sessions yet', 'Completed sessions will appear here.']
+    };
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◷</div><div class="empty-title">${msgs[status][0]}</div><div class="empty-sub">${msgs[status][1]}</div></div>`;
+    return;
+  }
+  el.innerHTML = items.map(s => `
+    <div class="session-card ${s.status}" onclick="openDetail('${s.id}')">
+      <div class="sess-avatar">${(s.firstName[0]||'') + (s.lastName[0]||'')}</div>
+      <div class="sess-body">
+        <div class="sess-name">${s.firstName} ${s.lastName}</div>
+        <div class="sess-meta">
+          <span class="sess-type ${s.type === 'Discovery Call (Free · 30 min)' ? 'discovery' : 'session'}">
+            ${s.type === 'Discovery Call (Free · 30 min)' ? '📞 Discovery' : '🔥 Coaching'}
+          </span>
+          <span style="color:#444">·</span>
+          <span>${fmtDate(s.datetime)}</span>
+          ${s.link ? `<span style="color:#5b8dd9;font-size:11px;">🔗 Link set</span>` : ''}
+        </div>
+      </div>
+      <div class="sess-actions" onclick="event.stopPropagation()">
+        ${s.status === 'pending' ? `<button class="sess-btn primary" onclick="updateStatus('${s.id}','confirmed')">Confirm</button>` : ''}
+        ${s.status === 'confirmed' ? `<button class="sess-btn primary" onclick="updateStatus('${s.id}','completed')">Complete</button>` : ''}
+        ${s.status !== 'completed' && s.status !== 'cancelled' ? `<button class="sess-btn" onclick="emailSession('${s.id}')">✉</button>` : ''}
+        ${s.status !== 'completed' && s.status !== 'cancelled' ? `<button class="sess-btn danger" onclick="cancelSession('${s.id}')">✕</button>` : ''}
+      </div>
+      <span class="status-badge ${s.status}">${s.status}</span>
+    </div>`).join('');
+  const countEl = document.getElementById(status + 'Count');
+  if (countEl) countEl.textContent = '(' + items.length + ')';
+}
+
+function render() {
+  renderMetrics();
+  renderSection('pendingList', 'pending');
+  renderSection('confirmedList', 'confirmed');
+  renderSection('completedList', 'completed');
+  document.getElementById('pendingCount').textContent = '(' + sessions.filter(s=>s.status==='pending').length + ')';
+  document.getElementById('confirmedCount').textContent = '(' + sessions.filter(s=>s.status==='confirmed').length + ')';
+}
+
+async function refresh() {
+  // Reload leads and re-check for new bookings from booking page
+  await loadLeads();
+  // Check SheetDB bookings sheet for new requests
+  try {
+    const r = await fetch(SHEETDB + '?sheet=bookings&limit=500', { headers: { 'Accept': 'application/json' } });
+    if (r.ok) {
+      const bookings = await r.json();
+      if (Array.isArray(bookings)) {
+        bookings.forEach(b => {
+          const exists = sessions.find(s => s.bookingId === b.id);
+          if (!exists && b.first_name) {
+            sessions.push({
+              id: 'b' + Date.now() + Math.random(),
+              bookingId: b.id,
+              firstName: b.first_name || '',
+              lastName: b.last_name || '',
+              email: b.email || '',
+              phone: b.phone || '',
+              type: b.session_type || '',
+              timezone: b.timezone || '',
+              goal: b.goal || '',
+              datetime: '',
+              link: '',
+              notes: '',
+              status: 'pending',
+              createdAt: b.created_at || new Date().toISOString()
+            });
+          }
+        });
+        saveSessions();
+      }
+    }
+  } catch(e) { console.warn('Bookings fetch error:', e); }
+  render();
+  document.getElementById('topbarSub').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+}
+
+// ── INVITE MODAL ──────────────────────────────────
+function openCalendly(type) {
+  const url = (type === 'paid') ? 'https://calendly.com/alignedorder/paid-session' : 'https://calendly.com/alignedorder/30min';
+  if(typeof Calendly !== 'undefined') {
+    Calendly.initPopupWidget({url: url});
+  } else {
+    window.open(url, '_blank');
+  }
+  return false;
+}
+
+function openInviteModal() {
+  selectedLead = null;
+  document.getElementById('leadSearch').value = '';
+  document.getElementById('leadResults').innerHTML = '';
+  document.getElementById('selectedLeadInfo').style.display = 'none';
+  document.getElementById('iType').value = '';
+  document.getElementById('iDate').value = '';
+  document.getElementById('iTime').value = '';
+  document.getElementById('iLink').value = '';
+  document.getElementById('iNotes').value = '';
+  renderLeadResults(qualifiedLeads.slice(0, 8));
+  document.getElementById('inviteOverlay').classList.add('open');
+}
+function closeInvite(e) {
+  if (!e || e.target === document.getElementById('inviteOverlay'))
+    document.getElementById('inviteOverlay').classList.remove('open');
+}
+
+function searchLeads() {
+  const q = document.getElementById('leadSearch').value.toLowerCase();
+  const results = q ? qualifiedLeads.filter(l =>
+    (l.firstName + ' ' + l.lastName).toLowerCase().includes(q) || l.email.toLowerCase().includes(q)
+  ) : qualifiedLeads.slice(0, 8);
+  renderLeadResults(results);
+}
+
+function renderLeadResults(results) {
+  const el = document.getElementById('leadResults');
+  if (!results.length) {
+    el.innerHTML = '<div style="padding:14px;text-align:center;font-size:12px;color:#444;">No qualified leads found</div>';
+    return;
+  }
+  el.innerHTML = results.map(l => `
+    <div class="lead-result-item ${selectedLead && selectedLead.id === l.id ? 'selected' : ''}" onclick="selectLead('${l.id}')">
+      <div class="lri-avatar">${initials(l)}</div>
+      <div style="flex:1">
+        <div class="lri-name">${l.firstName} ${l.lastName}</div>
+        <div class="lri-email">${l.email}</div>
+      </div>
+      <div class="lri-score">${l.score}%</div>
+    </div>`).join('');
+}
+
+function selectLead(id) {
+  selectedLead = qualifiedLeads.find(l => l.id === id);
+  if (!selectedLead) return;
+  document.getElementById('selectedLeadInfo').style.display = 'block';
+  document.getElementById('selectedLeadName').textContent = selectedLead.firstName + ' ' + selectedLead.lastName;
+  document.getElementById('selectedLeadEmail').textContent = selectedLead.email;
+  renderLeadResults(qualifiedLeads.slice(0, 8));
+}
+
+function scheduleSession() {
+  if (!selectedLead) { alert('Please select a lead.'); return; }
+  const type = document.getElementById('iType').value;
+  const date = document.getElementById('iDate').value;
+  const time = document.getElementById('iTime').value;
+  const link = document.getElementById('iLink').value.trim();
+  const notes = document.getElementById('iNotes').value.trim();
+  if (!type) { alert('Please select a session type.'); return; }
+  if (!date || !time) { alert('Please set a date and time.'); return; }
+
+  const session = {
+    id: 's' + Date.now(),
+    firstName: selectedLead.firstName,
+    lastName: selectedLead.lastName,
+    email: selectedLead.email,
+    phone: selectedLead.phone || '',
+    score: selectedLead.score,
+    type,
+    datetime: date + 'T' + time,
+    link,
+    notes,
+    status: 'confirmed',
+    createdAt: new Date().toISOString()
+  };
+
+  sessions.unshift(session);
+  saveSessions();
+  render();
+  closeInvite();
+
+  // Send confirmation email
+  emailSession(session.id);
+}
+
+// ── ACTIONS ───────────────────────────────────────
+function updateStatus(id, newStatus) {
+  const s = sessions.find(x => x.id === id);
+  if (s) { s.status = newStatus; saveSessions(); render(); }
+}
+
+function cancelSession(id) {
+  if (!confirm('Cancel this session?')) return;
+  const s = sessions.find(x => x.id === id);
+  if (s) { s.status = 'cancelled'; saveSessions(); render(); }
+}
+
+function emailSession(id) {
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  const dt = s.datetime ? new Date(s.datetime).toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' }) : 'TBC';
+  const subject = encodeURIComponent(`Your Aligned Order Session is Confirmed — ${dt}`);
+  const body = encodeURIComponent(
+    `Hi ${s.firstName},\n\nYour ${s.type} has been confirmed.\n\n` +
+    `📅 Date & Time: ${dt}\n` +
+    (s.link ? `🔗 Meeting Link: ${s.link}\n` : '') +
+    (s.notes ? `\n📝 Notes: ${s.notes}\n` : '') +
+    `\nIf you need to reschedule, simply reply to this email.\n\nWarm regards,\nAligned Order`
+  );
+  window.open(`mailto:${s.email}?subject=${subject}&body=${body}`, '_blank');
+}
+
+// ── DETAIL MODAL ──────────────────────────────────
+function openDetail(id) {
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  document.getElementById('detailTitle').textContent = s.firstName + ' ' + s.lastName;
+  document.getElementById('detailSub').textContent = s.type;
+  const dt = s.datetime ? new Date(s.datetime).toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' }) : 'Not set';
+  document.getElementById('detailBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+      <div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;">
+        <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:5px;font-weight:700;">Email</div>
+        <div style="font-size:13px;color:#f0ede8;font-weight:600;word-break:break-all;">${s.email}</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;">
+        <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:5px;font-weight:700;">Phone</div>
+        <div style="font-size:13px;color:#f0ede8;font-weight:600;">${s.phone || '—'}</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;">
+        <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:5px;font-weight:700;">Date & Time</div>
+        <div style="font-size:12px;color:#f0ede8;font-weight:600;">${dt}</div>
+      </div>
+      <div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;">
+        <div style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:5px;font-weight:700;">Status</div>
+        <div class="status-badge ${s.status}" style="display:inline-flex;">${s.status}</div>
+      </div>
+    </div>
+    ${s.link ? `<div style="background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;margin-bottom:14px;"><div style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:5px;font-weight:700;">Meeting Link</div><a href="${s.link}" target="_blank" style="font-size:13px;color:#5b8dd9;">${s.link}</a></div>` : ''}
+    ${s.notes ? `<div style="background:#1a1a1a;border-left:3px solid #c9a96e;border-radius:10px;padding:14px 16px;margin-bottom:18px;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#c9a96e;margin-bottom:8px;font-weight:700;">Notes</div><div style="font-size:12.5px;color:#777;line-height:1.7;">${s.notes}</div></div>` : ''}
+    ${s.goal ? `<div style="background:#1a1a1a;border-radius:10px;padding:14px 16px;margin-bottom:18px;border:1px solid #222;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#555;margin-bottom:8px;font-weight:700;">Client Goal</div><div style="font-size:12.5px;color:#777;line-height:1.7;">${s.goal}</div></div>` : ''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="modal-btn gold" onclick="emailSession('${s.id}')">✉ Send Email</button>
+      <button class="modal-btn green" onclick="waSession('${s.id}')">💬 WhatsApp</button>
+      ${s.status === 'pending' ? `<button class="modal-btn primary" onclick="updateStatus('${s.id}','confirmed');closeDetail();">✓ Confirm</button>` : ''}
+      ${s.status === 'confirmed' ? `<button class="modal-btn primary" onclick="updateStatus('${s.id}','completed');closeDetail();">✓ Complete</button>` : ''}
+    </div>`;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeDetail(e) {
+  if (!e || e.target === document.getElementById('detailOverlay'))
+    document.getElementById('detailOverlay').classList.remove('open');
+}
+
+function waSession(id) {
+  const s = sessions.find(x => x.id === id);
+  if (!s) return;
+  const dt = s.datetime ? new Date(s.datetime).toLocaleString('en-GB', { weekday:'long', day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' }) : 'TBC';
+  const ph = (s.phone || '').replace(/[^0-9+]/g, '');
+  const msg = encodeURIComponent(`Hi ${s.firstName}, your Aligned Order ${s.type} is confirmed for ${dt}.${s.link ? ' Meeting link: ' + s.link : ''} Looking forward to speaking with you!`);
+  window.open(`https://wa.me/${ph}?text=${msg}`, '_blank');
+}
+
+// ── INIT ──────────────────────────────────────────
+sessions = loadSessions();
+render();
+loadLeads().then(() => {
+  refresh();
+});
+
+// Poll every 30s
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
