@@ -288,7 +288,9 @@ function setStatus(color, text) {
 }
 
 function initials(s) {
-  return ((s.first_name||'')[0] + (s.last_name||'')[0]).toUpperCase();
+  const f = (s.first_name||'')[0] || '';
+  const l = (s.last_name||'')[0] || '';
+  return (f + l).toUpperCase() || '?';
 }
 
 function fmtDateTime(iso) {
@@ -393,10 +395,10 @@ function renderList(listId, items, status) {
   }
   el.innerHTML = items.map(s => `
     <div class="session-card ${s.status}" onclick="openDetail('${s.id}')">
-      <div class="sess-avatar">${initials(s)}</div>
+      <div class="sess-avatar">${(s.first_name||'?')[0].toUpperCase()}</div>
       <div class="sess-body">
         <div class="sess-name">
-          ${s.first_name} ${s.last_name}
+          ${[s.first_name, s.last_name].filter(Boolean).join(' ') || s.email || 'Unknown'}
           ${s.source === 'calendly' ? '<span class="calendly-badge">📅 Calendly</span>' : ''}
         </div>
         <div class="sess-meta">
