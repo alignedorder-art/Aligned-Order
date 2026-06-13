@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080808;--s1:#111;--s2:#161616;--s3:#1a1a1a;
+  --b1:#222;--b2:#2a2a2a;
+  --gold:#c9a96e;--gold-d:rgba(201,169,110,0.12);--gold-b:rgba(201,169,110,0.28);
+  --text:#f0ede8;--muted:#666;--muted2:#999;
+  --green:#4caf7d;--green-d:rgba(76,175,125,0.12);
+  --red:#e05a5a;--red-d:rgba(224,90,90,0.12);
+  --blue:#5b8dd9;--blue-d:rgba(91,141,217,0.12);
+  --amber:#e8a84a;--amber-d:rgba(232,168,74,0.12);
+  --purple:#9b59b6;--purple-d:rgba(155,89,182,0.12);
+}
+body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.brand{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.1em;}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;}
+.divider{width:1px;height:24px;background:var(--b2);}
+.page-title{font-family:'Cinzel',serif;font-size:14px;color:var(--text);letter-spacing:0.04em;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.btn{padding:7px 16px;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--gold-b);background:var(--gold-d);color:var(--gold);transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+.btn:hover{background:rgba(201,169,110,0.2);}
+.btn.ghost{background:transparent;border-color:var(--b2);color:var(--muted);}
+.btn.ghost:hover{border-color:var(--b2);color:var(--text);}
+.live-indicator{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* NAV TABS */
+.nav-tabs{background:var(--s1);border-bottom:1px solid var(--b1);padding:0 28px;display:flex;gap:4px;}
+.nav-tab{padding:12px 18px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* CONTENT */
+.content{padding:24px 28px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* METRICS GRID */
+.metrics-6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px;}
+.metrics-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.metrics-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.metric{background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;}
+.metric::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0;}
+.metric.gold::after{background:linear-gradient(90deg,#a07830,#c9a96e);}
+.metric.green::after{background:var(--green);}
+.metric.blue::after{background:var(--blue);}
+.metric.red::after{background:var(--red);}
+.metric.amber::after{background:var(--amber);}
+.metric.purple::after{background:var(--purple);}
+.metric-icon{font-size:18px;margin-bottom:8px;opacity:0.7;}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.metric-value{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--text);line-height:1;margin-bottom:4px;}
+.metric-sub{font-size:11px;color:var(--muted);}
+.metric-trend{font-size:11px;margin-top:4px;}
+.metric-trend.up{color:var(--green);}
+.metric-trend.down{color:var(--red);}
+
+/* CHARTS ROW */
+.charts-2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:22px;}
+.charts-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px;}
+.chart-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px 22px;}
+.chart-title{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:16px;}
+
+/* TABLES */
+.table-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.table-head{padding:14px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;}
+.table-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);font-weight:700;text-align:left;border-bottom:1px solid var(--b1);background:var(--s2);}
+td{padding:12px 16px;font-size:12.5px;vertical-align:middle;border-bottom:1px solid #1a1a1a;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(201,169,110,0.03);}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--gold-d);border:1px solid var(--gold-b);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'Cinzel',serif;}
+
+/* BADGES */
+.badge{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;}
+.badge.gold{background:var(--gold-d);color:var(--gold);border:1px solid var(--gold-b);}
+.badge.green{background:var(--green-d);color:var(--green);}
+.badge.red{background:var(--red-d);color:var(--red);}
+.badge.blue{background:var(--blue-d);color:var(--blue);}
+.badge.amber{background:var(--amber-d);color:var(--amber);}
+.badge.grey{background:var(--s3);color:var(--muted);border:1px solid var(--b2);}
+.badge.purple{background:var(--purple-d);color:var(--purple);}
+
+/* REVENUE SPECIFIC */
+.revenue-hero{background:linear-gradient(135deg,#0f0f0f,#161616);border:1px solid var(--b1);border-radius:18px;padding:32px;margin-bottom:22px;position:relative;overflow:hidden;text-align:center;}
+.revenue-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:300px;height:300px;background:radial-gradient(circle,rgba(201,169,110,0.1) 0%,transparent 65%);pointer-events:none;}
+.revenue-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,169,110,0.6);margin-bottom:10px;font-weight:600;}
+.revenue-total{font-family:'Cinzel',serif;font-size:clamp(36px,6vw,56px);font-weight:700;color:#fff;line-height:1;margin-bottom:8px;}
+.revenue-total span{font-size:0.4em;vertical-align:super;color:var(--gold);font-weight:400;}
+.revenue-subtitle{font-size:13px;color:rgba(255,255,255,0.4);}
+.revenue-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;}
+.rev-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:16px;text-align:left;}
+.rev-item-label{font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.35);margin-bottom:6px;font-weight:600;}
+.rev-item-value{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:#fff;}
+.rev-item-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:3px;}
+
+/* PAYMENT TABLE */
+.payment-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700;}
+.payment-status.paid{background:rgba(76,175,125,0.12);color:var(--green);}
+.payment-status.pending{background:rgba(232,168,74,0.12);color:var(--amber);}
+.payment-status.free{background:rgba(91,141,217,0.12);color:var(--blue);}
+
+/* OVERVIEW SPECIFIC */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;}
+.mini-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;}
+.mini-card-title{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.mini-lead-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1);}
+.mini-lead-row:last-child{border-bottom:none;}
+.mini-lead-info{flex:1;min-width:0;}
+.mini-lead-name{font-size:12.5px;font-weight:600;color:var(--text);}
+.mini-lead-email{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.activity-text{font-size:12px;color:var(--muted2);line-height:1.5;}
+.activity-time{font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+/* EMPTY */
+.empty-state{padding:40px;text-align:center;color:var(--muted);font-size:12px;}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin 0.7s linear infinite;display:inline-block;}
+
+@media(max-width:1100px){
+  .metrics-6{grid-template-columns:repeat(3,1fr);}
+  .charts-2{grid-template-columns:1fr;}
+  .charts-3{grid-template-columns:1fr 1fr;}
+  .overview-grid{grid-template-columns:1fr;}
+  .revenue-breakdown{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:768px){
+  .metrics-6,.metrics-4,.metrics-3{grid-template-columns:1fr 1fr;}
+  .charts-3{grid-template-columns:1fr;}
+  .content{padding:16px;}
+  .topbar{padding:0 16px;}
+  .nav-tabs{padding:0 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-wrap">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14.5" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="16,4 27,24 5,24" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+        <polygon points="16,14 22,24 10,24" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1"/>
+        <polygon points="16,3 18,8 14,8" fill="#c9a96e"/>
+      </svg>
+      <div>
+        <div class="brand">Aligned Order</div>
+        <div class="brand-sub">Admin</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="page-title" id="pageTitle">Overview</div>
+  </div>
+  <div class="topbar-right">
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      <span id="lastUpdated">Loading…</span>
+    </div>
+    <button class="btn" id="refreshBtn" onclick="refreshAll()">↺ Refresh</button>
+    <a href="dashboard.html" class="btn ghost">← Dashboard</a>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showPage('overview',this)">◈ Overview</div>
+  <div class="nav-tab" onclick="showPage('leads',this)">◉ Leads</div>
+  <div class="nav-tab" onclick="showPage('sessions',this)">◷ Sessions</div>
+  <div class="nav-tab" onclick="showPage('revenue',this)">💰 Revenue</div>
+</div>
+
+<!-- ═══════════════ OVERVIEW ═══════════════ -->
+<div class="content">
+<div class="page active" id="page-overview">
+
+  <div class="metrics-6">
+    <div class="metric gold"><div class="metric-icon">👥</div><div class="metric-label">Total Leads</div><div class="metric-value" id="o-totalLeads">—</div><div class="metric-sub">all responses</div></div>
+    <div class="metric green"><div class="metric-icon">✦</div><div class="metric-label">Qualified</div><div class="metric-value" id="o-qualified">—</div><div class="metric-sub">score ≥ 70%</div></div>
+    <div class="metric blue"><div class="metric-icon">◷</div><div class="metric-label">Sessions</div><div class="metric-value" id="o-sessions">—</div><div class="metric-sub">total booked</div></div>
+    <div class="metric amber"><div class="metric-icon">⏳</div><div class="metric-label">Upcoming</div><div class="metric-value" id="o-upcoming">—</div><div class="metric-sub">confirmed</div></div>
+    <div class="metric purple"><div class="metric-icon">💰</div><div class="metric-label">Revenue</div><div class="metric-value" id="o-revenue">—</div><div class="metric-sub">paid sessions</div></div>
+    <div class="metric red"><div class="metric-icon">📊</div><div class="metric-label">Conv. Rate</div><div class="metric-value" id="o-conv">—</div><div class="metric-sub">qualified/total</div></div>
+  </div>
+
+  <div class="charts-2">
+    <div class="chart-card">
+      <div class="chart-title">Lead Score Distribution</div>
+      <div class="chart-sub">How scores spread across all respondents</div>
+      <div style="position:relative;height:200px;"><canvas id="overviewDistChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Qualification Split</div>
+      <div class="chart-sub">Qualified vs not qualified</div>
+      <div style="position:relative;height:160px;"><canvas id="overviewQualChart"></canvas></div>
+      <div id="overviewQualLegend" style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="mini-card">
+      <div class="mini-card-title">
+        <span>🔥 Recent Qualified Leads</span>
+        <a href="#" onclick="showPage('leads',document.querySelectorAll('.nav-tab')[1])" style="font-size:11px;color:var(--gold);text-decoration:none;">View all</a>
+      </div>
+      <div id="recentQualLeads"><div class="empty-state">No qualified leads yet</div></div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-card-title">
+        <span>📅 Upcoming Sessions</span>
+        <a href="#" onclick="showPage('sessions',document.querySelectorAll('.nav-tab')[2])" style="font-size:11px;color:var(--gold);text-decoration:none;">View all</a>
+      </div>
+      <div id="upcomingSessions"><div class="empty-state">No upcoming sessions</div></div>
+    </div>
+  </div>
+
+  <div class="mini-card">
+    <div class="mini-card-title"><span>⚡ Recent Activity</span></div>
+    <div id="activityFeed"><div class="empty-state">No activity yet</div></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ LEADS ═══════════════ -->
+<div class="page" id="page-leads">
+
+  <div class="metrics-4">
+    <div class="metric gold"><div class="metric-label">Total Leads</div><div class="metric-value" id="l-total">—</div><div class="metric-sub">all responses</div></div>
+    <div class="metric green"><div class="metric-label">Qualified</div><div class="metric-value" id="l-qual">—</div><div class="metric-sub">score ≥ 70%</div></div>
+    <div class="metric blue"><div class="metric-label">Avg Score</div><div class="metric-value" id="l-avg">—</div><div class="metric-sub">trigger score</div></div>
+    <div class="metric red"><div class="metric-label">Conv. Rate</div><div class="metric-value" id="l-conv">—</div><div class="metric-sub">qualified/total</div></div>
+  </div>
+
+  <div class="charts-2">
+    <div class="chart-card">
+      <div class="chart-title">Score Distribution</div>
+      <div class="chart-sub">Breakdown by score range</div>
+      <div style="position:relative;height:200px;"><canvas id="leadsDistChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Life Areas Triggering Most</div>
+      <div class="chart-sub">From Q2 answers</div>
+      <div style="position:relative;height:200px;"><canvas id="leadsAreaChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head">
+      <div class="table-title">All Leads</div>
+      <div style="display:flex;gap:6px;">
+        <input id="leadSearch" placeholder="Search…" oninput="renderLeadsTable()" style="background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:6px 12px;color:var(--text);font-family:'Raleway',sans-serif;font-size:12px;outline:none;width:160px;">
+      </div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Score</th><th>Profile</th><th>Qualified</th><th>Date</th>
+      </tr></thead>
+      <tbody id="leadsTableBody"></tbody>
+    </table>
+    <div id="leadsTableEmpty" class="empty-state" style="display:none;">No leads found</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ SESSIONS ═══════════════ -->
+<div class="page" id="page-sessions">
+
+  <div class="metrics-4">
+    <div class="metric gold"><div class="metric-label">Total Sessions</div><div class="metric-value" id="s-total">—</div><div class="metric-sub">all time</div></div>
+    <div class="metric green"><div class="metric-label">Confirmed</div><div class="metric-value" id="s-confirmed">—</div><div class="metric-sub">upcoming</div></div>
+    <div class="metric blue"><div class="metric-label">Completed</div><div class="metric-value" id="s-completed">—</div><div class="metric-sub">done</div></div>
+    <div class="metric amber"><div class="metric-label">Completion Rate</div><div class="metric-value" id="s-compRate">—</div><div class="metric-sub">completed/total</div></div>
+  </div>
+
+  <div class="charts-3">
+    <div class="chart-card">
+      <div class="chart-title">Session Types</div>
+      <div class="chart-sub">Discovery vs Coaching</div>
+      <div style="position:relative;height:180px;"><canvas id="sessTypeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Session Status</div>
+      <div class="chart-sub">Current breakdown</div>
+      <div style="position:relative;height:180px;"><canvas id="sessStatusChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Outcomes</div>
+      <div class="chart-sub">Post-session results</div>
+      <div style="position:relative;height:180px;"><canvas id="sessOutcomeChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head"><div class="table-title">All Sessions</div></div>
+    <table>
+      <thead><tr>
+        <th>Client</th><th>Type</th><th>Date & Time</th><th>Status</th><th>Outcome</th><th>Source</th>
+      </tr></thead>
+      <tbody id="sessionsTableBody"></tbody>
+    </table>
+    <div id="sessionsTableEmpty" class="empty-state" style="display:none;">No sessions yet</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ REVENUE ═══════════════ -->
+<div class="page" id="page-revenue">
+
+  <div class="revenue-hero">
+    <div class="revenue-label">Total Revenue Generated</div>
+    <div class="revenue-total"><span>$</span><span id="r-total">0</span></div>
+    <div class="revenue-subtitle" id="r-subtitle">from paid coaching sessions</div>
+    <div class="revenue-breakdown">
+      <div class="rev-item">
+        <div class="rev-item-label">Paid Sessions</div>
+        <div class="rev-item-value" id="r-paidCount">0</div>
+        <div class="rev-item-sub">completed & paid</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-item-label">Avg per Session</div>
+        <div class="rev-item-value" id="r-avg">$0</div>
+        <div class="rev-item-sub">average value</div>
+      </div>
+      <div class="rev-item">
+        <div class="rev-item-label">Pending</div>
+        <div class="rev-item-value" id="r-pending">0</div>
+        <div class="rev-item-sub">awaiting payment</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-2">
+    <div class="chart-card">
+      <div class="chart-title">Revenue Over Time</div>
+      <div class="chart-sub">Monthly coaching session revenue</div>
+      <div style="position:relative;height:200px;"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Session Mix</div>
+      <div class="chart-sub">Free vs paid breakdown</div>
+      <div style="position:relative;height:170px;"><canvas id="revMixChart"></canvas></div>
+      <div id="revMixLegend" style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  <!-- Payment config -->
+  <div style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;margin-bottom:16px;">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">💳 Payment Configuration</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Session Price (USD)</div>
+        <input id="sessionPrice" type="number" value="150" min="0" style="background:#fff;border:1.5px solid var(--b2);border-radius:8px;padding:10px 12px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:14px;font-weight:600;width:100%;outline:none;-webkit-text-fill-color:#1a1a1a;" oninput="updateRevenue()">
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Stripe Payment Link</div>
+        <input id="stripeLink" type="url" placeholder="https://buy.stripe.com/..." style="background:#fff;border:1.5px solid var(--b2);border-radius:8px;padding:10px 12px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:13px;width:100%;outline:none;-webkit-text-fill-color:#1a1a1a;" oninput="saveConfig()">
+      </div>
+      <div style="display:flex;align-items:flex-end;">
+        <button class="btn" onclick="saveConfig()" style="width:100%;justify-content:center;">Save Config</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head"><div class="table-title">Payment Records</div></div>
+    <table>
+      <thead><tr>
+        <th>Client</th><th>Session Type</th><th>Date</th><th>Amount</th><th>Status</th>
+      </tr></thead>
+      <tbody id="paymentsTableBody"></tbody>
+    </table>
+    <div id="paymentsTableEmpty" class="empty-state" style="display:none;">No payment records yet. Complete paid coaching sessions to see revenue here.</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+const LEADS_API    = '/.netlify/functions/leads';
+const SESSIONS_API = '/.netlify/functions/sessions';
+
+let allLeads    = [];
+let allSessions = [];
+let charts      = {};
+let sessionPrice = 150;
+
+// ── CONFIG ────────────────────────────────────────
+function loadConfig() {
+  const saved = localStorage.getItem('ao_admin_config');
+  if(saved) {
+    const c = JSON.parse(saved);
+    sessionPrice = c.price || 150;
+    document.getElementById('sessionPrice').value = sessionPrice;
+    if(c.stripeLink) document.getElementById('stripeLink').value = c.stripeLink;
+  }
+}
+function saveConfig() {
+  const price = parseFloat(document.getElementById('sessionPrice').value) || 150;
+  const link  = document.getElementById('stripeLink').value.trim();
+  sessionPrice = price;
+  localStorage.setItem('ao_admin_config', JSON.stringify({ price, stripeLink: link }));
+  updateRevenue();
+}
+
+// ── FETCH ─────────────────────────────────────────
+async function fetchLeads() {
+  try {
+    const r = await fetch(LEADS_API, { cache: 'no-store' });
+    if(!r.ok) return [];
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(row => {
+      let comps = {};
+      try { comps = typeof row.components === 'string' ? JSON.parse(row.components) : (row.components||{}); } catch(e) {}
+      return {
+        id:        String(row.created_at || Math.random()),
+        firstName: String(row.first_name || ''),
+        lastName:  String(row.last_name  || ''),
+        email:     String(row.email      || ''),
+        phone:     String(row.phone      || ''),
+        score:     parseInt(row.score)   || 0,
+        profile:   String(row.profile    || ''),
+        qualified: row.qualified === 'true' || row.qualified === true,
+        date:      String(row.created_at || ''),
+        components: comps,
+        analysis:  String(row.analysis   || '')
+      };
+    }).filter(l => l.firstName || l.email);
+  } catch(e) { return []; }
+}
+
+async function fetchSessions() {
+  try {
+    const r = await fetch(SESSIONS_API, { cache: 'no-store' });
+    if(!r.ok) return [];
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return [];
+    const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+    return rows.map(row => {
+      const key = row.calendly_id || row.email;
+      return {
+        id:           String(row.calendly_id || row.created_at || Math.random()),
+        firstName:    String(row.first_name  || ''),
+        lastName:     String(row.last_name   || ''),
+        email:        String(row.email       || ''),
+        sessionType:  String(row.session_type|| ''),
+        datetime:     String(row.datetime    || ''),
+        meetingLink:  String(row.meeting_link|| ''),
+        status:       overrides[key] || String(row.status || 'confirmed'),
+        notes:        String(row.notes       || ''),
+        outcome:      String(row.outcome     || ''),
+        source:       String(row.source      || 'calendly'),
+        createdAt:    String(row.created_at  || '')
+      };
+    }).filter(s => s.firstName || s.email);
+  } catch(e) { return []; }
+}
+
+// ── HELPERS ───────────────────────────────────────
+function initials(f,l){ return ((f||'')[0]+(l||'')[0]).toUpperCase() || '?'; }
+function scoreClass(s){ return s>=70?'red':s>=45?'gold':'green'; }
+function fmtDate(iso){
+  if(!iso) return '—';
+  try { return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return '—'; }
+}
+function fmtDateTime(iso){
+  if(!iso) return '—';
+  try { return new Date(iso).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); } catch(e){ return iso; }
+}
+function isPaid(s){ return s.sessionType && (s.sessionType.toLowerCase().includes('paid') || s.sessionType.toLowerCase().includes('coaching')); }
+
+function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+// ── RENDER ALL ────────────────────────────────────
+async function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.innerHTML = '<span class="spinning">↺</span>';
+  btn.disabled = true;
+
+  [allLeads, allSessions] = await Promise.all([fetchLeads(), fetchSessions()]);
+
+  renderOverview();
+  renderLeadsPage();
+  renderSessionsPage();
+  renderRevenuePage();
+
+  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('lastUpdated').textContent = 'Updated ' + t;
+  btn.innerHTML = '↺ Refresh';
+  btn.disabled = false;
+}
+
+// ── OVERVIEW ──────────────────────────────────────
+function renderOverview() {
+  const tot  = allLeads.length;
+  const qual = allLeads.filter(l => l.qualified).length;
+  const sess = allSessions.length;
+  const upcoming = allSessions.filter(s => s.status === 'confirmed').length;
+  const paidComp = allSessions.filter(s => isPaid(s) && s.status === 'completed').length;
+  const rev = paidComp * sessionPrice;
+
+  document.getElementById('o-totalLeads').textContent = tot;
+  document.getElementById('o-qualified').textContent  = qual;
+  document.getElementById('o-sessions').textContent   = sess;
+  document.getElementById('o-upcoming').textContent   = upcoming;
+  document.getElementById('o-revenue').textContent    = '$' + rev.toLocaleString();
+  document.getElementById('o-conv').textContent       = tot ? Math.round((qual/tot)*100)+'%' : '—';
+
+  // Recent qualified leads
+  const ql = allLeads.filter(l => l.qualified).slice(0,5);
+  document.getElementById('recentQualLeads').innerHTML = ql.length ? ql.map(l => `
+    <div class="mini-lead-row">
+      <div class="avatar">${initials(l.firstName,l.lastName)}</div>
+      <div class="mini-lead-info">
+        <div class="mini-lead-name">${l.firstName} ${l.lastName}</div>
+        <div class="mini-lead-email">${l.email}</div>
+      </div>
+      <span class="badge red">${l.score}%</span>
+    </div>`).join('') : '<div class="empty-state">No qualified leads yet</div>';
+
+  // Upcoming sessions
+  const up = allSessions.filter(s => s.status === 'confirmed').slice(0,4);
+  document.getElementById('upcomingSessions').innerHTML = up.length ? up.map(s => `
+    <div class="mini-lead-row">
+      <div class="avatar">${(s.firstName||'?')[0].toUpperCase()}</div>
+      <div class="mini-lead-info">
+        <div class="mini-lead-name">${s.firstName} ${s.lastName}</div>
+        <div class="mini-lead-email">${fmtDateTime(s.datetime)}</div>
+      </div>
+      <span class="badge ${isPaid(s)?'gold':'blue'}">${isPaid(s)?'Paid':'Free'}</span>
+    </div>`).join('') : '<div class="empty-state">No upcoming sessions</div>';
+
+  // Activity feed
+  const activities = [
+    ...allLeads.slice(0,3).map(l => ({
+      type:'lead', color:'var(--gold)',
+      text:`<strong>${l.firstName} ${l.lastName}</strong> completed the trigger assessment — scored ${l.score}%`,
+      time: fmtDate(l.date)
+    })),
+    ...allSessions.slice(0,3).map(s => ({
+      type:'session', color:'var(--green)',
+      text:`<strong>${s.firstName} ${s.lastName}</strong> booked a ${s.sessionType}`,
+      time: fmtDate(s.createdAt)
+    }))
+  ].slice(0,6);
+
+  document.getElementById('activityFeed').innerHTML = activities.length ? activities.map(a => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div>
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+    </div>`).join('') : '<div class="empty-state">No activity yet</div>';
+
+  // Charts
+  const buckets = [0,0,0,0,0];
+  allLeads.forEach(l => { buckets[Math.min(4,Math.floor(l.score/20))]++; });
+  destroyChart('overviewDist');
+  charts['overviewDist'] = new Chart(document.getElementById('overviewDistChart'), {
+    type:'bar',
+    data:{
+      labels:['0–20','21–40','41–60','61–80','81–100'],
+      datasets:[{data:buckets,
+        backgroundColor:['rgba(76,175,125,0.5)','rgba(201,169,110,0.4)','rgba(201,169,110,0.6)','rgba(224,90,90,0.4)','rgba(224,90,90,0.65)'],
+        borderColor:['#4caf7d','#c9a96e','#c9a96e','#e05a5a','#e05a5a'],
+        borderWidth:1.5,borderRadius:5
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+              y:{ticks:{color:'#666',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+  });
+
+  destroyChart('overviewQual');
+  charts['overviewQual'] = new Chart(document.getElementById('overviewQualChart'), {
+    type:'doughnut',
+    data:{labels:['Qualified','Not Qualified'],
+      datasets:[{data:[qual, tot-qual],
+        backgroundColor:['rgba(201,169,110,0.75)','rgba(255,255,255,0.06)'],
+        borderColor:['#c9a96e','rgba(255,255,255,0.08)'],borderWidth:1.5
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  document.getElementById('overviewQualLegend').innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:#c9a96e"></div>Qualified: ${qual}</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.15);border:1px solid #333"></div>Others: ${tot-qual}</div>`;
+}
+
+// ── LEADS PAGE ────────────────────────────────────
+function renderLeadsPage() {
+  const tot  = allLeads.length;
+  const qual = allLeads.filter(l => l.qualified).length;
+  const avg  = tot ? Math.round(allLeads.reduce((s,l)=>s+l.score,0)/tot) : 0;
+  document.getElementById('l-total').textContent = tot;
+  document.getElementById('l-qual').textContent  = qual;
+  document.getElementById('l-avg').textContent   = avg ? avg+'%' : '—';
+  document.getElementById('l-conv').textContent  = tot ? Math.round((qual/tot)*100)+'%' : '—';
+  renderLeadsTable();
+
+  // Area chart from Q2 answers
+  const areaCounts = {};
+  allLeads.forEach(l => {
+    try {
+      const comps = l.components || {};
+      Object.keys(comps).forEach(k => {
+        areaCounts[k] = (areaCounts[k]||0) + 1;
+      });
+    } catch(e) {}
+  });
+  const areaLabels = Object.keys(areaCounts).slice(0,6);
+  const areaData   = areaLabels.map(k => areaCounts[k]);
+
+  destroyChart('leadsDist');
+  const buckets = [0,0,0,0,0];
+  allLeads.forEach(l => { buckets[Math.min(4,Math.floor(l.score/20))]++; });
+  charts['leadsDist'] = new Chart(document.getElementById('leadsDistChart'), {
+    type:'bar',
+    data:{labels:['0–20','21–40','41–60','61–80','81–100'],
+      datasets:[{data:buckets,backgroundColor:['rgba(76,175,125,0.5)','rgba(201,169,110,0.4)','rgba(201,169,110,0.6)','rgba(224,90,90,0.4)','rgba(224,90,90,0.65)'],borderColor:['#4caf7d','#c9a96e','#c9a96e','#e05a5a','#e05a5a'],borderWidth:1.5,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#666',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+  });
+
+  destroyChart('leadsArea');
+  charts['leadsArea'] = new Chart(document.getElementById('leadsAreaChart'), {
+    type:'bar',
+    data:{labels:areaLabels.length ? areaLabels : ['No data'],
+      datasets:[{data:areaData.length ? areaData : [0],backgroundColor:'rgba(201,169,110,0.5)',borderColor:'#c9a96e',borderWidth:1.5,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true},y:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+}
+
+function renderLeadsTable() {
+  const q = (document.getElementById('leadSearch').value||'').toLowerCase();
+  const rows = allLeads.filter(l =>
+    !q || (l.firstName+' '+l.lastName).toLowerCase().includes(q) || l.email.toLowerCase().includes(q)
+  );
+  const body  = document.getElementById('leadsTableBody');
+  const empty = document.getElementById('leadsTableEmpty');
+  if(!rows.length){ body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  body.innerHTML = rows.map(l => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:9px;">
+        <div class="avatar">${initials(l.firstName,l.lastName)}</div>
+        <div><div style="font-weight:600;color:var(--text)">${l.firstName} ${l.lastName}</div></div>
+      </div></td>
+      <td style="color:var(--muted);font-size:12px">${l.email}</td>
+      <td><span class="badge ${scoreClass(l.score)}">${l.score}%</span></td>
+      <td style="font-size:11.5px;color:var(--muted)">${l.profile}</td>
+      <td><span class="badge ${l.qualified?'green':'grey'}">${l.qualified?'✦ Qualified':'–'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${fmtDate(l.date)}</td>
+    </tr>`).join('');
+}
+
+// ── SESSIONS PAGE ─────────────────────────────────
+function renderSessionsPage() {
+  const tot   = allSessions.length;
+  const conf  = allSessions.filter(s => s.status==='confirmed').length;
+  const comp  = allSessions.filter(s => s.status==='completed').length;
+  document.getElementById('s-total').textContent    = tot;
+  document.getElementById('s-confirmed').textContent= conf;
+  document.getElementById('s-completed').textContent= comp;
+  document.getElementById('s-compRate').textContent = tot ? Math.round((comp/tot)*100)+'%' : '—';
+
+  // Table
+  const body  = document.getElementById('sessionsTableBody');
+  const empty = document.getElementById('sessionsTableEmpty');
+  if(!allSessions.length){ body.innerHTML=''; empty.style.display='block'; }
+  else {
+    empty.style.display='none';
+    body.innerHTML = allSessions.map(s => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:9px;">
+          <div class="avatar">${(s.firstName||'?')[0].toUpperCase()}</div>
+          <div><div style="font-weight:600;color:var(--text)">${s.firstName} ${s.lastName||''}</div>
+               <div style="font-size:11px;color:var(--muted)">${s.email}</div></div>
+        </div></td>
+        <td><span class="badge ${isPaid(s)?'gold':'blue'}">${isPaid(s)?'🔥 Coaching':'📞 Discovery'}</span></td>
+        <td style="font-size:12px;color:var(--muted)">${fmtDateTime(s.datetime)}</td>
+        <td><span class="badge ${s.status==='confirmed'?'green':s.status==='completed'?'blue':s.status==='cancelled'?'red':'amber'}">${s.status}</span></td>
+        <td style="font-size:11.5px;color:var(--muted)">${s.outcome||'—'}</td>
+        <td><span class="badge ${s.source==='calendly'?'green':'grey'}">${s.source==='calendly'?'📅 Calendly':'✋ Manual'}</span></td>
+      </tr>`).join('');
+  }
+
+  // Charts
+  const discovery = allSessions.filter(s => !isPaid(s)).length;
+  const coaching  = allSessions.filter(s => isPaid(s)).length;
+
+  destroyChart('sessType');
+  charts['sessType'] = new Chart(document.getElementById('sessTypeChart'), {
+    type:'doughnut',
+    data:{labels:['Discovery (Free)','Coaching (Paid)'],
+      datasets:[{data:[discovery,coaching],backgroundColor:['rgba(91,141,217,0.7)','rgba(201,169,110,0.75)'],borderColor:['#5b8dd9','#c9a96e'],borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#666',font:{size:10},padding:10}}}}
+  });
+
+  const statuses = ['confirmed','completed','cancelled','pending'];
+  const statusColors = ['rgba(76,175,125,0.7)','rgba(91,141,217,0.7)','rgba(224,90,90,0.6)','rgba(232,168,74,0.7)'];
+  destroyChart('sessStatus');
+  charts['sessStatus'] = new Chart(document.getElementById('sessStatusChart'), {
+    type:'doughnut',
+    data:{labels:statuses,datasets:[{data:statuses.map(st=>allSessions.filter(s=>s.status===st).length),backgroundColor:statusColors,borderColor:statusColors.map(c=>c.replace('0.7','1').replace('0.6','1')),borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#666',font:{size:10},padding:10}}}}
+  });
+
+  const outcomes = ['Booked Coaching','Good Progress','Follow-up Needed','On Hold','Not a Fit'];
+  const outCounts = outcomes.map(o => allSessions.filter(s => s.outcome===o).length);
+  destroyChart('sessOutcome');
+  charts['sessOutcome'] = new Chart(document.getElementById('sessOutcomeChart'), {
+    type:'bar',
+    data:{labels:outcomes,datasets:[{data:outCounts,backgroundColor:'rgba(201,169,110,0.5)',borderColor:'#c9a96e',borderWidth:1.5,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true},y:{ticks:{color:'#666',font:{size:9}},grid:{color:'rgba(255,255,255,0.04)'}}}}
+  });
+}
+
+// ── REVENUE PAGE ──────────────────────────────────
+function renderRevenuePage() { updateRevenue(); }
+
+function updateRevenue() {
+  const price   = parseFloat(document.getElementById('sessionPrice').value) || 150;
+  sessionPrice  = price;
+  const paidComp   = allSessions.filter(s => isPaid(s) && s.status==='completed');
+  const paidPending = allSessions.filter(s => isPaid(s) && s.status==='confirmed');
+  const total   = paidComp.length * price;
+  const avg     = paidComp.length ? price : 0;
+
+  document.getElementById('r-total').textContent    = total.toLocaleString();
+  document.getElementById('r-paidCount').textContent= paidComp.length;
+  document.getElementById('r-avg').textContent      = '$' + avg;
+  document.getElementById('r-pending').textContent  = paidPending.length;
+  document.getElementById('r-subtitle').textContent = `${paidComp.length} paid coaching sessions · $${price}/session`;
+
+  // Payment records table
+  const body  = document.getElementById('paymentsTableBody');
+  const empty = document.getElementById('paymentsTableEmpty');
+  const payRows = allSessions.filter(s => isPaid(s));
+  if(!payRows.length){ body.innerHTML=''; empty.style.display='block'; }
+  else {
+    empty.style.display='none';
+    body.innerHTML = payRows.map(s => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:9px;">
+          <div class="avatar">${(s.firstName||'?')[0].toUpperCase()}</div>
+          <div><div style="font-weight:600;color:var(--text)">${s.firstName} ${s.lastName||''}</div>
+               <div style="font-size:11px;color:var(--muted)">${s.email}</div></div>
+        </div></td>
+        <td><span class="badge gold">🔥 Coaching</span></td>
+        <td style="font-size:12px;color:var(--muted)">${fmtDateTime(s.datetime)}</td>
+        <td style="font-weight:700;color:var(--gold)">$${price}</td>
+        <td><span class="payment-status ${s.status==='completed'?'paid':s.status==='confirmed'?'pending':'free'}">${s.status==='completed'?'✓ Paid':s.status==='confirmed'?'⏳ Pending':'–'}</span></td>
+      </tr>`).join('');
+  }
+
+  // Revenue over time chart
+  const monthlyRev = {};
+  paidComp.forEach(s => {
+    if(s.datetime) {
+      try {
+        const m = new Date(s.datetime).toLocaleDateString('en-GB',{month:'short',year:'2-digit'});
+        monthlyRev[m] = (monthlyRev[m]||0) + price;
+      } catch(e) {}
+    }
+  });
+  const months = Object.keys(monthlyRev);
+  const revData = months.map(m => monthlyRev[m]);
+
+  destroyChart('revenue');
+  charts['revenue'] = new Chart(document.getElementById('revenueChart'), {
+    type:'line',
+    data:{labels:months.length ? months : ['No data'],
+      datasets:[{data:revData.length ? revData : [0],borderColor:'#c9a96e',backgroundColor:'rgba(201,169,110,0.1)',borderWidth:2,fill:true,tension:0.4,pointBackgroundColor:'#c9a96e',pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#666',font:{size:10},callback:v=>'$'+v},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+  });
+
+  // Mix chart
+  const freeCount = allSessions.filter(s => !isPaid(s)).length;
+  const paidCount = allSessions.filter(s => isPaid(s)).length;
+  destroyChart('revMix');
+  charts['revMix'] = new Chart(document.getElementById('revMixChart'), {
+    type:'doughnut',
+    data:{labels:['Free (Discovery)','Paid (Coaching)'],
+      datasets:[{data:[freeCount,paidCount],backgroundColor:['rgba(91,141,217,0.7)','rgba(201,169,110,0.75)'],borderColor:['#5b8dd9','#c9a96e'],borderWidth:1.5}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  document.getElementById('revMixLegend').innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:#5b8dd9"></div>Free: ${freeCount}</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:#c9a96e"></div>Paid: ${paidCount} · $${total.toLocaleString()}</div>`;
+}
+
+// ── PAGE NAV ──────────────────────────────────────
+function showPage(page, tab) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(tab) tab.classList.add('active');
+  const titles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue'};
+  document.getElementById('pageTitle').textContent = titles[page]||'';
+  if(page==='revenue') updateRevenue();
+}
+
+// ── INIT ──────────────────────────────────────────
+loadConfig();
+refreshAll();
+setInterval(refreshAll, 30000);
+</script>
+</body>
+</html>
