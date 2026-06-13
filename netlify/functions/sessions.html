@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Sessions</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0a;color:#f0ede8;font-family:'Raleway',sans-serif;min-height:100vh;}
+.shell{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;flex-shrink:0;background:#111;border-right:1px solid #222;display:flex;flex-direction:column;}
+.logo-area{padding:20px 18px;border-bottom:1px solid #222;display:flex;align-items:center;gap:12px;}
+.logo-name{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#c9a96e;letter-spacing:0.1em;}
+.logo-sub{font-size:9px;color:#555;letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;}
+.nav{padding:12px 0;flex:1;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 18px;font-size:13px;color:#666;cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;text-decoration:none;display:flex;}
+.nav-item:hover{color:#f0ede8;background:#1a1a1a;}
+.nav-item.active{color:#c9a96e;background:rgba(201,169,110,0.1);border-left-color:#c9a96e;}
+.sidebar-bottom{padding:14px 18px;border-top:1px solid #222;font-size:11px;color:#444;}
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{background:#111;border-bottom:1px solid #222;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10;flex-shrink:0;}
+.topbar-title{font-family:'Cinzel',serif;font-size:15px;color:#f0ede8;letter-spacing:0.04em;}
+.topbar-sub{font-size:11px;color:#555;margin-top:2px;}
+.topbar-actions{display:flex;gap:8px;}
+.btn{padding:8px 16px;border-radius:8px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid rgba(201,169,110,0.3);background:rgba(201,169,110,0.1);color:#c9a96e;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+.btn:hover{background:rgba(201,169,110,0.2);}
+.btn.green{border-color:rgba(76,175,125,0.3);background:rgba(76,175,125,0.1);color:#4caf7d;}
+.btn.green:hover{background:rgba(76,175,125,0.2);}
+.content{padding:24px;flex:1;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.metric{background:#111;border:1px solid #222;border-radius:12px;padding:18px 20px;position:relative;overflow:hidden;}
+.metric::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:12px 12px 0 0;}
+.metric.gold::after{background:linear-gradient(90deg,#a07830,#c9a96e);}
+.metric.amber::after{background:#e8a84a;}
+.metric.green::after{background:#4caf7d;}
+.metric.blue::after{background:#5b8dd9;}
+.metric-label{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:#555;margin-bottom:8px;font-weight:600;}
+.metric-value{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:#f0ede8;line-height:1;margin-bottom:4px;}
+.metric-sub{font-size:11px;color:#444;}
+
+/* SECTION */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:11px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;}
+
+/* SESSION CARDS */
+.sessions-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.session-card{background:#111;border:1px solid #222;border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:16px;transition:border-color 0.15s;cursor:pointer;}
+.session-card:hover{border-color:rgba(201,169,110,0.25);}
+.session-card.pending{border-left:3px solid #e8a84a;}
+.session-card.confirmed{border-left:3px solid #4caf7d;}
+.session-card.completed{border-left:3px solid #5b8dd9;}
+.session-card.cancelled{border-left:3px solid #e05a5a;opacity:0.5;}
+.sess-avatar{width:42px;height:42px;border-radius:50%;background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#c9a96e;flex-shrink:0;font-family:'Cinzel',serif;}
+.sess-body{flex:1;min-width:0;}
+.sess-name{font-size:13.5px;font-weight:600;color:#f0ede8;margin-bottom:4px;}
+.sess-meta{font-size:11.5px;color:#444;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sess-type{display:inline-flex;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;}
+.sess-type.discovery{background:rgba(91,141,217,0.12);color:#5b8dd9;}
+.sess-type.coaching{background:rgba(201,169,110,0.12);color:#c9a96e;}
+.sess-type.calendly{background:rgba(76,175,125,0.12);color:#4caf7d;}
+.status-badge{padding:4px 10px;border-radius:99px;font-size:10px;font-weight:700;}
+.status-badge.pending{background:rgba(232,168,74,0.12);color:#e8a84a;border:1px solid rgba(232,168,74,0.2);}
+.status-badge.confirmed{background:rgba(76,175,125,0.12);color:#4caf7d;border:1px solid rgba(76,175,125,0.2);}
+.status-badge.completed{background:rgba(91,141,217,0.12);color:#5b8dd9;border:1px solid rgba(91,141,217,0.2);}
+.status-badge.cancelled{background:rgba(224,90,90,0.1);color:#e05a5a;border:1px solid rgba(224,90,90,0.2);}
+.sess-actions{display:flex;gap:6px;flex-shrink:0;}
+.sess-btn{padding:6px 12px;border-radius:7px;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #2a2a2a;background:#1a1a1a;color:#555;transition:all 0.15s;}
+.sess-btn:hover{border-color:rgba(201,169,110,0.3);color:#c9a96e;}
+.sess-btn.confirm{border-color:rgba(76,175,125,0.3);background:rgba(76,175,125,0.08);color:#4caf7d;}
+.sess-btn.blue{border-color:rgba(91,141,217,0.3);background:rgba(91,141,217,0.08);color:#5b8dd9;}
+.sess-btn.danger{border-color:rgba(224,90,90,0.2);color:#e05a5a;}
+.calendly-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:#4caf7d;background:rgba(76,175,125,0.1);padding:2px 8px;border-radius:99px;}
+
+.empty{padding:48px 24px;text-align:center;background:#111;border:1px solid #222;border-radius:12px;margin-bottom:16px;}
+.empty-icon{font-size:28px;opacity:0.25;margin-bottom:12px;}
+.empty-title{font-size:13px;font-weight:600;color:#444;margin-bottom:6px;}
+.empty-sub{font-size:12px;color:#333;line-height:1.7;}
+.status-bar{display:flex;align-items:center;gap:8px;padding:8px 24px;background:#0d0d0d;border-top:1px solid #1a1a1a;font-size:11px;color:#444;flex-shrink:0;}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.status-dot.green{background:#4caf7d;}
+.status-dot.amber{background:#c9a96e;}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:#111;border:1px solid #2a2a2a;border-radius:18px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;}
+.modal-head{background:linear-gradient(135deg,#111,#161616);padding:24px;border-bottom:1px solid #222;position:relative;}
+.modal-head::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);border-radius:18px 18px 0 0;}
+.modal-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:#f0ede8;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:#555;}
+.modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:#555;cursor:pointer;font-size:20px;}
+.modal-body{padding:24px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:7px;}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid #333;border-radius:10px;padding:11px 14px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;outline:none;transition:border-color 0.2s;-webkit-text-fill-color:#1a1a1a;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#c9a96e;}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#fff;padding-right:36px;}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.detail-block{background:#1a1a1a;border-radius:10px;padding:12px 14px;border:1px solid #222;}
+.detail-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:0.12em;color:#444;margin-bottom:4px;font-weight:700;}
+.detail-val{font-size:13px;color:#f0ede8;font-weight:600;word-break:break-all;line-height:1.4;}
+.section-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:#c9a96e;font-weight:700;margin-bottom:10px;}
+.notes-box{background:#1a1a1a;border-left:3px solid #c9a96e;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.outcome-box{background:#1a1a1a;border-left:3px solid #5b8dd9;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.modal-btn{padding:12px;border-radius:10px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all 0.18s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.modal-btn.gold{background:rgba(201,169,110,0.12);color:#c9a96e;border:1px solid rgba(201,169,110,0.25);}
+.modal-btn.gold:hover{background:rgba(201,169,110,0.22);}
+.modal-btn.green{background:rgba(76,175,125,0.12);color:#4caf7d;border:1px solid rgba(76,175,125,0.25);}
+.modal-btn.green:hover{background:rgba(76,175,125,0.2);}
+.modal-btn.blue{background:rgba(91,141,217,0.12);color:#5b8dd9;border:1px solid rgba(91,141,217,0.25);}
+.modal-btn.blue:hover{background:rgba(91,141,217,0.2);}
+.modal-btn.primary{background:linear-gradient(135deg,#c9a96e,#a07830);color:#080808;font-weight:800;}
+.modal-btn.primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,169,110,0.3);}
+
+/* OUTCOME TAGS */
+.outcome-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.outcome-tag{padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #2a2a2a;background:#1a1a1a;color:#555;transition:all 0.15s;}
+.outcome-tag:hover{border-color:rgba(201,169,110,0.3);color:#c9a96e;}
+.outcome-tag.selected{background:rgba(201,169,110,0.15);color:#c9a96e;border-color:rgba(201,169,110,0.4);}
+.outcome-tag.selected.blue{background:rgba(91,141,217,0.15);color:#5b8dd9;border-color:rgba(91,141,217,0.4);}
+.outcome-tag.selected.green{background:rgba(76,175,125,0.15);color:#4caf7d;border-color:rgba(76,175,125,0.4);}
+.outcome-tag.selected.red{background:rgba(224,90,90,0.12);color:#e05a5a;border-color:rgba(224,90,90,0.3);}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin 0.7s linear infinite;display:inline-block;}
+@media(max-width:768px){.sidebar{display:none;}.metrics{grid-template-columns:1fr 1fr;}.content{padding:16px;}.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="sidebar">
+    <div class="logo-area">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16.5" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="18,4 30,26 6,26" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
+        <polygon points="18,16 25,26 11,26" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1"/>
+        <polygon points="18,3 20,8 16,8" fill="#c9a96e"/>
+        <line x1="18" y1="4" x2="18" y2="26" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      </svg>
+      <div><div class="logo-name">Aligned Order</div><div class="logo-sub">Sessions</div></div>
+    </div>
+    <div class="nav">
+      <a class="nav-item" href="dashboard.html">◈ Overview</a>
+      <a class="nav-item" href="dashboard.html">★ Leads</a>
+      <a class="nav-item active" href="sessions.html">◷ Sessions</a>
+      <a class="nav-item" href="booking.html" target="_blank">↗ Booking Page</a>
+    </div>
+    <div class="sidebar-bottom">Sessions Manager</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Sessions</div>
+        <div class="topbar-sub" id="topbarSub">Loading…</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn" onclick="refresh()">↺ Refresh</button>
+        <button class="btn green" onclick="openCalendly('discovery')">📞 Discovery Call</button>
+        <button class="btn green" onclick="openCalendly('coaching')">🔥 Coaching Session</button>
+        <button class="btn" onclick="openScheduleModal()">+ Manual Schedule</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="metrics">
+        <div class="metric gold"><div class="metric-label">Total</div><div class="metric-value" id="mTotal">0</div><div class="metric-sub">all sessions</div></div>
+        <div class="metric amber"><div class="metric-label">Pending</div><div class="metric-value" id="mPending">0</div><div class="metric-sub">awaiting confirm</div></div>
+        <div class="metric green"><div class="metric-label">Confirmed</div><div class="metric-value" id="mConfirmed">0</div><div class="metric-sub">upcoming</div></div>
+        <div class="metric blue"><div class="metric-label">Completed</div><div class="metric-value" id="mCompleted">0</div><div class="metric-sub">done</div></div>
+      </div>
+
+      <!-- CALENDLY SYNC BANNER -->
+      <div id="calendlyBanner" style="background:rgba(76,175,125,0.08);border:1px solid rgba(76,175,125,0.2);border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:18px;">📅</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#4caf7d;">Calendly Auto-Sync Active</div>
+          <div style="font-size:11.5px;color:#555;margin-top:2px;">Bookings from Calendly appear here automatically. Webhook URL: <span style="color:#4caf7d;font-family:monospace;" id="webhookUrl"></span></div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">⏳ Pending <span id="pendingCnt" style="color:#e8a84a;"></span></div>
+      </div>
+      <div class="sessions-grid" id="pendingList"></div>
+
+      <div class="section-header">
+        <div class="section-title">✅ Confirmed <span id="confirmedCnt" style="color:#4caf7d;"></span></div>
+      </div>
+      <div class="sessions-grid" id="confirmedList"></div>
+
+      <div class="section-header">
+        <div class="section-title">🔵 Completed <span id="completedCnt" style="color:#5b8dd9;"></span></div>
+      </div>
+      <div class="sessions-grid" id="completedList"></div>
+
+      <div class="section-header" id="cancelledSection" style="display:none;">
+        <div class="section-title">❌ Cancelled <span id="cancelledCnt" style="color:#e05a5a;"></span></div>
+      </div>
+      <div class="sessions-grid" id="cancelledList"></div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot green" id="statusDot"></div>
+      <span id="statusText">Loading sessions…</span>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION DETAIL / NOTES MODAL -->
+<div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+      <div class="modal-title" id="dTitle">Session Details</div>
+      <div class="modal-sub" id="dSub"></div>
+    </div>
+    <div class="modal-body" id="dBody"></div>
+  </div>
+</div>
+
+<!-- SCHEDULE MODAL -->
+<div class="overlay" id="scheduleOverlay" onclick="closeSchedule(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeSchedule()">✕</button>
+      <div class="modal-title">Manual Schedule</div>
+      <div class="modal-sub">Schedule a session for a client</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">First Name</label>
+        <input class="form-input" id="sFirst" type="text" placeholder="Client first name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Last Name</label>
+        <input class="form-input" id="sLast" type="text" placeholder="Client last name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="sEmail" type="email" placeholder="client@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-input" id="sPhone" type="tel" placeholder="+1 000 000 0000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Session Type</label>
+        <select class="form-select" id="sType">
+          <option value="">Select…</option>
+          <option value="Discovery Call (Free · 30 min)">📞 Discovery Call — Free · 30 min</option>
+          <option value="Coaching Session (Paid · 60 min)">🔥 Coaching Session — Paid · 60 min</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="sDate" type="date"></div>
+        <div class="form-group"><label class="form-label">Time</label><input class="form-input" id="sTime" type="time"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Meeting Link</label><input class="form-input" id="sLink" type="url" placeholder="https://zoom.us/j/…"></div>
+      <div class="form-group"><label class="form-label">Notes (optional)</label><textarea class="form-textarea" id="sNotes" placeholder="What to prepare, what to expect…"></textarea></div>
+      <div class="modal-actions">
+        <button class="modal-btn gold" onclick="closeSchedule()">Cancel</button>
+        <button class="modal-btn primary" onclick="saveManualSession()">Confirm Session →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SESSIONS_API  = '/.netlify/functions/sessions';
+const DISCOVERY = 'https://calendly.com/alignedorder/30min';
+const COACHING  = 'https://calendly.com/alignedorder/paid-session';
+let sessions = [];
+
+// Show webhook URL
+document.getElementById('webhookUrl').textContent =
+  window.location.origin + '/.netlify/functions/calendly-webhook';
+
+function setStatus(color, text) {
+  document.getElementById('statusDot').className = 'status-dot ' + color;
+  document.getElementById('statusText').textContent = text;
+}
+
+function initials(s) {
+  return ((s.first_name||'')[0] + (s.last_name||'')[0]).toUpperCase();
+}
+
+function fmtDateTime(iso) {
+  if(!iso) return '—';
+  try {
+    return new Date(iso).toLocaleString('en-GB', {
+      weekday:'short',day:'numeric',month:'short',
+      hour:'2-digit',minute:'2-digit'
+    });
+  } catch(e) { return iso; }
+}
+
+// ── FETCH ──────────────────────────────────────────
+async function fetchSessions() {
+  try {
+    const r = await fetch(SESSIONS_API, { cache: 'no-store' });
+    if(!r.ok) return null;
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(row => ({
+      id:           row.calendly_id || row.created_at || String(Math.random()),
+      first_name:   String(row.first_name || ''),
+      last_name:    String(row.last_name  || ''),
+      email:        String(row.email      || ''),
+      phone:        String(row.phone      || ''),
+      session_type: String(row.session_type || row.type || ''),
+      datetime:     String(row.datetime   || ''),
+      meeting_link: String(row.meeting_link || row.link || ''),
+      status:       String(row.status     || 'pending'),
+      notes:        String(row.notes      || ''),
+      outcome:      String(row.outcome    || ''),
+      calendly_id:  String(row.calendly_id|| ''),
+      created_at:   String(row.created_at || ''),
+      source:       row.calendly_id ? 'calendly' : 'manual'
+    })).filter(s => s.first_name || s.email);
+  } catch(e) {
+    console.error('fetchSessions error:', e);
+    return null;
+  }
+}
+
+async function load() {
+  setStatus('amber', 'Loading…');
+  const data = await fetchSessions();
+  if(data === null) { setStatus('amber', 'Could not reach database'); return; }
+  // Apply saved status overrides from localStorage
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  sessions = data.map(s => {
+    const key = s.calendly_id || s.email;
+    if(overrides[key]) s.status = overrides[key];
+    return s;
+  });
+  render();
+  const t = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+  setStatus('green', `Live · ${sessions.length} sessions · ${t}`);
+  document.getElementById('topbarSub').textContent = 'Updated ' + t;
+}
+
+async function refresh() { await load(); }
+
+// ── RENDER ─────────────────────────────────────────
+function render() {
+  const pend      = sessions.filter(s => s.status === 'pending');
+  const conf      = sessions.filter(s => s.status === 'confirmed');
+  const comp      = sessions.filter(s => s.status === 'completed');
+  const cancelled = sessions.filter(s => s.status === 'cancelled');
+
+  document.getElementById('mTotal').textContent     = sessions.length;
+  document.getElementById('mPending').textContent   = pend.length;
+  document.getElementById('mConfirmed').textContent = conf.length;
+  document.getElementById('mCompleted').textContent = comp.length;
+  document.getElementById('pendingCnt').textContent   = pend.length ? `(${pend.length})` : '';
+  document.getElementById('confirmedCnt').textContent = conf.length ? `(${conf.length})` : '';
+  document.getElementById('completedCnt').textContent = comp.length ? `(${comp.length})` : '';
+
+  renderList('pendingList',   pend,      'pending');
+  renderList('confirmedList', conf,      'confirmed');
+  renderList('completedList', comp,      'completed');
+
+  // Show cancelled section only if there are cancelled sessions
+  const cancelledSection = document.getElementById('cancelledSection');
+  if(cancelled.length) {
+    cancelledSection.style.display = 'flex';
+    document.getElementById('cancelledCnt').textContent = `(${cancelled.length})`;
+    renderList('cancelledList', cancelled, 'cancelled');
+  } else {
+    cancelledSection.style.display = 'none';
+    document.getElementById('cancelledList').innerHTML = '';
+  }
+}
+
+function renderList(listId, items, status) {
+  const el = document.getElementById(listId);
+  if(!items.length) {
+    const msgs = {
+      pending:   ['No pending sessions', 'New Calendly bookings will appear here automatically.'],
+      confirmed: ['No confirmed sessions', 'Confirm pending sessions or schedule manually.'],
+      completed: ['No completed sessions', 'Mark sessions as complete after they happen.']
+    };
+    el.innerHTML = `<div class="empty"><div class="empty-icon">◷</div><div class="empty-title">${msgs[status][0]}</div><div class="empty-sub">${msgs[status][1]}</div></div>`;
+    return;
+  }
+  el.innerHTML = items.map(s => `
+    <div class="session-card ${s.status}" onclick="openDetail('${s.id}')">
+      <div class="sess-avatar">${initials(s)}</div>
+      <div class="sess-body">
+        <div class="sess-name">
+          ${s.first_name} ${s.last_name}
+          ${s.source === 'calendly' ? '<span class="calendly-badge">📅 Calendly</span>' : ''}
+        </div>
+        <div class="sess-meta">
+          <span class="sess-type ${s.session_type.includes('Discovery') ? 'discovery' : s.source === 'calendly' ? 'calendly' : 'coaching'}">
+            ${s.session_type.includes('Discovery') ? '📞 Discovery' : s.source === 'calendly' ? '📅 ' + s.session_type : '🔥 Coaching'}
+          </span>
+          <span>·</span>
+          <span>${fmtDateTime(s.datetime)}</span>
+          ${s.meeting_link ? '<span style="color:#5b8dd9;font-size:11px;">🔗 Link</span>' : ''}
+          ${s.outcome ? `<span style="color:#4caf7d;font-size:11px;">✓ ${s.outcome}</span>` : ''}
+        </div>
+      </div>
+      <div class="sess-actions" onclick="event.stopPropagation()">
+        ${s.status === 'pending'    ? `<button class="sess-btn confirm" onclick="updateStatus('${s.id}','confirmed')">Confirm</button>` : ''}
+        ${s.status === 'confirmed'  ? `<button class="sess-btn blue"    onclick="openNotes('${s.id}')">✎ Notes</button>` : ''}
+        ${s.status === 'confirmed'  ? `<button class="sess-btn confirm" onclick="updateStatus('${s.id}','completed')">Complete</button>` : ''}
+        <button class="sess-btn" onclick="emailSession('${s.id}')">✉</button>
+        <button class="sess-btn" onclick="waSession('${s.id}')">💬</button>
+        ${s.status !== 'completed' ? `<button class="sess-btn danger" onclick="cancelSession('${s.id}')">✕</button>` : ''}
+      </div>
+      <span class="status-badge ${s.status}">${s.status}</span>
+    </div>`).join('');
+}
+
+// ── ACTIONS ────────────────────────────────────────
+async function updateStatus(id, newStatus) {
+  const s = sessions.find(x => x.id === id);
+  if(!s) return;
+  s.status = newStatus;
+
+  // Save status override to localStorage so it persists
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  overrides[s.calendly_id || s.email] = newStatus;
+  localStorage.setItem('ao_sess_overrides', JSON.stringify(overrides));
+
+  // Also save to sheet
+  try {
+    await fetch(SESSIONS_API, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: s.email, calendly_id: s.calendly_id, status: newStatus })
+    });
+  } catch(e) {}
+  render();
+}
+
+async function cancelSession(id) {
+  if(!confirm('Cancel this session?')) return;
+  await updateStatus(id, 'cancelled');
+}
+
+function emailSession(id) {
+  const s = sessions.find(x => x.id === id);
+  if(!s) return;
+  const dt = fmtDateTime(s.datetime);
+  window.open(`mailto:${s.email}?subject=Your Aligned Order Session&body=Hi ${s.first_name},%0D%0A%0D%0AYour ${s.session_type} is confirmed for ${dt}.%0D%0A${s.meeting_link ? 'Meeting Link: ' + s.meeting_link + '%0D%0A' : ''}%0D%0AWarm regards,%0D%0AAligned Order`, '_blank');
+}
+
+function waSession(id) {
+  const s = sessions.find(x => x.id === id);
+  if(!s) return;
+  const ph = (s.phone || '').replace(/[^0-9+]/g, '');
+  const msg = encodeURIComponent(`Hi ${s.first_name}, your Aligned Order ${s.session_type} is confirmed for ${fmtDateTime(s.datetime)}.${s.meeting_link ? ' Link: ' + s.meeting_link : ''} See you then!`);
+  window.open(`https://wa.me/${ph}?text=${msg}`, '_blank');
+}
+
+function openCalendly(type) {
+  window.open(type === 'coaching' ? COACHING : DISCOVERY, '_blank');
+}
+
+// ── NOTES & OUTCOME MODAL ─────────────────────────
+let currentNoteId = null;
+let selectedOutcome = '';
+
+function openNotes(id) {
+  currentNoteId = id;
+  const s = sessions.find(x => x.id === id);
+  if(!s) return;
+  selectedOutcome = s.outcome || '';
+
+  document.getElementById('dTitle').textContent = s.first_name + ' ' + s.last_name;
+  document.getElementById('dSub').textContent = s.session_type + ' · ' + fmtDateTime(s.datetime);
+
+  const outcomes = [
+    { label: '🔥 Booked Coaching',  val: 'Booked Coaching',  cls: '' },
+    { label: '✅ Good Progress',     val: 'Good Progress',    cls: 'green' },
+    { label: '🔄 Follow-up Needed', val: 'Follow-up Needed', cls: 'blue' },
+    { label: '⏸ On Hold',           val: 'On Hold',          cls: '' },
+    { label: '❌ Not a Fit',         val: 'Not a Fit',        cls: 'red' },
+  ];
+
+  document.getElementById('dBody').innerHTML = `
+    <div style="margin-bottom:18px;">
+      <div class="section-lbl">Session Notes</div>
+      <textarea class="form-textarea" id="notesInput" placeholder="What was discussed, key insights, client feedback…">${s.notes}</textarea>
+    </div>
+    <div style="margin-bottom:18px;">
+      <div class="section-lbl">Session Outcome</div>
+      <div class="outcome-tags">
+        ${outcomes.map(o => `
+          <div class="outcome-tag ${selectedOutcome === o.val ? 'selected ' + o.cls : ''}" 
+               onclick="selectOutcome('${o.val}','${o.cls}',this)">${o.label}</div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-block"><div class="detail-lbl">Email</div><div class="detail-val">${s.email}</div></div>
+      <div class="detail-block"><div class="detail-lbl">Phone</div><div class="detail-val">${s.phone || '—'}</div></div>
+      <div class="detail-block"><div class="detail-lbl">Meeting Link</div><div class="detail-val"><a href="${s.meeting_link}" target="_blank" style="color:#5b8dd9;">${s.meeting_link ? 'Open Link' : '—'}</a></div></div>
+      <div class="detail-block"><div class="detail-lbl">Source</div><div class="detail-val" style="color:${s.source==='calendly'?'#4caf7d':'#c9a96e'}">${s.source === 'calendly' ? '📅 Calendly' : '✋ Manual'}</div></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn gold" onclick="closeDetail()">Cancel</button>
+      <button class="modal-btn primary" onclick="saveNotes()">Save Notes →</button>
+    </div>`;
+
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function selectOutcome(val, cls, el) {
+  selectedOutcome = val;
+  document.querySelectorAll('.outcome-tag').forEach(t => {
+    t.className = 'outcome-tag';
+  });
+  el.className = 'outcome-tag selected ' + cls;
+}
+
+async function saveNotes() {
+  const s = sessions.find(x => x.id === currentNoteId);
+  if(!s) return;
+  const notes = document.getElementById('notesInput').value;
+  s.notes = notes;
+  s.outcome = selectedOutcome;
+  if(selectedOutcome) s.status = 'completed';
+
+  // Save to localStorage overrides
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  const key = s.calendly_id || s.email;
+  overrides[key] = selectedOutcome ? 'completed' : s.status;
+  localStorage.setItem('ao_sess_overrides', JSON.stringify(overrides));
+
+  try {
+    await fetch(SESSIONS_API, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: s.email,
+        calendly_id: s.calendly_id,
+        notes,
+        outcome: selectedOutcome,
+        status: selectedOutcome ? 'completed' : s.status
+      })
+    });
+  } catch(e) {}
+
+  closeDetail();
+  render();
+}
+
+function openDetail(id) { openNotes(id); }
+function closeDetail(e) {
+  if(!e || e.target === document.getElementById('detailOverlay'))
+    document.getElementById('detailOverlay').classList.remove('open');
+}
+
+// ── MANUAL SCHEDULE ────────────────────────────────
+function openScheduleModal() {
+  ['sFirst','sLast','sEmail','sPhone','sLink','sNotes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('sType').value = '';
+  document.getElementById('sDate').value = '';
+  document.getElementById('sTime').value = '';
+  document.getElementById('scheduleOverlay').classList.add('open');
+}
+function closeSchedule(e) {
+  if(!e || e.target === document.getElementById('scheduleOverlay'))
+    document.getElementById('scheduleOverlay').classList.remove('open');
+}
+
+async function saveManualSession() {
+  const first = document.getElementById('sFirst').value.trim();
+  const last  = document.getElementById('sLast').value.trim();
+  const email = document.getElementById('sEmail').value.trim();
+  const type  = document.getElementById('sType').value;
+  const date  = document.getElementById('sDate').value;
+  const time  = document.getElementById('sTime').value;
+  if(!first || !email || !type || !date || !time) {
+    alert('Please fill in name, email, type, date and time.');
+    return;
+  }
+  const session = {
+    first_name:   first,
+    last_name:    last,
+    email,
+    phone:        document.getElementById('sPhone').value.trim(),
+    session_type: type,
+    datetime:     date + 'T' + time,
+    meeting_link: document.getElementById('sLink').value.trim(),
+    notes:        document.getElementById('sNotes').value.trim(),
+    status:       'confirmed',
+    outcome:      '',
+    calendly_id:  '',
+    created_at:   new Date().toISOString()
+  };
+  try {
+    await fetch(SESSIONS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(session)
+    });
+  } catch(e) {}
+  // Add locally
+  sessions.unshift({ ...session, id: session.created_at, source: 'manual' });
+  render();
+  closeSchedule();
+  emailSession(session.created_at);
+}
+
+// Poll every 15s for new Calendly bookings
+setInterval(async () => {
+  const data = await fetchSessions();
+  if(data && data.length !== sessions.length) {
+    sessions = data; render();
+    setStatus('green', `Live · ${sessions.length} sessions · ${new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}`);
+  }
+}, 15000);
+
+load();
+</script>
+</body>
+</html>
