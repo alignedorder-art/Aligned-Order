@@ -199,6 +199,11 @@ body{background:#0a0a0a;color:#f0ede8;font-family:'Raleway',sans-serif;min-heigh
         <div class="section-title">🔵 Completed <span id="completedCnt" style="color:#5b8dd9;"></span></div>
       </div>
       <div class="sessions-grid" id="completedList"></div>
+
+      <div class="section-header" id="cancelledSection" style="display:none;">
+        <div class="section-title">❌ Cancelled <span id="cancelledCnt" style="color:#e05a5a;"></span></div>
+      </div>
+      <div class="sessions-grid" id="cancelledList"></div>
     </div>
 
     <div class="status-bar">
@@ -329,7 +334,13 @@ async function load() {
   setStatus('amber', 'Loading…');
   const data = await fetchSessions();
   if(data === null) { setStatus('amber', 'Could not reach database'); return; }
-  sessions = data;
+  // Apply saved status overrides from localStorage
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  sessions = data.map(s => {
+    const key = s.calendly_id || s.email;
+    if(overrides[key]) s.status = overrides[key];
+    return s;
+  });
   render();
   const t = new Date().toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
   setStatus('green', `Live · ${sessions.length} sessions · ${t}`);
@@ -340,9 +351,10 @@ async function refresh() { await load(); }
 
 // ── RENDER ─────────────────────────────────────────
 function render() {
-  const pend = sessions.filter(s => s.status === 'pending');
-  const conf = sessions.filter(s => s.status === 'confirmed');
-  const comp = sessions.filter(s => s.status === 'completed');
+  const pend      = sessions.filter(s => s.status === 'pending');
+  const conf      = sessions.filter(s => s.status === 'confirmed');
+  const comp      = sessions.filter(s => s.status === 'completed');
+  const cancelled = sessions.filter(s => s.status === 'cancelled');
 
   document.getElementById('mTotal').textContent     = sessions.length;
   document.getElementById('mPending').textContent   = pend.length;
@@ -352,9 +364,20 @@ function render() {
   document.getElementById('confirmedCnt').textContent = conf.length ? `(${conf.length})` : '';
   document.getElementById('completedCnt').textContent = comp.length ? `(${comp.length})` : '';
 
-  renderList('pendingList',   pend,   'pending');
-  renderList('confirmedList', conf,   'confirmed');
-  renderList('completedList', comp,   'completed');
+  renderList('pendingList',   pend,      'pending');
+  renderList('confirmedList', conf,      'confirmed');
+  renderList('completedList', comp,      'completed');
+
+  // Show cancelled section only if there are cancelled sessions
+  const cancelledSection = document.getElementById('cancelledSection');
+  if(cancelled.length) {
+    cancelledSection.style.display = 'flex';
+    document.getElementById('cancelledCnt').textContent = `(${cancelled.length})`;
+    renderList('cancelledList', cancelled, 'cancelled');
+  } else {
+    cancelledSection.style.display = 'none';
+    document.getElementById('cancelledList').innerHTML = '';
+  }
 }
 
 function renderList(listId, items, status) {
@@ -403,7 +426,13 @@ async function updateStatus(id, newStatus) {
   const s = sessions.find(x => x.id === id);
   if(!s) return;
   s.status = newStatus;
-  // Save to sheet
+
+  // Save status override to localStorage so it persists
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  overrides[s.calendly_id || s.email] = newStatus;
+  localStorage.setItem('ao_sess_overrides', JSON.stringify(overrides));
+
+  // Also save to sheet
   try {
     await fetch(SESSIONS_API, {
       method: 'PATCH',
@@ -502,6 +531,12 @@ async function saveNotes() {
   s.notes = notes;
   s.outcome = selectedOutcome;
   if(selectedOutcome) s.status = 'completed';
+
+  // Save to localStorage overrides
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  const key = s.calendly_id || s.email;
+  overrides[key] = selectedOutcome ? 'completed' : s.status;
+  localStorage.setItem('ao_sess_overrides', JSON.stringify(overrides));
 
   try {
     await fetch(SESSIONS_API, {
