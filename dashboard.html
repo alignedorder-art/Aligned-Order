@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aligned Order — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
-<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0a0a0a;color:#f0ede8;font-family:'Raleway',sans-serif;min-height:100vh;}
@@ -413,6 +412,15 @@ td{padding:13px 16px;font-size:12.5px;vertical-align:middle;}
 </div>
 
 <script>
+window.onerror = function(msg, src, line, col, err) {
+  console.error('Error:', msg, src, line, col);
+  return true; // prevent default error handling
+};
+window.onunhandledrejection = function(e) {
+  console.error('Promise rejection:', e.reason);
+  return true;
+};
+
 const GAS_URL   = '/.netlify/functions/leads';
 const SESS_KEY  = 'ao_sessions_v1';
 const DISCOVERY = 'https://calendly.com/alignedorder/30min';
@@ -850,17 +858,13 @@ function waLead(id){
 // ── CALENDLY ──────────────────────────────────────
 function openCalendly(type){
   const url = type==='coaching' ? COACHING : DISCOVERY;
-  if(typeof Calendly!=='undefined'){
-    Calendly.initPopupWidget({url});
-  } else {
-    window.open(url,'_blank');
-  }
+  // Just open in new tab - most reliable approach
+  window.open(url,'_blank');
 }
 
 // ── CLEAR ─────────────────────────────────────────
 async function clearAll(){
   if(!confirm('Delete all leads? This cannot be undone.'))return;
-  try{ // Clear not supported via GAS — clear sheet manually }catch(e){}
   allLeads=[];renderAll();setStatus('amber','All leads cleared');
 }
 
