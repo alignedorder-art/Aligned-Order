@@ -59,8 +59,8 @@ exports.handler = async (event) => {
               const inv = invData.collection && invData.collection[0];
               if (inv) {
                 return {
-                  first_name:   inv.name ? inv.name.split(' ')[0] : '',
-                  last_name:    inv.name ? inv.name.split(' ').slice(1).join(' ') : '',
+                  first_name:   inv.name ? (inv.name.split(' ')[0] || inv.name) : (inv.email ? inv.email.split('@')[0] : 'Unknown'),
+                  last_name:    inv.name && inv.name.split(' ').length > 1 ? inv.name.split(' ').slice(1).join(' ') : '',
                   email:        inv.email || '',
                   phone:        '',
                   session_type: ev.name || 'Session',
