@@ -8,14 +8,14 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#080808;--surface:#111;--surface2:#181818;
-  --border:#2a2a2a;--gold:#c9a96e;--gold-dim:rgba(201,169,110,0.12);
-  --gold-border:rgba(201,169,110,0.28);--text:#f0ede8;--muted:#666;--muted2:#999;
+  --bg:#ffffff;--surface:#f4f4f8;--surface2:#eeeef6;
+  --border:#d8d8ec;--gold:#4a3ab5;--gold-dim:rgba(74,58,181,0.1);
+  --gold-border:rgba(74,58,181,0.25);--text:#1a1a2e;--muted:#8888b0;--muted2:#999;
   --green:#4caf7d;--green-dim:rgba(76,175,125,0.12);
 }
 body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 16px 80px;}
-body::before{content:'';position:fixed;top:-120px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,0.07) 0%,transparent 65%);pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;bottom:-100px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(201,169,110,0.04) 0%,transparent 65%);pointer-events:none;z-index:0;}
+body::before{content:'';position:fixed;top:-120px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(74,58,181,0.07) 0%,transparent 65%);pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-100px;left:-80px;width:420px;height:420px;background:radial-gradient(circle,rgba(74,58,181,0.04) 0%,transparent 65%);pointer-events:none;z-index:0;}
 .wrapper{width:100%;max-width:580px;position:relative;z-index:1;}
 
 /* HEADER */
@@ -29,8 +29,8 @@ h1 em{font-style:italic;color:var(--gold);}
 /* SESSION TYPE CARDS */
 .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px;}
 .type-card{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:24px 20px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;overflow:hidden;}
-.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);opacity:0;transition:opacity 0.2s;}
-.type-card:hover{border-color:var(--gold-border);background:rgba(201,169,110,0.04);}
+.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3a2aa0,#4a3ab5);opacity:0;transition:opacity 0.2s;}
+.type-card:hover{border-color:var(--gold-border);background:rgba(74,58,181,0.04);}
 .type-card:hover::before{opacity:1;}
 .type-card.selected{border-color:var(--gold);background:var(--gold-dim);}
 .type-card.selected::before{opacity:1;}
@@ -41,13 +41,13 @@ h1 em{font-style:italic;color:var(--gold);}
 
 /* FORM CARD */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;margin-bottom:16px;position:relative;overflow:hidden;animation:fadeUp 0.5s ease both;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e);}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#3a2aa0,#4a3ab5);}
 .card-title{font-family:'Cinzel',serif;font-size:14px;font-weight:600;color:var(--text);margin-bottom:20px;letter-spacing:0.04em;}
 
 .form-group{margin-bottom:18px;}
 .form-label{display:block;font-size:11px;font-weight:700;color:var(--muted2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
-.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-text-fill-color:#1a1a1a;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,110,0.12);}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:#e8e8f4;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color 0.2s,box-shadow 0.2s;-webkit-text-fill-color:#e8e8f4;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(74,58,181,0.1);}
 .form-input::placeholder,.form-textarea::placeholder{color:#aaa;}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px;}
 .form-textarea{resize:vertical;min-height:100px;line-height:1.6;}
@@ -55,8 +55,8 @@ h1 em{font-style:italic;color:var(--gold);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
 /* SUBMIT */
-.submit-btn{width:100%;padding:16px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#c9a96e,#a07830);color:#080808;box-shadow:0 4px 24px rgba(201,169,110,0.35);transition:all 0.2s;letter-spacing:0.02em;margin-top:8px;}
-.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,169,110,0.45);}
+.submit-btn{width:100%;padding:16px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#4a3ab5,#3a2aa0);color:#ffffff;box-shadow:0 4px 24px rgba(74,58,181,0.3);transition:all 0.2s;letter-spacing:0.02em;margin-top:8px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(74,58,181,0.4);}
 .submit-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
 
 /* SUCCESS */
@@ -89,11 +89,11 @@ h1 em{font-style:italic;color:var(--gold);}
   <div class="header">
     <div class="logo">
       <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-        <circle cx="30" cy="30" r="28" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
-        <polygon points="30,8 50,44 10,44" fill="none" stroke="#c9a96e" stroke-width="1.6"/>
-        <polygon points="30,26 42,44 18,44" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1.1"/>
-        <polygon points="30,7 33,14 27,14" fill="#c9a96e"/>
-        <line x1="30" y1="8" x2="30" y2="44" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+        <circle cx="30" cy="30" r="28" stroke="#4a3ab5" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="30,8 50,44 10,44" fill="none" stroke="#4a3ab5" stroke-width="1.6"/>
+        <polygon points="30,26 42,44 18,44" fill="rgba(74,58,181,0.12)" stroke="#4a3ab5" stroke-width="1.1"/>
+        <polygon points="30,7 33,14 27,14" fill="#4a3ab5"/>
+        <line x1="30" y1="8" x2="30" y2="44" stroke="#4a3ab5" stroke-width="1" opacity="0.5"/>
       </svg>
     </div>
     <div class="brand">Aligned Order</div>
