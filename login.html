@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#080808;color:#f0ede8;font-family:'Raleway',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+body::before{content:'';position:fixed;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 65%);pointer-events:none;}
+body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(201,169,110,0.04) 0%,transparent 65%);pointer-events:none;}
+
+.card{background:#111;border:1px solid #222;border-radius:24px;width:100%;max-width:420px;overflow:hidden;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#a07830,#c9a96e,#a07830);}
+
+.card-top{padding:40px 36px 32px;text-align:center;border-bottom:1px solid #1a1a1a;}
+.logo{display:flex;justify-content:center;margin-bottom:20px;}
+.brand{font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:#c9a96e;margin-bottom:10px;font-weight:600;}
+.title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#f0ede8;margin-bottom:8px;}
+.subtitle{font-size:12.5px;color:#555;line-height:1.6;}
+
+.card-body{padding:32px 36px;}
+
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:#555;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+.input-wrap{position:relative;}
+.form-input{width:100%;background:#fff;border:1.5px solid #2a2a2a;border-radius:12px;padding:13px 16px;color:#1a1a1a;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:all 0.2s;-webkit-text-fill-color:#1a1a1a;}
+.form-input:focus{border-color:#c9a96e;box-shadow:0 0 0 3px rgba(201,169,110,0.1);}
+.form-input.error{border-color:#e05a5a;box-shadow:0 0 0 3px rgba(224,90,90,0.1);}
+.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;cursor:pointer;font-size:16px;padding:4px;}
+
+.error-msg{background:rgba(224,90,90,0.1);border:1px solid rgba(224,90,90,0.25);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#e05a5a;margin-bottom:18px;display:none;align-items:center;gap:8px;}
+.error-msg.show{display:flex;}
+
+.login-btn{width:100%;padding:15px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,#c9a96e,#a07830);color:#080808;box-shadow:0 4px 24px rgba(201,169,110,0.3);transition:all 0.2s;letter-spacing:0.02em;margin-top:4px;}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,169,110,0.4);}
+.login-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.attempts{text-align:center;font-size:11px;color:#444;margin-top:14px;}
+.attempts span{color:#e05a5a;}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake 0.4s ease;}
+</style>
+</head>
+<body>
+<div class="card" id="loginCard">
+  <div class="card-top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="26" r="24" stroke="#c9a96e" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="26,7 43,38 9,38" fill="none" stroke="#c9a96e" stroke-width="1.6"/>
+        <polygon points="26,22 36,38 16,38" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1.1"/>
+        <polygon points="26,6 29,13 23,13" fill="#c9a96e"/>
+        <line x1="26" y1="7" x2="26" y2="38" stroke="#c9a96e" stroke-width="1" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="brand">Aligned Order</div>
+    <div class="title">Welcome Back</div>
+    <div class="subtitle">Sign in to access your private dashboard</div>
+  </div>
+
+  <div class="card-body">
+    <div class="error-msg" id="errorMsg">
+      <span>⚠</span>
+      <span id="errorText">Invalid email or password</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input class="form-input" id="emailInput" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter') document.getElementById('passwordInput').focus()">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap">
+        <input class="form-input" id="passwordInput" type="password" placeholder="••••••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') login()">
+        <button class="toggle-pw" onclick="togglePw()" tabindex="-1">👁</button>
+      </div>
+    </div>
+
+    <button class="login-btn" id="loginBtn" onclick="login()">Sign In →</button>
+
+    <div class="attempts" id="attemptsMsg" style="display:none;">
+      <span id="attemptsLeft"></span> attempts remaining before lockout
+    </div>
+  </div>
+</div>
+
+<script>
+// Credentials
+const USERS = [
+  { email: 'alignedorder@gmail.com', password: 'Alignedorder1234' },
+  { email: 'b.jones.order@gmail.com', password: 'Alignedorder1234' }
+];
+const SESSION_KEY    = 'ao_auth_session';
+const SESSION_EXPIRY = 8 * 60 * 60 * 1000; // 8 hours
+
+let attempts = parseInt(localStorage.getItem('ao_login_attempts') || '0');
+let lockUntil = parseInt(localStorage.getItem('ao_lock_until') || '0');
+
+function checkSession() {
+  const session = localStorage.getItem(SESSION_KEY);
+  if(session) {
+    const s = JSON.parse(session);
+    if(s.expiry > Date.now()) {
+      // Already logged in — redirect to intended page or dashboard
+      const redirect = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
+      window.location.href = redirect;
+    }
+  }
+}
+
+function togglePw() {
+  const input = document.getElementById('passwordInput');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function showError(msg) {
+  const err = document.getElementById('errorMsg');
+  document.getElementById('errorText').textContent = msg;
+  err.classList.add('show');
+  document.getElementById('loginCard').classList.add('shake');
+  setTimeout(() => document.getElementById('loginCard').classList.remove('shake'), 400);
+}
+
+function login() {
+  // Check lockout
+  if(Date.now() < lockUntil) {
+    const mins = Math.ceil((lockUntil - Date.now()) / 60000);
+    showError(`Too many attempts. Try again in ${mins} minute${mins>1?'s':''}.`);
+    return;
+  }
+
+  const email    = document.getElementById('emailInput').value.trim().toLowerCase();
+  const password = document.getElementById('passwordInput').value;
+  const btn      = document.getElementById('loginBtn');
+
+  if(!email || !password) {
+    showError('Please enter your email and password.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  // Simulate slight delay for security
+  setTimeout(() => {
+    const validUser = USERS.find(u => u.email.toLowerCase() === email && u.password === password);
+    if(validUser) {
+      // Success — create session
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        email,
+        expiry: Date.now() + SESSION_EXPIRY
+      }));
+      localStorage.removeItem('ao_login_attempts');
+      localStorage.removeItem('ao_lock_until');
+
+      btn.textContent = '✓ Success!';
+      btn.style.background = 'linear-gradient(135deg,#4caf7d,#2e8b57)';
+
+      const redirect = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
+      setTimeout(() => { window.location.href = redirect; }, 600);
+
+    } else {
+      // Failed
+      attempts++;
+      localStorage.setItem('ao_login_attempts', attempts);
+
+      if(attempts >= 5) {
+        lockUntil = Date.now() + 15 * 60 * 1000; // 15 min lockout
+        localStorage.setItem('ao_lock_until', lockUntil);
+        showError('Too many failed attempts. Locked for 15 minutes.');
+        document.getElementById('attemptsMsg').style.display = 'none';
+      } else {
+        const left = 5 - attempts;
+        showError('Invalid email or password.');
+        document.getElementById('attemptsMsg').style.display = 'block';
+        document.getElementById('attemptsLeft').textContent = left;
+      }
+
+      document.getElementById('emailInput').classList.add('error');
+      document.getElementById('passwordInput').classList.add('error');
+      document.getElementById('passwordInput').value = '';
+
+      btn.disabled = false;
+      btn.textContent = 'Sign In →';
+    }
+  }, 600);
+}
+
+// Check if already logged in
+checkSession();
+</script>
+</body>
+</html>

@@ -2,6 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
+<script>
+// Auth guard — redirect to login if not authenticated
+(function() {
+  const SESSION_KEY = 'ao_auth_session';
+  const session = localStorage.getItem(SESSION_KEY);
+  if(!session) {
+    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname.split('/').pop());
+    return;
+  }
+  const s = JSON.parse(session);
+  if(s.expiry < Date.now()) {
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname.split('/').pop());
+    return;
+  }
+})();
+</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aligned Order — Sessions</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -165,6 +184,7 @@ body{background:#0a0a0a;color:#f0ede8;font-family:'Raleway',sans-serif;min-heigh
         <button class="btn green" onclick="openCalendly('discovery')">📞 Discovery Call</button>
         <button class="btn green" onclick="openCalendly('coaching')">🔥 Coaching Session</button>
         <button class="btn" onclick="openScheduleModal()">+ Manual Schedule</button>
+        <button class="btn ghost" onclick="logout()" style="margin-left:4px;">⎋ Logout</button>
       </div>
     </div>
 
@@ -629,5 +649,11 @@ setInterval(async () => {
 
 load();
 </script>
+
+function logout() {
+  localStorage.removeItem('ao_auth_session');
+  window.location.href = 'login.html';
+}
+
 </body>
 </html>
