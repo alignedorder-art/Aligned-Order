@@ -2,2187 +2,913 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aligned Order — Trigger Assessment</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" crossorigin="anonymous"></script>
 <style>
-:root {
-  --bg: #080808;
-  --bg2: #0d0d0d;
-  --surface: #111111;
-  --border: #2a2a2a;
-  --border-soft: #222222;
-  --text: #f0ede8;
-  --text-soft: #c8c0b4;
-  --muted: #6b6560;
-  --accent: #c9a96e;
-  --accent-light: rgba(201,169,110,0.12);
-  --accent-deep: #a07830;
-  --sage: #c9a96e;
-  --sage-light: rgba(201,169,110,0.1);
-  --sage-deep: #a07830;
-  --blush: #c9a96e;
-  --blush-light: rgba(201,169,110,0.08);
-  --warm-gold: #c9a96e;
-  --warm-gold-light: rgba(201,169,110,0.1);
-  --pill-bg: #1a1a1a;
-  --pill-hover: #222222;
-  --pill-selected-bg: #c9a96e;
-  --pill-selected-text: #080808;
-  --shadow-soft: 0 4px 32px rgba(0,0,0,0.5);
-  --shadow-card: 0 2px 20px rgba(0,0,0,0.4);
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--surface:#f4f4f8;--surface2:#eeeef6;
+  --border:#d0d0e8;--border2:#e8e8f4;
+  --indigo:#4a3ab5;--indigo-d:rgba(74,58,181,0.1);--indigo-b:rgba(74,58,181,0.25);
+  --gold:#d4a84b;--gold-d:rgba(212,168,75,0.12);
+  --text:#1a1a2e;--muted:#6a6a9a;--muted2:#9090c0;
+  --green:#2e7d52;--green-d:rgba(46,125,82,0.1);
+  --red:#c0392b;--red-d:rgba(192,57,43,0.1);
+  --amber:#d4a84b;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Raleway', sans-serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 16px 80px;
-  position: relative;
-}
+/* INTRO SCREEN */
+#introScreen{position:fixed;inset:0;background:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;padding:24px;transition:opacity 0.8s ease;}
+#introScreen.fade-out{opacity:0;pointer-events:none;}
+.intro-logo{margin-bottom:24px;animation:floatIn 1s ease both;}
+.intro-brand{font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.4em;color:var(--indigo);text-transform:uppercase;margin-bottom:16px;animation:floatIn 1s 0.2s ease both;opacity:0;}
+.intro-title{font-family:'Cinzel',serif;font-size:clamp(28px,6vw,48px);font-weight:700;color:#fff;text-align:center;line-height:1.2;margin-bottom:16px;animation:floatIn 1s 0.4s ease both;opacity:0;}
+.intro-title em{color:var(--gold);font-style:italic;}
+.intro-sub{font-size:14px;color:rgba(255,255,255,0.5);text-align:center;line-height:1.8;max-width:420px;margin-bottom:36px;animation:floatIn 1s 0.6s ease both;opacity:0;}
+.intro-btn{padding:16px 48px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--indigo),#3a2aa0);color:#fff;letter-spacing:0.04em;animation:floatIn 1s 0.8s ease both;opacity:0;box-shadow:0 8px 32px rgba(74,58,181,0.4);transition:all 0.2s;}
+.intro-btn:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(74,58,181,0.5);}
+.intro-meta{display:flex;gap:24px;margin-top:24px;animation:floatIn 1s 1s ease both;opacity:0;}
+.intro-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.4);}
 
-/* Soft ambient background blobs */
-body::before {
-  content: '';
-  position: fixed;
-  top: -140px; right: -100px;
-  width: 520px; height: 520px;
-  background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-}
-body::after {
-  content: '';
-  position: fixed;
-  bottom: -120px; left: -80px;
-  width: 440px; height: 440px;
-  background: radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-}
+/* MAIN QUIZ */
+#quizScreen{display:none;min-height:100vh;}
 
-.wrapper {
-  width: 100%;
-  max-width: 600px;
-  position: relative;
-  z-index: 1;
-}
+/* PROGRESS */
+.progress-bar-wrap{position:fixed;top:0;left:0;right:0;z-index:50;height:4px;background:var(--border2);}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--indigo),var(--gold));transition:width 0.5s cubic-bezier(0.4,0,0.2,1);width:0%;}
+.progress-header{position:fixed;top:4px;left:0;right:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border2);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;}
+.progress-label{font-size:12px;font-weight:600;color:var(--muted);}
+.progress-steps{display:flex;gap:4px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all 0.3s;}
+.step-dot.done{background:var(--indigo);}
+.step-dot.active{background:var(--gold);transform:scale(1.3);}
 
-/* ─── HEADER ─── */
-.header {
-  text-align: center;
-  margin-bottom: 48px;
-  animation: softRise 0.8s cubic-bezier(0.22,1,0.36,1) both;
-}
-.ao-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
-  animation: slowRotateIn 1.2s cubic-bezier(0.22,1,0.36,1) both;
-}
-@keyframes slowRotateIn {
-  from { opacity:0; transform: rotate(-15deg) scale(0.8); }
-  to   { opacity:1; transform: rotate(0deg) scale(1); }
-}
-.ao-brand {
-  font-family: 'Cinzel', serif;
-  font-size: 13px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 18px;
-  font-weight: 600;
-}
+/* QUESTION AREA */
+.quiz-content{padding:80px 16px 40px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.q-card{width:100%;max-width:620px;animation:slideUp 0.5s ease both;}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-30px)}}
+.q-card.exit{animation:slideDown 0.3s ease both;}
 
+.q-number{font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--indigo);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.q-number::after{content:'';flex:1;height:1px;background:var(--border);}
+.q-text{font-family:'Cinzel',serif;font-size:clamp(18px,4vw,26px);font-weight:600;color:var(--text);line-height:1.4;margin-bottom:8px;}
+.q-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
 
-h1 {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(26px, 5.5vw, 40px);
-  font-weight: 600;
-  line-height: 1.25;
-  color: var(--text);
-  margin-bottom: 16px;
-  letter-spacing: -0.01em;
-}
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.option{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:16px 20px;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:14px;text-align:left;}
+.option:hover{border-color:var(--indigo);background:var(--indigo-d);transform:translateX(4px);}
+.option.selected{border-color:var(--indigo);background:var(--indigo-d);box-shadow:0 0 0 3px rgba(74,58,181,0.1);}
+.option-letter{width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0;transition:all 0.18s;}
+.option.selected .option-letter{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.option-text{font-size:14px;color:var(--text);line-height:1.5;font-weight:500;}
 
-h1 em {
-  font-style: italic;
-  color: var(--accent);
-}
+.next-btn{width:100%;padding:15px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--indigo),#3a2aa0);color:#fff;transition:all 0.2s;opacity:0.4;pointer-events:none;letter-spacing:0.02em;}
+.next-btn.active{opacity:1;pointer-events:all;box-shadow:0 6px 24px rgba(74,58,181,0.3);}
+.next-btn.active:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(74,58,181,0.4);}
 
-.subtitle {
-  font-size: 15px;
-  color: var(--text-soft);
-  line-height: 1.8;
-  max-width: 420px;
-  margin: 0 auto 20px;
-  font-weight: 400;
-}
+/* DIAGNOSIS CARD */
+#diagnosisScreen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:80px 16px 40px;}
+.diag-card{width:100%;max-width:580px;background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(74,58,181,0.12);animation:diagIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;}
+@keyframes diagIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+.diag-top{padding:36px 32px 28px;text-align:center;position:relative;}
+.diag-pulse{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--gold));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;box-shadow:0 8px 32px rgba(74,58,181,0.3);animation:pulse-ring 2s infinite;}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(74,58,181,0.4)}70%{box-shadow:0 0 0 20px rgba(74,58,181,0)}100%{box-shadow:0 0 0 0 rgba(74,58,181,0)}}
+.diag-label{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;}
+.diag-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.diag-text{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;}
+.diag-meter{background:var(--surface2);border-radius:99px;height:8px;overflow:hidden;margin-bottom:8px;}
+.diag-meter-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--indigo),var(--gold));transition:width 1.2s cubic-bezier(0.4,0,0.2,1);}
+.diag-meter-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:24px;}
+.diag-continue{width:100%;padding:14px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--indigo),#3a2aa0);color:#fff;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(74,58,181,0.3);transition:all 0.2s;}
+.diag-continue:hover{transform:translateY(-2px);}
+.diag-pattern{position:absolute;top:0;right:0;width:120px;height:120px;opacity:0.05;background:radial-gradient(circle,var(--indigo) 0%,transparent 70%);}
 
-.time-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(201,169,110,0.1);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 16px;
-  border-radius: 99px;
-  border: 1px solid rgba(201,169,110,0.25);
-  letter-spacing: 0.02em;
-}
+/* CONTACT SCREEN */
+#contactScreen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:80px 16px 40px;}
+.contact-card{width:100%;max-width:520px;background:#fff;border-radius:24px;padding:36px 32px;box-shadow:0 20px 60px rgba(74,58,181,0.1);animation:slideUp 0.5s ease both;}
+.contact-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;}
+.contact-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.contact-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;}
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;}
+.form-input{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:border-color 0.2s;-webkit-text-fill-color:var(--text);}
+.form-input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-d);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.submit-btn{width:100%;padding:15px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--indigo),#3a2aa0);color:#fff;box-shadow:0 6px 24px rgba(74,58,181,0.3);transition:all 0.2s;margin-top:8px;letter-spacing:0.02em;}
+.submit-btn:hover{transform:translateY(-2px);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
-/* ─── PROGRESS ─── */
-.progress-section {
-  margin-bottom: 28px;
-  animation: softRise 0.8s 0.1s cubic-bezier(0.22,1,0.36,1) both;
-}
-.progress-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-.progress-step {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-.progress-pct {
-  font-size: 12px;
-  color: var(--sage);
-  font-weight: 700;
-}
-.progress-track {
-  background: var(--border);
-  border-radius: 99px;
-  height: 6px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #a07830 0%, #c9a96e 100%);
-  border-radius: 99px;
-  width: 0%;
-  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-}
+/* RESULTS SCREEN */
+#resultsScreen{display:none;min-height:100vh;padding:80px 16px 60px;display:none;flex-direction:column;align-items:center;}
+.results-hero{width:100%;max-width:580px;text-align:center;margin-bottom:24px;animation:slideUp 0.6s ease both;}
+.score-ring-wrap{position:relative;width:160px;height:160px;margin:0 auto 24px;}
+.score-ring-wrap svg{transform:rotate(-90deg);}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-pct{font-family:'Cinzel',serif;font-size:36px;font-weight:700;color:var(--text);line-height:1;}
+.score-lbl{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.results-profile{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.results-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;}
 
-/* ─── CARD ─── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 40px 36px 34px;
-  margin-bottom: 16px;
-  display: none;
-  box-shadow: var(--shadow-card);
-  position: relative;
-  overflow: hidden;
-  animation: softRise 0.5s cubic-bezier(0.22,1,0.36,1) both;
-}
+.components-grid{width:100%;max-width:580px;display:flex;flex-direction:column;gap:10px;margin-bottom:24px;animation:slideUp 0.6s 0.2s ease both;opacity:0;animation-fill-mode:both;}
+.comp-row{background:#fff;border:1px solid var(--border2);border-radius:12px;padding:14px 16px;}
+.comp-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px;}
+.comp-name{font-weight:600;color:var(--text);}
+.comp-score{font-weight:700;color:var(--indigo);}
+.comp-bar-track{background:var(--surface2);border-radius:99px;height:6px;overflow:hidden;}
+.comp-bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(0.4,0,0.2,1);}
 
-/* Soft top accent stripe */
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #a07830, #c9a96e);
-  border-radius: 28px 28px 0 0;
-  opacity: 0.7;
-}
+.ai-card{width:100%;max-width:580px;background:linear-gradient(135deg,rgba(74,58,181,0.06),rgba(212,168,75,0.06));border:1px solid var(--indigo-b);border-radius:18px;padding:24px;margin-bottom:24px;animation:slideUp 0.6s 0.4s ease both;opacity:0;animation-fill-mode:both;}
+.ai-label{font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;}
+.ai-text{font-size:13.5px;color:var(--muted);line-height:1.85;}
 
-/* Decorative circle blob inside card */
-.card::after {
-  content: '';
-  position: absolute;
-  bottom: -60px; right: -60px;
-  width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(201,169,110,0.05) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
+.qual-card{width:100%;max-width:580px;background:linear-gradient(135deg,var(--indigo),#3a2aa0);border-radius:18px;padding:28px;text-align:center;margin-bottom:16px;animation:slideUp 0.6s 0.6s ease both;opacity:0;animation-fill-mode:both;box-shadow:0 12px 40px rgba(74,58,181,0.3);}
+.qual-card h3{font-family:'Cinzel',serif;font-size:20px;color:#fff;margin-bottom:8px;}
+.qual-card p{font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:20px;line-height:1.7;}
+.book-btn{padding:14px 32px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;background:#fff;color:var(--indigo);letter-spacing:0.02em;transition:all 0.2s;box-shadow:0 4px 16px rgba(0,0,0,0.15);}
+.book-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
 
-.card.active { display: block; }
+.thankyou-card{width:100%;max-width:580px;background:#fff;border:1px solid var(--border2);border-radius:18px;padding:28px;text-align:center;margin-bottom:16px;animation:slideUp 0.6s 0.6s ease both;opacity:0;animation-fill-mode:both;}
+.thankyou-card h3{font-family:'Cinzel',serif;font-size:18px;color:var(--text);margin-bottom:8px;}
+.thankyou-card p{font-size:13px;color:var(--muted);line-height:1.7;}
 
-.q-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(201,169,110,0.1);
-  color: var(--accent);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: 99px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(201,169,110,0.22);
-}
+@keyframes floatIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinning{animation:spin 0.7s linear infinite;display:inline-block;}
 
-.q-text {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(17px, 3.2vw, 22px);
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text);
-  margin-bottom: 8px;
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr;}
+  .diag-card{margin:0 4px;}
+  .contact-card{padding:24px 18px;}
 }
-
-.q-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 26px;
-  font-weight: 400;
-  line-height: 1.6;
-  font-style: italic;
-}
-
-/* ─── PILLS ─── */
-.pills { display: flex; flex-wrap: wrap; gap: 10px; }
-
-.pill {
-  background: var(--pill-bg);
-  border: 1.5px solid var(--border);
-  color: var(--text-soft);
-  padding: 11px 20px;
-  border-radius: 99px;
-  font-size: 13.5px;
-  font-family: 'Raleway', sans-serif;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
-  user-select: none;
-  -webkit-user-select: none;
-  line-height: 1;
-}
-.pill:hover {
-  background: var(--pill-hover);
-  border-color: var(--blush);
-  color: var(--text);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(176,125,110,0.12);
-}
-.pill.selected {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #080808;
-  font-weight: 700;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(201,169,110,0.35);
-}
-
-/* ─── SCALE ─── */
-.scale-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.scale-btn {
-  aspect-ratio: 1;
-  border-radius: 18px;
-  background: var(--pill-bg);
-  border: 1.5px solid var(--border);
-  color: var(--text-soft);
-  font-size: 16px;
-  font-weight: 600;
-  font-family: 'Raleway', sans-serif;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
-  display: flex; align-items: center; justify-content: center;
-  padding: 10px 0;
-}
-.scale-btn:hover {
-  background: rgba(201,169,110,0.1);
-  border-color: rgba(201,169,110,0.4);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(201,169,110,0.15);
-}
-.scale-btn.selected {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #080808;
-  font-weight: 700;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(201,169,110,0.4);
-}
-.scale-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 6px;
-  font-style: italic;
-}
-
-/* ─── OTHER INPUT ─── */
-.other-wrap {
-  margin-top: 22px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border);
-}
-.other-label {
-  font-size: 11px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.other-box { position: relative; }
-.other-input {
-  width: 100%;
-  background: #ffffff;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 11px 52px 11px 14px;
-  color: #1a1a1a !important;
-  -webkit-text-fill-color: #1a1a1a;
-  font-family: 'Raleway', sans-serif;
-  font-size: 13px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  font-weight: 600;
-}
-.other-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(201,169,110,0.12); background: #ffffff; color: #1a1a1a !important; -webkit-text-fill-color: #1a1a1a; }
-.other-input::placeholder { color: #aaaaaa; }
-.char-count {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10.5px;
-  color: var(--muted);
-  pointer-events: none;
-  font-weight: 600;
-}
-.char-count.warn { color: var(--warm-gold); }
-.char-count.max { color: var(--accent); }
-
-/* ─── NAV ─── */
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-}
-.btn {
-  padding: 14px 32px;
-  border-radius: 99px;
-  font-family: 'Raleway', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
-  letter-spacing: 0.01em;
-}
-.btn-ghost {
-  background: transparent;
-  border: 1.5px solid var(--border);
-  color: var(--muted);
-}
-.btn-ghost:hover { border-color: rgba(201,169,110,0.4); color: var(--text); transform: translateY(-1px); }
-
-.btn-primary {
-  background: linear-gradient(135deg, #c9a96e 0%, #a07830 100%);
-  color: white;
-  min-width: 150px;
-  box-shadow: 0 4px 20px rgba(201,169,110,0.35);
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(201,169,110,0.42);
-}
-.btn-primary:disabled {
-  background: var(--border);
-  color: var(--muted);
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* ─── RESULTS ─── */
-#results { display: none; animation: softRise 0.7s cubic-bezier(0.22,1,0.36,1) both; }
-
-.score-card {
-  background: linear-gradient(145deg, #111111 0%, #0a0a0a 100%);
-  border-radius: 28px;
-  padding: 48px 36px 44px;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 12px 48px rgba(45,36,32,0.2);
-}
-.score-card::before {
-  content: '';
-  position: absolute;
-  top: -80px; left: 50%;
-  transform: translateX(-50%);
-  width: 360px; height: 360px;
-  background: radial-gradient(circle, rgba(201,169,110,0.14) 0%, transparent 65%);
-  pointer-events: none;
-}
-.score-card::after {
-  content: '';
-  position: absolute;
-  bottom: -60px; right: -40px;
-  width: 220px; height: 220px;
-  background: radial-gradient(circle, rgba(201,169,110,0.08) 0%, transparent 65%);
-  pointer-events: none;
-}
-
-.score-label {
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-.score-ring-wrap { display: flex; justify-content: center; margin-bottom: 24px; position: relative; z-index: 1; }
-.score-ring { position: relative; width: 150px; height: 150px; }
-.score-ring svg { transform: rotate(-90deg); width: 150px; height: 150px; }
-.ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 9; }
-.ring-fill {
-  fill: none; stroke-width: 9; stroke-linecap: round;
-  stroke-dasharray: 408; stroke-dashoffset: 408;
-  transition: stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1) 0.4s;
-}
-.ring-text {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-.ring-pct {
-  font-family: 'Cinzel', serif;
-  font-size: 38px; font-weight: 600; color: #fff; line-height: 1;
-}
-.ring-pct-sign { font-size: 18px; font-weight: 400; opacity: 0.65; }
-.ring-sublabel {
-  font-size: 10px; letter-spacing: 0.16em;
-  color: rgba(255,255,255,0.38);
-  text-transform: uppercase; margin-top: 5px;
-  font-weight: 600;
-}
-
-.score-title {
-  font-family: 'Cinzel', serif;
-  font-size: 24px; font-weight: 600;
-  color: rgba(255,255,255,0.93); margin-bottom: 12px;
-  position: relative; z-index: 1;
-}
-.score-desc {
-  font-size: 14px; color: rgba(255,255,255,0.52);
-  line-height: 1.8; max-width: 400px;
-  margin: 0 auto; font-weight: 400;
-  position: relative; z-index: 1;
-}
-
-/* Components */
-.components-heading {
-  font-family: 'Cinzel', serif;
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-.components-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 18px;
-  font-style: italic;
-  letter-spacing: 0.03em;
-}
-
-.component-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
-
-.component-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 20px 22px;
-  display: flex; align-items: center; gap: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.5);
-  opacity: 0; transform: translateY(14px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-}
-.component-item.visible { opacity: 1; transform: translateY(0); }
-.component-item:hover {
-  border-color: var(--border);
-  box-shadow: var(--shadow-soft);
-  transform: translateY(-1px);
-  transition: opacity 0.45s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.comp-icon {
-  width: 46px; height: 46px; border-radius: 14px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
-}
-.comp-body { flex: 1; min-width: 0; }
-.comp-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
-.comp-desc { font-size: 12px; color: var(--muted); line-height: 1.6; font-weight: 400; }
-.comp-bar-wrap { width: 64px; flex-shrink: 0; text-align: right; }
-.comp-pct-label { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-.comp-bar-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.comp-bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 1.1s cubic-bezier(0.4,0,0.2,1) 0.5s; }
-
-/* Reassurance note */
-.reassurance {
-  background: rgba(201,169,110,0.07);
-  border: 1px solid rgba(201,169,110,0.18);
-  border-radius: 18px;
-  padding: 20px 22px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-.reassurance-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
-.reassurance-text { font-size: 13px; color: var(--text-soft); line-height: 1.75; }
-.reassurance-text strong { color: var(--text); font-weight: 700; }
-
-.restart-btn {
-  display: block; width: 100%; text-align: center;
-  padding: 15px; background: transparent;
-  border: 1.5px solid var(--border); border-radius: 14px;
-  font-family: 'Raleway', sans-serif; font-size: 13px;
-  color: var(--muted); cursor: pointer;
-  transition: all 0.2s ease; font-weight: 600;
-}
-.restart-btn:hover { border-color: var(--sage); color: var(--accent); background: var(--sage-light); }
-
-/* ─── THANK YOU CARD ─── */
-.thankyou-card {
-  background: linear-gradient(145deg, #0f0f0f 0%, #161616 100%);
-  border-radius: 28px;
-  padding: 48px 36px;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 12px 48px rgba(45,36,32,0.18);
-}
-.thankyou-card::before {
-  content: '';
-  position: absolute;
-  top: -100px; left: 50%;
-  transform: translateX(-50%);
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(201,169,110,0.15) 0%, transparent 65%);
-  pointer-events: none;
-}
-.thankyou-card::after {
-  content: '';
-  position: absolute;
-  bottom: -50px; right: -30px;
-  width: 200px; height: 200px;
-  background: radial-gradient(circle, rgba(201,169,110,0.1) 0%, transparent 65%);
-  pointer-events: none;
-}
-.ty-sparkle {
-  font-size: 44px;
-  display: block;
-  margin-bottom: 16px;
-  animation: floatBounce 3s ease-in-out infinite;
-  position: relative; z-index: 1;
-}
-@keyframes floatBounce {
-  0%, 100% { transform: translateY(0px) rotate(-4deg); }
-  50% { transform: translateY(-8px) rotate(4deg); }
-}
-.ty-heading {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(22px, 5vw, 30px);
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 14px;
-  line-height: 1.3;
-  position: relative; z-index: 1;
-}
-.ty-heading em { font-style: italic; color: rgba(201,169,110,0.92); }
-.ty-message {
-  font-size: 14.5px;
-  color: rgba(255,255,255,0.6);
-  line-height: 1.85;
-  max-width: 380px;
-  margin: 0 auto 28px;
-  font-weight: 400;
-  position: relative; z-index: 1;
-}
-.ty-divider {
-  width: 48px; height: 2px;
-  background: linear-gradient(90deg, rgba(232,196,184,0.6), rgba(201,169,110,0.6));
-  border-radius: 99px;
-  margin: 0 auto 24px;
-  position: relative; z-index: 1;
-}
-.ty-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.11);
-  border-radius: 16px;
-  padding: 16px 20px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.52);
-  line-height: 1.7;
-  text-align: left;
-  position: relative; z-index: 1;
-  max-width: 380px;
-  margin: 0 auto;
-}
-.ty-note-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
-
-/* Share strip */
-.share-strip {
-  background: rgba(201,169,110,0.07);
-  border: 1px solid rgba(201,169,110,0.18);
-  border-radius: 20px;
-  padding: 18px 22px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.share-text { font-size: 13px; color: var(--accent); font-weight: 700; }
-.share-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; font-weight: 400; }
-.share-icons { display: flex; gap: 8px; }
-.share-btn {
-  width: 40px; height: 40px;
-  background: var(--surface2, #1a1a1a);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
-  border: none;
-}
-.share-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
-
-/* Instagram CTA banner */
-.ig-banner {
-  background: rgba(201,169,110,0.06);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 28px;
-  animation: softRise 0.8s 0.2s cubic-bezier(0.22,1,0.36,1) both;
-}
-.ig-icon { font-size: 22px; flex-shrink: 0; }
-.ig-text { font-size: 12.5px; color: var(--text-soft); line-height: 1.6; }
-.ig-text strong { color: var(--text); font-weight: 700; }
-
-
-/* ─── CONTACT CARD ─── */
-.contact-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 40px 36px 34px;
-  display: none;
-  box-shadow: var(--shadow-card);
-  position: relative;
-  overflow: hidden;
-  animation: softRise 0.5s cubic-bezier(0.22,1,0.36,1) both;
-  margin-bottom: 14px;
-}
-.contact-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #a07830, #c9a96e);
-  border-radius: 28px 28px 0 0;
-  opacity: 0.7;
-}
-.contact-card.active { display: block; }
-
-.contact-intro {
-  margin-bottom: 28px;
-}
-.contact-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(201,169,110,0.1);
-  color: var(--accent);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: 99px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(201,169,110,0.22);
-}
-.contact-heading {
-  font-family: 'Cinzel', serif;
-  font-size: clamp(18px, 3.5vw, 23px);
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.4;
-  margin-bottom: 10px;
-}
-.contact-sub {
-  font-size: 13.5px;
-  color: var(--muted);
-  line-height: 1.75;
-  font-style: italic;
-}
-
-/* Form fields */
-.form-group {
-  margin-bottom: 16px;
-}
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-soft);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 7px;
-}
-.form-input {
-  width: 100%;
-  background: #ffffff;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 13px 16px;
-  color: #1a1a1a !important;
-  -webkit-text-fill-color: #1a1a1a;
-  font-family: 'Raleway', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-}
-.form-input:focus { border-color: var(--accent); background: #ffffff; color: #1a1a1a !important; -webkit-text-fill-color: #1a1a1a; box-shadow: 0 0 0 3px rgba(201,169,110,0.13); }
-.form-input::placeholder { color: #aaaaaa; }
-.form-input.error { border-color: #d4756b; box-shadow: 0 0 0 3px rgba(212,117,107,0.1); }
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-/* Privacy note */
-.privacy-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  background: rgba(201,169,110,0.07);
-  border: 1px solid rgba(201,169,110,0.18);
-  border-radius: 14px;
-  padding: 13px 16px;
-  margin-top: 20px;
-  font-size: 12px;
-  color: var(--accent);
-  line-height: 1.6;
-}
-.privacy-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-
-/* Submit CTA */
-.submit-btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 16px 32px;
-  border-radius: 99px;
-  font-family: 'Raleway', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  background: linear-gradient(135deg, #c9a96e 0%, #a07830 100%);
-  color: white;
-  box-shadow: 0 4px 20px rgba(201,169,110,0.35);
-  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
-  letter-spacing: 0.01em;
-}
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(201,169,110,0.45);
-}
-.submit-btn:disabled {
-  background: var(--border);
-  color: var(--muted);
-  box-shadow: none;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.error-msg {
-  font-size: 11.5px;
-  color: #c0392b;
-  margin-top: 5px;
-  display: none;
-  font-weight: 500;
-}
-.error-msg.visible { display: block; }
-
-@media (max-width: 480px) {
-  .form-row { grid-template-columns: 1fr; }
-  .contact-card { padding: 28px 18px 24px; }
-}
-@keyframes softRise {
-  from { opacity: 0; transform: translateY(22px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 480px) {
-  .card { padding: 28px 18px 24px; }
-  .score-card { padding: 36px 20px 32px; }
-  .scale-btn { font-size: 14px; border-radius: 14px; }
-}
-
-/* ─── QUALIFIER CARD ─── */
-.qualifier-card {
-  background: linear-gradient(145deg, #0a0a0a 0%, #141414 100%);
-  border-radius: 28px;
-  padding: 48px 36px;
-  text-align: center;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 16px 56px rgba(45,36,32,0.28);
-  animation: softRise 0.7s cubic-bezier(0.22,1,0.36,1) both;
-}
-.qualifier-glow {
-  position: absolute;
-  top: -80px; left: 50%;
-  transform: translateX(-50%);
-  width: 440px; height: 440px;
-  background: radial-gradient(circle, rgba(201,169,110,0.18) 0%, transparent 65%);
-  pointer-events: none;
-}
-.qualifier-badge {
-  display: inline-block;
-  background: rgba(201,169,110,0.12);
-  border: 1px solid rgba(201,169,110,0.3);
-  color: #c9a96e;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.22em;
-  padding: 6px 16px;
-  border-radius: 99px;
-  margin-bottom: 16px;
-  position: relative; z-index: 1;
-}
-.qualifier-score-line {
-  font-family: 'Cinzel', serif;
-  font-size: 15px;
-  color: rgba(201,169,110,0.8);
-  font-style: italic;
-  margin-bottom: 18px;
-  position: relative; z-index: 1;
-}
-.qualifier-cta-box {
-  background: rgba(201,169,110,0.06);
-  border: 1px solid rgba(201,169,110,0.2);
-  border-radius: 20px;
-  padding: 24px 22px;
-  margin-top: 20px;
-  position: relative; z-index: 1;
-}
-.qualifier-cta-label {
-  font-size: 13.5px;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  margin-bottom: 10px;
-}
-.qualifier-cta-desc {
-  font-size: 13px;
-  color: rgba(255,255,255,0.5);
-  line-height: 1.75;
-  margin-bottom: 20px;
-}
-.qualifier-btn {
-  width: 100%;
-  padding: 16px 32px;
-  border-radius: 99px;
-  font-family: 'Raleway', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  cursor: pointer;
-  border: none;
-  background: linear-gradient(135deg, #c9a96e 0%, #a07830 100%);
-  color: #080808;
-  font-weight: 800;
-  box-shadow: 0 4px 24px rgba(201,169,110,0.45);
-  transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
-  letter-spacing: 0.02em;
-}
-.qualifier-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 36px rgba(201,169,110,0.55);
-}
-
-/* Pie chart container */
-.chart-section {
-  margin-bottom: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 28px 24px;
-  box-shadow: var(--shadow-card);
-}
-.chart-title {
-  font-family: 'Cinzel', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-  text-align: center;
-}
-.chart-sub {
-  font-size: 12px;
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 20px;
-  font-style: italic;
-}
-#pieCanvas { display: block; margin: 0 auto; max-width: 260px; }
-
-/* AI Analysis section */
-.ai-analysis-section {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 28px 24px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-card);
-  display: none;
-}
-.ai-analysis-section.visible { display: block; animation: softRise 0.6s cubic-bezier(0.22,1,0.36,1) both; }
-.ai-section-title {
-  font-family: 'Cinzel', serif;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ai-section-body {
-  font-size: 13.5px;
-  color: var(--text-soft);
-  line-height: 1.85;
-  white-space: pre-wrap;
-}
-
-/* Spinner */
-.analysis-spinner {
-  width: 36px; height: 36px;
-  border: 3px solid var(--border);
-  border-top-color: var(--sage);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
 </style>
 </head>
 <body>
-<div class="wrapper">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="ao-logo" aria-label="Aligned Order logo">
-      <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="36" cy="36" r="34" stroke="#c9a96e" stroke-width="1.5" opacity="0.7"/>
-        <polygon points="36,8 62,54 10,54" fill="none" stroke="#c9a96e" stroke-width="1.8"/>
-        <polygon points="36,28 50,54 22,54" fill="rgba(201,169,110,0.15)" stroke="#c9a96e" stroke-width="1.2"/>
-        <polygon points="36,7 39,16 33,16" fill="#c9a96e"/>
-        <line x1="36" y1="8" x2="36" y2="54" stroke="#c9a96e" stroke-width="1.2" opacity="0.5"/>
-      </svg>
-    </div>
-    <div class="ao-brand">Aligned Order</div>
-    <h1>You're Juggling Everything —<br><em>But What's It Costing You?</em></h1>
-    <p class="subtitle">When you're stretched thin across work, family, and responsibilities, small things can set you off fast. This assessment reveals how reactive you really are — and exactly where it's coming from.</p>
-    <div class="time-badge">⏱ Takes under 2 minutes</div>
+<!-- INTRO -->
+<div id="introScreen">
+  <svg class="intro-logo" width="70" height="70" viewBox="0 0 70 70" fill="none">
+    <circle cx="35" cy="35" r="33" stroke="#4a3ab5" stroke-width="1.2" opacity="0.6"/>
+    <polygon points="35,8 58,54 12,54" fill="none" stroke="#4a3ab5" stroke-width="1.8"/>
+    <polygon points="35,28 48,54 22,54" fill="rgba(74,58,181,0.2)" stroke="#4a3ab5" stroke-width="1.2"/>
+    <polygon points="35,7 38,16 32,16" fill="#d4a84b"/>
+    <line x1="35" y1="8" x2="35" y2="54" stroke="#4a3ab5" stroke-width="1" opacity="0.4"/>
+  </svg>
+  <div class="intro-brand">Aligned Order</div>
+  <h1 class="intro-title">Discover What's <em>Triggering</em> You</h1>
+  <p class="intro-sub">A 10-question adaptive assessment that reveals your emotional trigger patterns — and what to do about them.</p>
+  <button class="intro-btn" onclick="startQuiz()">Begin Assessment →</button>
+  <div class="intro-meta">
+    <div class="intro-meta-item">⏱ 3–4 minutes</div>
+    <div class="intro-meta-item">🔒 Private & confidential</div>
+    <div class="intro-meta-item">✦ Personalised results</div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen">
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <div class="progress-header">
+    <div class="progress-label" id="progressLabel">Question 1 of 10</div>
+    <div class="progress-steps" id="progressSteps"></div>
   </div>
 
-
-  <!-- IG BANNER -->
-  <div class="ig-banner">
-    <span class="ig-icon">📲</span>
-    <div class="ig-text"><strong>Seen this on Instagram?</strong> You're in the right place — take the 2-minute assessment and find out exactly what's driving your stress.</div>
-  </div>
-
-  <!-- PROGRESS -->
-  <div class="progress-section" id="progressSection">
-    <div class="progress-top">
-      <span class="progress-step" id="stepLabel">Question 1 of 10</span>
-      <span class="progress-pct" id="pctLabel">0%</span>
-    </div>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
+  <div class="quiz-content">
+    <div class="q-card" id="qCard">
+      <div class="q-number" id="qNumber">Question 1</div>
+      <div class="q-text" id="qText"></div>
+      <div class="q-sub" id="qSub"></div>
+      <div class="options" id="optionsWrap"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Continue →</button>
     </div>
   </div>
+</div>
 
-  <!-- Q1 -->
-  <div class="card active" id="q1" data-type="scale">
-    <div class="q-tag">🌊 Reactivity</div>
-    <div class="q-text">On a typical busy day, how quickly do small things — a slow driver, a missed message, an interruption — push you over the edge?</div>
-    <div class="q-sub">1 = I barely notice it &nbsp;·&nbsp; 5 = I'm set off almost instantly</div>
-    <div class="scale-grid">
-      <button class="scale-btn" data-val="1" data-score="10">1</button>
-      <button class="scale-btn" data-val="2" data-score="30">2</button>
-      <button class="scale-btn" data-val="3" data-score="55">3</button>
-      <button class="scale-btn" data-val="4" data-score="78">4</button>
-      <button class="scale-btn" data-val="5" data-score="100">5</button>
-    </div>
-    <div class="scale-labels"><span>Barely notice</span><span>Set off instantly</span></div>
-  </div>
-
-  <!-- Q2 -->
-  <div class="card" id="q2" data-type="multi">
-    <div class="q-tag">🏠 Life Areas</div>
-    <div class="q-text">Which parts of your life are draining you the most right now?</div>
-    <div class="q-sub">Select all that apply — this is about where the pressure is quietly building</div>
-    <div class="pills" data-multi="true">
-      <div class="pill" data-val="Partner / Spouse" data-score="15">Partner / Spouse</div>
-      <div class="pill" data-val="My kids" data-score="15">My kids</div>
-      <div class="pill" data-val="My parents" data-score="15">My parents</div>
-      <div class="pill" data-val="My business" data-score="18">My business</div>
-      <div class="pill" data-val="My boss / manager" data-score="18">My boss / manager</div>
-      <div class="pill" data-val="Employees / team" data-score="16">Employees / team</div>
-      <div class="pill" data-val="Clients / customers" data-score="14">Clients / customers</div>
-      <div class="pill" data-val="Finances" data-score="16">Finances</div>
-      <div class="pill" data-val="Strangers / public" data-score="10">Strangers / public</div>
-    </div>
-    <div class="other-wrap">
-      <div class="other-label">Not on the list? Add your own</div>
-      <div class="other-box">
-        <input class="other-input" type="text" maxlength="100" placeholder="e.g. School runs, admin, social media…" data-q="q2">
-        <span class="char-count">0/100</span>
-      </div>
+<!-- DIAGNOSIS -->
+<div id="diagnosisScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:80px 16px 40px;">
+  <div class="diag-card">
+    <div class="diag-top">
+      <div class="diag-pattern"></div>
+      <div class="diag-pulse" id="diagIcon">🔍</div>
+      <div class="diag-label" id="diagLabel">Preliminary Reading</div>
+      <div class="diag-title" id="diagTitle">Loading…</div>
+      <div class="diag-text" id="diagText"></div>
+      <div class="diag-meter"><div class="diag-meter-fill" id="diagMeterFill" style="width:0%"></div></div>
+      <div class="diag-meter-label"><span id="diagMeterLow">Low</span><span id="diagLevel"></span><span id="diagMeterHigh">High</span></div>
+      <button class="diag-continue" id="diagContinueBtn">Continue Assessment →</button>
     </div>
   </div>
+</div>
 
-  <!-- Q3 -->
-  <div class="card" id="q3" data-type="single">
-    <div class="q-tag">⚡ Fight or Flight</div>
-    <div class="q-text">When something frustrates you mid-day — a problem at work, your kid acting up, a difficult person — what do you usually do first?</div>
-    <div class="q-sub">Pick the one that's most true, even if you're not proud of it — this is a safe space</div>
-    <div class="pills" data-multi="false">
-      <div class="pill" data-val="React immediately — say something sharp" data-score="92">React immediately — say something sharp</div>
-      <div class="pill" data-val="Go quiet and withdraw" data-score="75">Go quiet and withdraw</div>
-      <div class="pill" data-val="Power through and suppress it" data-score="68">Power through and suppress it</div>
-      <div class="pill" data-val="Vent to someone I trust" data-score="50">Vent to someone I trust</div>
-      <div class="pill" data-val="Take a breath and reset" data-score="12">Take a breath and reset</div>
-    </div>
-    <div class="other-wrap">
-      <div class="other-label">Not on the list? Add your own</div>
-      <div class="other-box">
-        <input class="other-input" type="text" maxlength="100" placeholder="What do you actually do?" data-q="q3">
-        <span class="char-count">0/100</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Q4 -->
-  <div class="card" id="q4" data-type="scale">
-    <div class="q-tag">⏳ Stress Duration</div>
-    <div class="q-text">After something bothers you, how long does it follow you around — affecting your focus, your mood, or how you treat the people around you?</div>
-    <div class="q-sub">1 = I shake it off quickly &nbsp;·&nbsp; 5 = It colours the rest of my day</div>
-    <div class="scale-grid">
-      <button class="scale-btn" data-val="1" data-score="10">1</button>
-      <button class="scale-btn" data-val="2" data-score="28">2</button>
-      <button class="scale-btn" data-val="3" data-score="52">3</button>
-      <button class="scale-btn" data-val="4" data-score="76">4</button>
-      <button class="scale-btn" data-val="5" data-score="100">5</button>
-    </div>
-    <div class="scale-labels"><span>Shake it off fast</span><span>Follows me all day</span></div>
-  </div>
-
-  <!-- Q5 -->
-  <div class="card" id="q5" data-type="single">
-    <div class="q-tag">🪞 Insecurity</div>
-    <div class="q-text">When someone questions your decisions — a partner, a client, your boss — what's your honest internal reaction?</div>
-    <div class="q-sub">No one else sees this — be real with yourself, there's no wrong answer</div>
-    <div class="pills" data-multi="false">
-      <div class="pill" data-val="Maybe they're right — I second-guess myself" data-score="88">Maybe they're right — I second-guess myself</div>
-      <div class="pill" data-val="Who do they think they are?" data-score="82">Who do they think they are?</div>
-      <div class="pill" data-val="I need to fix this right now" data-score="72">I need to fix this right now</div>
-      <div class="pill" data-val="I feel embarrassed or exposed" data-score="85">I feel embarrassed or exposed</div>
-      <div class="pill" data-val="I hear them out without spiralling" data-score="12">I hear them out without spiralling</div>
-    </div>
-    <div class="other-wrap">
-      <div class="other-label">Not on the list? Add your own</div>
-      <div class="other-box">
-        <input class="other-input" type="text" maxlength="100" placeholder="Your honest first thought…" data-q="q5">
-        <span class="char-count">0/100</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Q6 -->
-  <div class="card" id="q6" data-type="scale">
-    <div class="q-tag">🛡️ Defensiveness</div>
-    <div class="q-text">How often do you find yourself defending your choices — at home or at work — even when part of you knows you could've handled it better?</div>
-    <div class="q-sub">1 = Rarely, I'm open to feedback &nbsp;·&nbsp; 5 = I almost always defend myself</div>
-    <div class="scale-grid">
-      <button class="scale-btn" data-val="1" data-score="8">1</button>
-      <button class="scale-btn" data-val="2" data-score="30">2</button>
-      <button class="scale-btn" data-val="3" data-score="55">3</button>
-      <button class="scale-btn" data-val="4" data-score="78">4</button>
-      <button class="scale-btn" data-val="5" data-score="100">5</button>
-    </div>
-    <div class="scale-labels"><span>Open to feedback</span><span>Always defensive</span></div>
-  </div>
-
-  <!-- Q7 -->
-  <div class="card" id="q7" data-type="multi">
-    <div class="q-tag">🔥 Triggers</div>
-    <div class="q-text">Which of these situations fires you up the fastest when you're already stretched?</div>
-    <div class="q-sub">Select everything that genuinely applies to you</div>
-    <div class="pills" data-multi="true">
-      <div class="pill" data-val="Being disrespected" data-score="18">Being disrespected</div>
-      <div class="pill" data-val="People not pulling their weight" data-score="17">People not pulling their weight</div>
-      <div class="pill" data-val="Being ignored or dismissed" data-score="16">Being ignored or dismissed</div>
-      <div class="pill" data-val="Things taking longer than they should" data-score="14">Things taking longer than they should</div>
-      <div class="pill" data-val="Being undermined or overruled" data-score="18">Being undermined or overruled</div>
-      <div class="pill" data-val="Feeling like no one appreciates what I do" data-score="17">Feeling like no one appreciates what I do</div>
-      <div class="pill" data-val="Broken promises or let-downs" data-score="16">Broken promises or let-downs</div>
-      <div class="pill" data-val="Constant interruptions" data-score="13">Constant interruptions</div>
-    </div>
-    <div class="other-wrap">
-      <div class="other-label">Not on the list? Add your own</div>
-      <div class="other-box">
-        <input class="other-input" type="text" maxlength="100" placeholder="What else sets you off?" data-q="q7">
-        <span class="char-count">0/100</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Q8 -->
-  <div class="card" id="q8" data-type="scale">
-    <div class="q-tag">🌡️ Baseline Stress</div>
-    <div class="q-text">Before anything even goes wrong — how stressed or on-edge are you already when you start your day?</div>
-    <div class="q-sub">1 = I feel calm and ready &nbsp;·&nbsp; 5 = I'm already tense before it begins</div>
-    <div class="scale-grid">
-      <button class="scale-btn" data-val="1" data-score="8">1</button>
-      <button class="scale-btn" data-val="2" data-score="28">2</button>
-      <button class="scale-btn" data-val="3" data-score="52">3</button>
-      <button class="scale-btn" data-val="4" data-score="76">4</button>
-      <button class="scale-btn" data-val="5" data-score="100">5</button>
-    </div>
-    <div class="scale-labels"><span>Calm and ready</span><span>Tense before it starts</span></div>
-  </div>
-
-  <!-- Q9 -->
-  <div class="card" id="q9" data-type="single">
-    <div class="q-tag">💛 Relationships</div>
-    <div class="q-text">How often does the stress you carry spill over — into how you speak to your partner, your kids, your team, or the people closest to you?</div>
-    <div class="q-sub">Be honest — this is the part most people find hardest to admit</div>
-    <div class="pills" data-multi="false">
-      <div class="pill" data-val="Rarely — I keep it separate" data-score="12">Rarely — I keep it separate</div>
-      <div class="pill" data-val="Sometimes — I catch myself after the fact" data-score="42">Sometimes — I catch myself after the fact</div>
-      <div class="pill" data-val="Often — people around me feel it" data-score="68">Often — people around me feel it</div>
-      <div class="pill" data-val="Very often — it's causing real tension" data-score="86">Very often — it's causing real tension</div>
-      <div class="pill" data-val="Constantly — my relationships are suffering" data-score="100">Constantly — my relationships are suffering</div>
-    </div>
-    <div class="other-wrap">
-      <div class="other-label">Want to add context?</div>
-      <div class="other-box">
-        <input class="other-input" type="text" maxlength="100" placeholder="Optional — describe what's happening…" data-q="q9">
-        <span class="char-count">0/100</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Q10 -->
-  <div class="card" id="q10" data-type="scale">
-    <div class="q-tag">🌱 Self-Awareness</div>
-    <div class="q-text">In the heat of the moment — when you're snapping, shutting down, or overreacting — how often are you actually aware it's happening?</div>
-    <div class="q-sub">1 = I only realise much later &nbsp;·&nbsp; 5 = I can see it happening in real time</div>
-    <div class="scale-grid">
-      <button class="scale-btn" data-val="1" data-score="100">1</button>
-      <button class="scale-btn" data-val="2" data-score="75">2</button>
-      <button class="scale-btn" data-val="3" data-score="50">3</button>
-      <button class="scale-btn" data-val="4" data-score="25">4</button>
-      <button class="scale-btn" data-val="5" data-score="5">5</button>
-    </div>
-    <div class="scale-labels"><span>Only realise later</span><span>Aware in real time</span></div>
-  </div>
-
-  <!-- RESULTS -->
-  <div id="results">
-    <div class="score-card">
-      <div class="score-label">Your Trigger Score</div>
-      <div class="score-ring-wrap">
-        <div class="score-ring">
-          <svg viewBox="0 0 150 150">
-            <circle class="ring-bg" cx="75" cy="75" r="65"/>
-            <circle class="ring-fill" id="ringFill" cx="75" cy="75" r="65"/>
-          </svg>
-          <div class="ring-text">
-            <div class="ring-pct"><span id="ringNumber">0</span><span class="ring-pct-sign">%</span></div>
-            <div class="ring-sublabel">Reactive</div>
-          </div>
-        </div>
-      </div>
-      <div class="score-title" id="scoreTitleText">—</div>
-      <div class="score-desc" id="scoreDescText">—</div>
-    </div>
-
-    <div class="reassurance" id="reassuranceBox">
-      <div class="reassurance-icon">💛</div>
-      <div class="reassurance-text" id="reassuranceText">—</div>
-    </div>
-
-    <!-- PIE CHART -->
-    <div class="chart-section" id="chartSection">
-      <div class="chart-title">Your Score Breakdown</div>
-      <div class="chart-sub">How each component contributes to your overall trigger score</div>
-      <canvas id="pieCanvas" width="260" height="260"></canvas>
-    </div>
-
-    <!-- AI ANALYSIS -->
-    <div class="ai-analysis-section" id="aiAnalysisSection">
-      <div class="ai-section-title">🧠 &nbsp;Personal Analysis</div>
-      <div class="ai-section-body" id="aiAnalysisBody">Analysing your responses…</div>
-    </div>
-
-    <!-- AI LOADING -->
-    <div id="analysisLoading" style="display:none; text-align:center; padding:32px 0;">
-      <div class="analysis-spinner"></div>
-      <div style="font-size:13px; color:var(--muted); margin-top:14px; font-style:italic;">Generating your personal analysis…</div>
-    </div>
-
-    <div class="components-heading">Your 5 Core Components</div>
-    <div class="components-sub">Each area below reflects a real pattern — not a judgment</div>
-    <div class="component-list" id="componentList"></div>
-
-    <!-- THANK YOU CARD — standard (under 70%) -->
-    <div class="thankyou-card" id="thankyouCard" style="display:none;">
-      <span class="ty-sparkle">🌿</span>
-      <div class="ty-heading">Thank You for <em>Being Honest</em> With Yourself</div>
-      <div class="ty-message">
-        That takes more courage than people realise. We've received your responses and will take the time to review them properly.
-      </div>
-      <div class="ty-divider"></div>
-      <div class="ty-note">
-        <span class="ty-note-icon">💌</span>
-        <span>We'll analyse your answers — and if we believe we can genuinely help you, we'll be in touch. <strong>Not everyone will hear back, but if you do, it means we found something worth exploring together.</strong></span>
-      </div>
-    </div>
-
-    <!-- QUALIFIER CARD — 70%+ only -->
-    <div class="qualifier-card" id="qualifierCard" style="display:none;">
-      <div class="qualifier-glow"></div>
-      <span class="ty-sparkle">🔥</span>
-      <div class="qualifier-badge">HIGH PROBLEM AWARENESS</div>
-      <div class="ty-heading" style="color:#fff;">You're Ready for <em>Real Change</em></div>
-      <div class="qualifier-score-line" id="qualifierScoreLine"></div>
-      <div class="ty-message" style="color:rgba(255,255,255,0.65);">
-        Your score puts you in the top tier of people who are genuinely ready to do something about this. You're not just aware of the problem — you're feeling it every single day.
-      </div>
-      <div class="ty-divider"></div>
-      <div class="qualifier-cta-box">
-        <div class="qualifier-cta-label">🗓️ &nbsp;You Qualify for a Free Discovery Call</div>
-        <div class="qualifier-cta-desc">We only work with people who are truly ready. Based on your answers, we'd like to speak with you personally — no pressure, no pitch. Just an honest conversation about what's possible.</div>
-        <button class="qualifier-btn" onclick="bookCall()">Book My Free Call →</button>
-      </div>
-      <div class="ty-note" style="margin-top:16px; background:rgba(255,255,255,0.06); border-color:rgba(255,255,255,0.1);">
-        <span class="ty-note-icon">💌</span>
-        <span style="color:rgba(255,255,255,0.5);">We've also sent a copy of your full report to your email. Check your inbox — it includes your breakdown and next steps.</span>
-      </div>
-    </div>
-
-
-
-    <!-- SHARE STRIP -->
-    <div class="share-strip" id="shareStrip" style="display:none;">
-      <div>
-        <div class="share-text">Know someone who needs this?</div>
-        <div class="share-sub">Share this assessment with them</div>
-      </div>
-      <div class="share-icons">
-        <button class="share-btn" title="Share" onclick="handleShare()">🔗</button>
-        <button class="share-btn" title="Instagram">📸</button>
-        <button class="share-btn" title="WhatsApp" onclick="shareWhatsApp()">💬</button>
-      </div>
-    </div>
-
-    <button class="restart-btn" id="restartBtn" style="display:none;" onclick="restart()">↺ &nbsp; Retake the assessment</button>
-  </div>
-
-  <!-- CONTACT CARD -->
-  <div class="contact-card" id="contactCard">
-    <div class="contact-intro">
-      <div class="contact-eyebrow">✨ Almost There</div>
-      <div class="contact-heading">Where should we send your results?</div>
-      <div class="contact-sub">You're one step away from your personal Trigger Score. Enter your details below — we'll review your answers and reach out if we believe we can genuinely help you.</div>
-    </div>
-
+<!-- CONTACT -->
+<div id="contactScreen" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:80px 16px 40px;">
+  <div class="contact-card">
+    <div class="contact-eyebrow">Almost There</div>
+    <div class="contact-title">Where Should We Send Your Results?</div>
+    <div class="contact-sub">Your full trigger profile and personalised insights will be ready in seconds. Enter your details to receive them.</div>
     <div class="form-row">
-      <div class="form-group">
-        <label class="form-label" for="fieldFirstName">First Name</label>
-        <input class="form-input" id="fieldFirstName" type="text" placeholder="Your first name" autocomplete="given-name">
-        <div class="error-msg" id="errFirstName">Please enter your first name</div>
+      <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="cFirst" type="text" placeholder="Your first name" autocomplete="given-name"></div>
+      <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" id="cLast" type="text" placeholder="Your last name" autocomplete="family-name"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" id="cEmail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+    <div class="form-group"><label class="form-label">Phone <span style="color:var(--muted2);font-weight:400;">(optional)</span></label><input class="form-input" id="cPhone" type="tel" placeholder="+1 000 000 0000" autocomplete="tel"></div>
+    <button class="submit-btn" id="submitBtn" onclick="submitContact()">Reveal My Results →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div class="results-hero">
+    <div style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--indigo);margin-bottom:16px;">Your Trigger Profile</div>
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle cx="80" cy="80" r="68" fill="none" stroke="#e8e8f4" stroke-width="10"/>
+        <circle id="scoreCircle" cx="80" cy="80" r="68" fill="none" stroke="url(#scoreGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="427" stroke-dashoffset="427" style="transition:stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)"/>
+        <defs>
+          <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4a3ab5"/>
+            <stop offset="100%" stop-color="#d4a84b"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="score-num">
+        <div class="score-pct" id="scorePct">0%</div>
+        <div class="score-lbl">Trigger Score</div>
       </div>
-      <div class="form-group">
-        <label class="form-label" for="fieldLastName">Last Name</label>
-        <input class="form-input" id="fieldLastName" type="text" placeholder="Your last name" autocomplete="family-name">
-        <div class="error-msg" id="errLastName">Please enter your last name</div>
-      </div>
     </div>
-
-    <div class="form-group">
-      <label class="form-label" for="fieldEmail">Email Address</label>
-      <input class="form-input" id="fieldEmail" type="email" placeholder="you@example.com" autocomplete="email">
-      <div class="error-msg" id="errEmail">Please enter a valid email address</div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label" for="fieldPhone">Phone Number <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input class="form-input" id="fieldPhone" type="tel" placeholder="+1 000 000 0000" autocomplete="tel">
-    </div>
-
-    <div class="privacy-note">
-      <span class="privacy-icon">🔒</span>
-      <span>Your details are kept completely private. We don't share, sell, or spam. We'll only reach out if we genuinely think we can help you.</span>
-    </div>
-
-    <button class="submit-btn" id="submitContactBtn" onclick="submitContact()">See My Trigger Score →</button>
+    <div class="results-profile" id="resultsProfile"></div>
+    <div class="results-sub" id="resultsSub"></div>
   </div>
 
-  <!-- NAV -->
-  <div class="nav" id="navBtns">
-    <button class="btn btn-ghost" id="backBtn" onclick="go(-1)" style="visibility:hidden">← Back</button>
-    <button class="btn btn-primary" id="nextBtn" onclick="go(1)" disabled>Continue →</button>
-  </div>
-
+  <div class="components-grid" id="componentsGrid"></div>
+  <div class="ai-card"><div class="ai-label">✦ Personalised Insight</div><div class="ai-text" id="aiText">Generating your personalised analysis…</div></div>
+  <div id="qualCard"></div>
 </div>
 
 <script>
-window.onerror = function(msg, src, line, col, err) {
-  console.error('Global error:', msg, 'at', src, line + ':' + col, err);
-  return false;
-};
-window.onunhandledrejection = function(e) {
-  console.error('Unhandled promise rejection:', e.reason);
+// ── CONFIG ────────────────────────────────────────
+const GAS_URL       = '/.netlify/functions/leads';
+const EMAILJS_SVC   = 'service_yyo6mqf';
+const EMAILJS_TPL   = 'template_kfjusda';
+const EMAILJS_KEY   = 'x1hyqhvVsCKfjnV1A';
+const DISCOVERY_URL = 'https://calendly.com/alignedorder/30min';
+
+emailjs.init({ publicKey: EMAILJS_KEY });
+
+// ── BASE QUESTIONS ─────────────────────────────────
+// Each question has a category for adaptive branching
+const BASE_QUESTIONS = [
+  {
+    id:'q1', cat:'reactivity',
+    text:'When something unexpected disrupts your day, how quickly do you feel a strong emotional reaction?',
+    sub:'Think about the last time your plans were suddenly changed.',
+    options:[
+      {text:'Almost instantly — I react before I can think',score:100},
+      {text:'Within a few minutes of it sinking in',score:75},
+      {text:'I feel it slowly building over time',score:50},
+      {text:'I usually stay calm and adapt easily',score:20}
+    ]
+  },
+  {
+    id:'q2', cat:'fightflight',
+    text:'When you feel challenged or criticised, what is your most natural first response?',
+    sub:'Be honest — your first instinct, not what you think you should do.',
+    options:[
+      {text:'Fight back — I defend myself or attack',score:100},
+      {text:'Shut down or withdraw from the situation',score:80},
+      {text:'Feel hurt but try to keep it together',score:55},
+      {text:'Listen openly and reflect on the feedback',score:15}
+    ]
+  },
+  {
+    id:'q3', cat:'stress',
+    text:'How long does stress or emotional pain typically stay with you after a difficult event?',
+    sub:'Consider arguments, setbacks, or upsetting news.',
+    options:[
+      {text:'Days or even weeks — it lingers deeply',score:100},
+      {text:'About 24 hours before I start to recover',score:70},
+      {text:'A few hours — I bounce back relatively quickly',score:40},
+      {text:'I shake it off within minutes',score:10}
+    ]
+  },
+  {
+    id:'q4', cat:'insecurity',
+    text:'When someone you care about seems distant or cold, what goes through your mind?',
+    sub:'Notice your internal story — not just what you do.',
+    options:[
+      {text:'I immediately assume I did something wrong',score:100},
+      {text:'I worry they are upset with me specifically',score:75},
+      {text:'I wonder if they are going through something',score:35},
+      {text:'I give them space and don\'t overthink it',score:10}
+    ]
+  },
+  {
+    id:'q5', cat:'defensiveness',
+    text:'How often do small comments from others make you feel personally attacked?',
+    sub:'Even well-meaning remarks or innocent questions.',
+    options:[
+      {text:'Very often — I\'m always on guard',score:100},
+      {text:'Sometimes, especially on hard days',score:65},
+      {text:'Rarely — I can usually take things in stride',score:30},
+      {text:'Almost never — I have thick skin',score:5}
+    ]
+  },
+  {
+    id:'q6', cat:'relationship',
+    text:'When there is tension at home or work, how does it affect your ability to function?',
+    sub:'Think about your focus, energy, and mood.',
+    options:[
+      {text:'I can\'t concentrate on anything else',score:100},
+      {text:'It distracts me significantly',score:72},
+      {text:'I feel it but can still get things done',score:40},
+      {text:'I compartmentalise well — it barely affects me',score:10}
+    ]
+  },
+  {
+    id:'q7', cat:'baseline',
+    text:'On a typical day with no particular stressors, how would you describe your baseline emotional state?',
+    sub:'Not your best or worst day — just ordinary life.',
+    options:[
+      {text:'Tense and braced for something to go wrong',score:100},
+      {text:'Mildly anxious or unsettled most of the time',score:70},
+      {text:'Generally okay with occasional dips',score:40},
+      {text:'Calm and stable most of the time',score:10}
+    ]
+  },
+  {
+    id:'q8', cat:'awareness',
+    text:'How aware are you of what specifically triggers your strongest emotional reactions?',
+    sub:'Your ability to name and recognise your own patterns.',
+    options:[
+      {text:'Not at all — my reactions feel random and uncontrollable',score:100},
+      {text:'Somewhat — I have hunches but no clear picture',score:65},
+      {text:'Fairly aware — I can usually identify them after',score:35},
+      {text:'Very aware — I can see them coming',score:10}
+    ]
+  }
+];
+
+// Adaptive follow-up questions based on high scores in categories
+const ADAPTIVE_QUESTIONS = {
+  reactivity: {
+    id:'qa1', cat:'reactivity_deep',
+    text:'When you react instantly, what does it feel like in your body first?',
+    sub:'Tune into the physical sensation before the thought.',
+    options:[
+      {text:'Chest tightness or racing heart',score:90},
+      {text:'Heat rising in my face or neck',score:80},
+      {text:'A knot or drop in my stomach',score:70},
+      {text:'Muscle tension, especially in jaw or shoulders',score:65}
+    ]
+  },
+  fightflight: {
+    id:'qa2', cat:'fightflight_deep',
+    text:'After you\'ve reacted with anger or withdrawal, how do you feel?',
+    sub:'The aftermath — not the moment itself.',
+    options:[
+      {text:'Ashamed or regretful — I wish I\'d responded differently',score:90},
+      {text:'Justified — they deserved it',score:75},
+      {text:'Numb and disconnected',score:85},
+      {text:'Relieved to have expressed myself',score:40}
+    ]
+  },
+  insecurity: {
+    id:'qa3', cat:'insecurity_deep',
+    text:'When you feel insecure in a relationship, what do you usually do?',
+    sub:'Your go-to coping strategy.',
+    options:[
+      {text:'Seek constant reassurance',score:95},
+      {text:'Become clingy or possessive',score:85},
+      {text:'Pull away before they can hurt me',score:90},
+      {text:'Pretend everything is fine',score:70}
+    ]
+  },
+  stress: {
+    id:'qa4', cat:'stress_deep',
+    text:'What helps you recover fastest from emotional pain?',
+    sub:'Your most effective reset.',
+    options:[
+      {text:'Talking it out with someone I trust',score:30},
+      {text:'Distracting myself with work or activity',score:55},
+      {text:'Being alone with my thoughts',score:45},
+      {text:'Nothing really works — it just fades with time',score:90}
+    ]
+  }
 };
 
-const TOTAL = 10;
-let current = 1;
-const answers = {};
+const FINAL_QUESTIONS = [
+  {
+    id:'qf1', cat:'trigger_specific',
+    text:'Which of these situations triggers your strongest emotional reaction?',
+    sub:'There are no wrong answers — choose what resonates most.',
+    options:[
+      {text:'Being ignored, dismissed or overlooked',score:90},
+      {text:'Feeling out of control or unprepared',score:85},
+      {text:'Conflict or confrontation with people close to me',score:80},
+      {text:'Financial pressure or uncertainty',score:75}
+    ]
+  },
+  {
+    id:'qf2', cat:'spillover',
+    text:'How often do negative emotions from one area of life spill into others?',
+    sub:'For example — a bad day at work affecting your mood at home.',
+    options:[
+      {text:'Always — everything bleeds into everything else',score:100},
+      {text:'Often — I struggle to compartmentalise',score:75},
+      {text:'Sometimes — depends on the severity',score:45},
+      {text:'Rarely — I keep things separate well',score:10}
+    ]
+  }
+];
+
+// ── STATE ──────────────────────────────────────────
+let currentQ      = 0;
+let answers       = [];
+let questionFlow  = [];
+let selectedOpt   = null;
+let contact       = {};
+let diagPhase     = 0; // 0=none, 1=after Q2, 2=after Q5, 3=after Q8
+let diagnosisData = [];
+
+// ── BUILD QUESTION FLOW ────────────────────────────
+function buildFlow() {
+  // Start with base questions 1-2
+  questionFlow = [BASE_QUESTIONS[0], BASE_QUESTIONS[1]];
+  // Diagnosis after Q2
+  questionFlow.push({type:'diagnosis', phase:1});
+  // Q3-5
+  questionFlow.push(BASE_QUESTIONS[2], BASE_QUESTIONS[3], BASE_QUESTIONS[4]);
+  // Diagnosis after Q5
+  questionFlow.push({type:'diagnosis', phase:2});
+  // Q6-8
+  questionFlow.push(BASE_QUESTIONS[5], BASE_QUESTIONS[6], BASE_QUESTIONS[7]);
+  // Diagnosis after Q8
+  questionFlow.push({type:'diagnosis', phase:3});
+  // Final questions
+  questionFlow.push(...FINAL_QUESTIONS);
+}
+
+// ── INIT ──────────────────────────────────────────
+function startQuiz() {
+  document.getElementById('introScreen').classList.add('fade-out');
+  setTimeout(() => {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    buildFlow();
+    buildProgressDots();
+    showStep(0);
+  }, 800);
+}
+
+function buildProgressDots() {
+  const realQs = questionFlow.filter(q => q.type !== 'diagnosis');
+  const wrap = document.getElementById('progressSteps');
+  wrap.innerHTML = realQs.map((_,i) =>
+    `<div class="step-dot" id="dot-${i}"></div>`
+  ).join('');
+}
 
 function updateProgress() {
-  const pct = Math.round(((current - 1) / TOTAL) * 100);
+  const realQs = questionFlow.filter(q => q.type !== 'diagnosis');
+  const answered = answers.length;
+  const pct = (answered / realQs.length) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('stepLabel').textContent = `Question ${current} of ${TOTAL}`;
-  document.getElementById('pctLabel').textContent = pct + '%';
+
+  realQs.forEach((_,i) => {
+    const dot = document.getElementById('dot-'+i);
+    if(!dot) return;
+    dot.className = 'step-dot ' + (i < answered ? 'done' : i === answered ? 'active' : '');
+  });
+
+  const label = `Question ${answered+1} of ${realQs.length}`;
+  document.getElementById('progressLabel').textContent = label;
 }
 
-function checkAnswer() {
-  const card = document.getElementById('q' + current);
-  const type = card.dataset.type;
-  let ok = false;
-  if (type === 'scale') {
-    ok = !!card.querySelector('.scale-btn.selected');
-  } else {
-    const hasPill = !!card.querySelector('.pill.selected');
-    const otherInput = card.querySelector('.other-input');
-    const hasOther = otherInput && otherInput.value.trim().length > 0;
-    ok = hasPill || hasOther;
-  }
-  document.getElementById('nextBtn').disabled = !ok;
-}
-
-document.querySelectorAll('.pills').forEach(group => {
-  const multi = group.dataset.multi === 'true';
-  group.querySelectorAll('.pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      if (!multi) {
-        group.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-        pill.classList.add('selected');
-        answers['q' + current] = { score: parseInt(pill.dataset.score), val: pill.dataset.val };
-      } else {
-        pill.classList.toggle('selected');
-        const selected = [...group.querySelectorAll('.pill.selected')];
-        const totalScore = selected.reduce((s, p) => s + parseInt(p.dataset.score), 0);
-        answers['q' + current] = { score: Math.min(100, totalScore), vals: selected.map(p => p.dataset.val) };
-      }
-      checkAnswer();
-    });
-  });
-});
-
-document.querySelectorAll('.other-input').forEach(input => {
-  const countEl = input.closest('.other-box').querySelector('.char-count');
-  input.addEventListener('input', () => {
-    const len = input.value.length;
-    countEl.textContent = len + '/100';
-    countEl.classList.toggle('warn', len >= 70 && len < 100);
-    countEl.classList.toggle('max', len >= 100);
-    const q = input.dataset.q;
-    if (!answers[q]) answers[q] = {};
-    answers[q].other = input.value.trim();
-    if (!document.getElementById(q).querySelector('.pill.selected')) {
-      answers[q].score = answers[q].score || 50;
-    }
-    checkAnswer();
-  });
-});
-
-document.querySelectorAll('.scale-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const wrap = btn.closest('.scale-grid');
-    wrap.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    answers['q' + current] = { score: parseInt(btn.dataset.score), val: btn.dataset.val };
-    checkAnswer();
-  });
-});
-
-function go(dir) {
-  if (dir === 1 && current === TOTAL) {
-    // Show contact card instead of results directly
-    document.getElementById('q' + current).classList.remove('active');
-    document.getElementById('progressSection').style.display = 'none';
-    document.getElementById('navBtns').style.display = 'none';
-    document.getElementById('contactCard').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// ── SHOW STEP ──────────────────────────────────────
+function showStep(idx) {
+  if(idx >= questionFlow.length) {
+    // All done → show contact form
+    showContact();
     return;
   }
-  document.getElementById('q' + current).classList.remove('active');
-  current += dir;
-  document.getElementById('q' + current).classList.add('active');
-  updateProgress();
-  document.getElementById('backBtn').style.visibility = current === 1 ? 'hidden' : 'visible';
-  document.getElementById('nextBtn').textContent = current === TOTAL ? 'Almost Done →' : 'Continue →';
-  checkAnswer();
-}
 
-function calcScore() {
-  const weights = { q1:1.4, q2:1.0, q3:1.3, q4:1.1, q5:1.2, q6:1.2, q7:1.0, q8:1.1, q9:1.3, q10:0.8 };
-  let totalW = 0, wSum = 0;
-  for (const [q, w] of Object.entries(weights)) {
-    const a = answers[q];
-    if (a && a.score !== undefined) { wSum += a.score * w; totalW += w * 100; }
+  const step = questionFlow[idx];
+
+  if(step.type === 'diagnosis') {
+    showDiagnosis(step.phase, idx);
+    return;
   }
-  return totalW > 0 ? Math.round((wSum / totalW) * 100) : 50;
+
+  // Check if we should insert adaptive question
+  if(answers.length === 2) {
+    insertAdaptive();
+  }
+
+  showQuestion(step, idx);
 }
 
-function componentScores() {
-  const q = k => (answers[k] && answers[k].score !== undefined) ? answers[k].score : 50;
-  return [
-    {
-      name: 'Reactivity Under Load',
-      icon: '🌊', iconBg: 'rgba(201,169,110,0.1)',
-      score: Math.round(q('q1') * 0.5 + q('q4') * 0.3 + q('q8') * 0.2),
-      desc: 'How quickly you react when you\'re already carrying a lot. A shorter fuse is a sign your cup is full — not that something is wrong with you.',
-      color: '#c9a96e'
-    },
-    {
-      name: 'Fight or Flight Response',
-      icon: '⚡', iconBg: 'rgba(201,169,110,0.08)',
-      score: Math.round(q('q3') * 0.7 + q('q1') * 0.3),
-      desc: 'When pressure hits, your nervous system defaults to a survival mode — attack, escape, or suppress. It\'s biology, not weakness.',
-      color: '#c9a96e'
-    },
-    {
-      name: 'Insecurity & Self-Doubt',
-      icon: '🪞', iconBg: 'rgba(201,169,110,0.12)',
-      score: Math.round(q('q5') * 0.6 + q('q6') * 0.4),
-      desc: 'High-achieving people often carry the deepest self-doubt beneath the surface. This shows how much criticism quietly shakes you.',
-      color: '#e8c97a'
-    },
-    {
-      name: 'Defensiveness',
-      icon: '🛡️', iconBg: 'rgba(201,169,110,0.1)',
-      score: Math.round(q('q6') * 0.6 + q('q9') * 0.4),
-      desc: 'Protecting yourself feels necessary when you\'re overwhelmed. But over time, defensiveness can quietly close the door on connection.',
-      color: '#c9a96e'
-    },
-    {
-      name: 'Baseline Tension',
-      icon: '🌡️', iconBg: 'rgba(201,169,110,0.08)',
-      score: Math.round(q('q8') * 0.4 + q('q4') * 0.3 + q('q9') * 0.3),
-      desc: 'Your constant background hum of stress. Carrying too much for too long leaves the nervous system permanently on standby mode.',
-      color: '#c9a96e'
+function insertAdaptive() {
+  // Find highest scoring category from first 2 answers
+  const cats = answers.map(a => a.cat);
+  const scores = answers.map(a => a.score);
+  const maxIdx = scores.indexOf(Math.max(...scores));
+  const topCat = cats[maxIdx];
+
+  // Check if adaptive question for this cat exists and isn't already inserted
+  const adaptQ = ADAPTIVE_QUESTIONS[topCat];
+  if(adaptQ && !questionFlow.find(q => q.id === adaptQ.id)) {
+    // Insert after current position (after diagnosis)
+    const diagIdx = questionFlow.findIndex(q => q.type === 'diagnosis' && q.phase === 1);
+    questionFlow.splice(diagIdx + 1, 0, adaptQ);
+  }
+}
+
+function showQuestion(q, idx) {
+  selectedOpt = null;
+  document.getElementById('quizScreen').style.display = 'block';
+  document.getElementById('diagnosisScreen').style.display = 'none';
+
+  document.getElementById('qNumber').textContent = 'Question ' + (answers.length + 1);
+  document.getElementById('qText').textContent = q.text;
+  document.getElementById('qSub').textContent = q.sub || '';
+
+  const wrap = document.getElementById('optionsWrap');
+  const letters = ['A','B','C','D'];
+  wrap.innerHTML = q.options.map((opt, i) => `
+    <div class="option" id="opt-${i}" onclick="selectOption(${i}, ${opt.score}, '${q.cat}')">
+      <div class="option-letter">${letters[i]}</div>
+      <div class="option-text">${opt.text}</div>
+    </div>`).join('');
+
+  const btn = document.getElementById('nextBtn');
+  btn.classList.remove('active');
+  btn.textContent = 'Continue →';
+
+  updateProgress();
+
+  // Animate in
+  const card = document.getElementById('qCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'slideUp 0.5s ease both';
+}
+
+function selectOption(i, score, cat) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  document.getElementById('opt-'+i).classList.add('selected');
+  selectedOpt = { score, cat };
+  document.getElementById('nextBtn').classList.add('active');
+}
+
+function nextQuestion() {
+  if(!selectedOpt) return;
+  answers.push(selectedOpt);
+  currentQ++;
+
+  // Find next step index
+  let qCount = 0;
+  for(let i = 0; i < questionFlow.length; i++) {
+    if(questionFlow[i].type !== 'diagnosis') {
+      if(qCount === answers.length - 1) {
+        // This was the question we just answered
+        // Animate out
+        const card = document.getElementById('qCard');
+        card.style.animation = 'slideDown 0.3s ease both';
+        setTimeout(() => showStep(i + 1), 300);
+        return;
+      }
+      qCount++;
     }
-  ];
+  }
+  showContact();
 }
 
-function scoreProfile(pct) {
-  if (pct <= 25) return {
-    title: 'Well-Regulated Under Pressure',
-    desc: 'Even with everything on your plate, you\'re holding it together emotionally. You\'ve likely built some solid coping foundations — there are still a few spots worth keeping an eye on.',
-    reassurance: '<strong>This is something to feel genuinely good about.</strong> Not everyone who carries this much stays this grounded. Your self-awareness is already working in your favour.'
-  };
-  if (pct <= 45) return {
-    title: 'Manageable — But Starting to Show',
-    desc: 'You\'re mostly keeping it together, but the weight is beginning to show in specific places. These patterns tend to compound quietly as life gets busier.',
-    reassurance: '<strong>You\'re more aware than most people at this stage.</strong> The fact that you noticed and took this assessment puts you ahead. Small shifts now can prevent bigger ones later.'
-  };
-  if (pct <= 65) return {
-    title: 'The Pressure Is Getting Through',
-    desc: 'The amount you\'re carrying is starting to affect how you show up — at home, at work, with the people you care about. This is incredibly common for people holding as much as you are.',
-    reassurance: '<strong>This doesn\'t mean you\'re failing — it means you\'re human.</strong> You\'ve been holding a lot, for a long time, often without anyone really noticing. That takes a toll. It can also change.'
-  };
-  if (pct <= 80) return {
-    title: 'Running on Fumes',
-    desc: 'You\'re in reactive mode more than you\'d like. The stress you\'re holding is quietly shaping your decisions, your relationships, and how others experience you.',
-    reassurance: '<strong>First — please be kind to yourself right now.</strong> This score reflects the weight you\'ve been carrying, not who you are. Many people in this range don\'t even realise how close to empty they\'ve been running.'
-  };
-  return {
-    title: 'Critically Overloaded',
-    desc: 'You\'re carrying far more than your nervous system can quietly absorb. The reactivity, the tension, the way it spills into people around you — that\'s not a character flaw. It\'s a system pushed past its limit.',
-    reassurance: '<strong>Please hear this:</strong> what you\'re experiencing is a very human response to an unsustainable load. You\'ve likely been holding this together for longer than anyone knows. That matters. And it can be different.'
+// ── DIAGNOSIS ──────────────────────────────────────
+const DIAGNOSES = {
+  1: {
+    // After Q1+Q2 — reactivity + fight/flight
+    high: {
+      icon:'⚡',label:'Early Signal Detected',
+      title:'High Emotional Reactivity',
+      text:'Your responses suggest a hair-trigger emotional response system. When stress arrives, your nervous system activates quickly and intensely — this is a survival pattern that once kept you safe, but may now be creating friction in your relationships and daily life.',
+      meter:85, level:'High Reactivity'
+    },
+    mid: {
+      icon:'🌊',label:'Pattern Emerging',
+      title:'Moderate Emotional Sensitivity',
+      text:'You experience emotional waves that can be challenging to navigate. You feel things deeply and sometimes struggle to stay regulated when triggered — but you have some capacity to catch yourself.',
+      meter:55, level:'Moderate Sensitivity'
+    },
+    low: {
+      icon:'🌿',label:'Initial Reading',
+      title:'Emotional Steadiness',
+      text:'Your early responses suggest a relatively stable emotional baseline. You may still have specific triggers, but your general reactivity appears well-managed.',
+      meter:25, level:'Low Reactivity'
+    }
+  },
+  2: {
+    // After Q3+Q4+Q5 — stress, insecurity, defensiveness
+    high: {
+      icon:'🔥',label:'Pattern Confirmed',
+      title:'Chronic Stress Activation',
+      text:'A clearer picture is forming. Your emotional system appears to carry stress for extended periods and operates with heightened insecurity and defensiveness. This is often rooted in early experiences that wired your nervous system to stay alert for threat — even when none exists.',
+      meter:88, level:'Chronic Pattern'
+    },
+    mid: {
+      icon:'💫',label:'Deeper Layer',
+      title:'Situational Emotional Dysregulation',
+      text:'Your responses reveal that stress and self-doubt surface in specific conditions — particularly around connection and belonging. When these needs feel threatened, your emotional regulation becomes harder.',
+      meter:58, level:'Situational Pattern'
+    },
+    low: {
+      icon:'⚖️',label:'Balanced Profile',
+      title:'Healthy Stress Response',
+      text:'Your relationship with stress and self-doubt appears healthy overall. You may have specific areas to explore, but your foundation seems secure.',
+      meter:28, level:'Balanced'
+    }
+  },
+  3: {
+    // After Q6+Q7+Q8 — relationship, baseline, awareness
+    high: {
+      icon:'🧠',label:'Full Profile Emerging',
+      title:'Deep-Rooted Trigger Pattern',
+      text:'The complete picture is becoming clear. Your triggers appear to run deep, affecting your baseline state, relationships, and ability to function. Crucially, your awareness of these patterns may still be developing — which means there is significant opportunity for transformation with the right guidance.',
+      meter:92, level:'Deep Pattern'
+    },
+    mid: {
+      icon:'🔮',label:'Profile Crystallising',
+      title:'Significant Emotional Burden',
+      text:'Your assessment reveals a real emotional weight you carry — particularly in your relationships and baseline state. The good news: your self-awareness is developing, which is the first step toward real change.',
+      meter:60, level:'Moderate Burden'
+    },
+    low: {
+      icon:'✨',label:'Profile Complete',
+      title:'Resilient Foundation',
+      text:'Your responses throughout suggest strong emotional resilience. You have areas of growth available, but you operate from a stable foundation. Your self-awareness is your greatest asset.',
+      meter:30, level:'Resilient'
+    }
+  }
+};
+
+function showDiagnosis(phase, nextIdx) {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('diagnosisScreen').style.display = 'flex';
+
+  // Calculate average score of answers so far
+  const avg = answers.reduce((s,a) => s + a.score, 0) / answers.length;
+  const level = avg >= 70 ? 'high' : avg >= 40 ? 'mid' : 'low';
+  const diag = DIAGNOSES[phase][level];
+
+  document.getElementById('diagIcon').textContent = diag.icon;
+  document.getElementById('diagLabel').textContent = diag.label;
+  document.getElementById('diagTitle').textContent = diag.title;
+  document.getElementById('diagText').textContent = diag.text;
+  document.getElementById('diagLevel').textContent = diag.level;
+
+  // Animate meter
+  setTimeout(() => {
+    document.getElementById('diagMeterFill').style.width = diag.meter + '%';
+  }, 400);
+
+  // Store for final report
+  diagnosisData.push({ phase, diag, level });
+
+  document.getElementById('diagContinueBtn').onclick = () => {
+    document.getElementById('diagnosisScreen').style.display = 'none';
+    showStep(nextIdx + 1);
   };
 }
 
+// ── CONTACT ────────────────────────────────────────
+function showContact() {
+  document.getElementById('quizScreen').style.display = 'none';
+  document.getElementById('diagnosisScreen').style.display = 'none';
+  document.getElementById('contactScreen').style.display = 'flex';
+}
 
 async function submitContact() {
-  // Validate fields
-  let valid = true;
+  const first = document.getElementById('cFirst').value.trim();
+  const last  = document.getElementById('cLast').value.trim();
+  const email = document.getElementById('cEmail').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
 
-  const firstName = document.getElementById('fieldFirstName').value.trim();
-  const lastName  = document.getElementById('fieldLastName').value.trim();
-  const email     = document.getElementById('fieldEmail').value.trim();
-  const emailRx   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if(!first) { alert('Please enter your first name.'); return; }
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Please enter a valid email.'); return; }
 
-  const setError = (id, errId, show) => {
-    document.getElementById(id).classList.toggle('error', show);
-    document.getElementById(errId).classList.toggle('visible', show);
+  contact = { firstName: first, lastName: last, email, phone };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinning">⟳</span> Analysing your results…';
+
+  document.getElementById('contactScreen').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'flex';
+
+  await showResults();
+}
+
+// ── RESULTS ────────────────────────────────────────
+function calcScore() {
+  const total = answers.reduce((s,a) => s + a.score, 0);
+  return Math.round(total / answers.length);
+}
+
+function getProfile(score) {
+  if(score >= 85) return {
+    title:'Chronically Triggered',
+    sub:'Your emotional system is operating in near-constant high alert. Triggers are frequent, intense, and affecting multiple areas of your life.',
+    color:'#c0392b'
   };
-
-  setError('fieldFirstName', 'errFirstName', !firstName);
-  setError('fieldLastName',  'errLastName',  !lastName);
-  setError('fieldEmail',     'errEmail',     !emailRx.test(email));
-
-  if (!firstName) valid = false;
-  if (!lastName)  valid = false;
-  if (!emailRx.test(email)) valid = false;
-
-  if (!valid) return;
-
-  // Store contact details
-  answers['contact'] = {
-    firstName,
-    lastName,
-    email,
-    phone: document.getElementById('fieldPhone').value.trim()
+  if(score >= 70) return {
+    title:'Running on Fumes',
+    sub:'You\'re managing — but just barely. Emotional triggers are draining your energy and showing up in your relationships and focus.',
+    color:'#d4a84b'
   };
+  if(score >= 50) return {
+    title:'The Pressure Is Building',
+    sub:'You have real trigger patterns that surface under pressure. Left unaddressed, they tend to intensify over time.',
+    color:'#e8a84a'
+  };
+  if(score >= 30) return {
+    title:'Manageable — But Starting to Show',
+    sub:'You have emotional resilience but specific triggers that catch you off-guard. Awareness is your next step.',
+    color:'#4a3ab5'
+  };
+  return {
+    title:'Well Regulated',
+    sub:'Your emotional responses are generally healthy and well-managed. You have the tools — now refine them.',
+    color:'#2e7d52'
+  };
+}
 
-  // Hide contact card and show results
-  document.getElementById('contactCard').classList.remove('active');
+function getComponents() {
+  const cats = {
+    reactivity:   { name:'Reactivity Under Load',      scores:[] },
+    fightflight:  { name:'Fight or Flight Response',    scores:[] },
+    stress:       { name:'Stress Duration',             scores:[] },
+    insecurity:   { name:'Insecurity & Self-Doubt',     scores:[] },
+    defensiveness:{ name:'Defensiveness',               scores:[] },
+    relationship: { name:'Relationship Spillover',      scores:[] },
+    baseline:     { name:'Baseline Tension',            scores:[] },
+    awareness:    { name:'Self-Awareness',              scores:[] }
+  };
+  answers.forEach(a => {
+    const base = a.cat.split('_')[0];
+    if(cats[base]) cats[base].scores.push(a.score);
+  });
+  return Object.entries(cats)
+    .filter(([,v]) => v.scores.length > 0)
+    .map(([k,v]) => ({
+      name: v.name,
+      score: Math.round(v.scores.reduce((s,x)=>s+x,0)/v.scores.length)
+    }))
+    .sort((a,b) => b.score - a.score);
+}
+
+async function showResults() {
+  const score      = calcScore();
+  const profile    = getProfile(score);
+  const components = getComponents();
+  const isQual     = score >= 70;
+
+  // Animate score ring
+  setTimeout(() => {
+    const circle = document.getElementById('scoreCircle');
+    const circ = 2 * Math.PI * 68;
+    circle.style.strokeDashoffset = circ - (score/100) * circ;
+    circle.style.stroke = profile.color;
+
+    let n = 0;
+    const timer = setInterval(() => {
+      n = Math.min(n + 2, score);
+      document.getElementById('scorePct').textContent = n + '%';
+      if(n >= score) clearInterval(timer);
+    }, 20);
+  }, 300);
+
+  document.getElementById('resultsProfile').textContent = profile.title;
+  document.getElementById('resultsSub').textContent = profile.sub;
+
+  // Components
+  const colors = ['#c0392b','#d4a84b','#e8a84a','#4a3ab5','#2e7d52'];
+  document.getElementById('componentsGrid').innerHTML = components.map((c,i) => `
+    <div class="comp-row">
+      <div class="comp-top">
+        <span class="comp-name">${c.name}</span>
+        <span class="comp-score">${c.score}%</span>
+      </div>
+      <div class="comp-bar-track">
+        <div class="comp-bar-fill" style="width:0%;background:${colors[Math.min(i,colors.length-1)]}" id="bar-${i}"></div>
+      </div>
+    </div>`).join('');
+
+  setTimeout(() => {
+    components.forEach((_,i) => {
+      document.getElementById('bar-'+i).style.width = components[i].score + '%';
+    });
+  }, 400);
+
+  // AI Analysis
   try {
-    await showResults();
-  } catch(e) {
-    console.error('submitContact error:', e);
-    document.getElementById('results').style.display = 'block';
-  }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    const diagSummary = diagnosisData.map(d =>
+      `Phase ${d.phase}: ${d.diag.title} (${d.level})`
+    ).join(', ');
 
-// ── EmailJS config ──
-const EMAILJS_SERVICE  = 'service_yyo6mqf';   // ← replace after signup
-const EMAILJS_TEMPLATE = 'template_kfjusda';  // ← replace after signup
-const EMAILJS_KEY      = 'x1hyqhvVsCKfjnV1A';   // ← replace after signup
-const REPORT_EMAIL     = 'alignedorder@gmail.com';
+    const compSummary = components.slice(0,3).map(c =>
+      `${c.name}: ${c.score}%`
+    ).join(', ');
 
-// ── Draw pie chart ──
-function drawPieChart(components) {
-  const canvas = document.getElementById('pieCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const cx = 130, cy = 130, r = 100, innerR = 48;
-  const total = components.reduce((s, c) => s + c.score, 0) || 1;
-  let startAngle = -Math.PI / 2;
-  ctx.clearRect(0, 0, 260, 260);
-
-  const pieColors = ['#4e79a7','#e15759','#59a14f','#f28e2b','#b07aa1'];
-  components.forEach((c, ci) => {
-    const slice = (c.score / total) * 2 * Math.PI;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.arc(cx, cy, r, startAngle, startAngle + slice);
-    ctx.closePath();
-    ctx.fillStyle = pieColors[ci % pieColors.length];
-    ctx.fill();
-    ctx.strokeStyle = '#0a0a0a';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-    startAngle += slice;
-  });
-
-  // Donut hole
-  ctx.beginPath();
-  ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
-  ctx.fillStyle = '#111111';
-  ctx.fill();
-
-  // Legend below
-  const legendY = 230;
-  // We skip canvas legend; use HTML legend below
-}
-
-function buildPieLegend(components) {
-  const existing = document.getElementById('pieLegend');
-  if (existing) existing.remove();
-  const legend = document.createElement('div');
-  legend.id = 'pieLegend';
-  legend.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:16px;';
-  const pieColorsRef = ['#4e79a7','#e15759','#59a14f','#f28e2b','#b07aa1'];
-  components.forEach((c, ci) => {
-    const dot = `<span style="width:10px;height:10px;border-radius:50%;background:${pieColorsRef[ci]};display:inline-block;flex-shrink:0;margin-top:3px"></span>`;
-    const item = document.createElement('div');
-    item.style.cssText = 'display:flex;align-items:flex-start;gap:6px;font-size:11.5px;color:#5a4d45;';
-    item.innerHTML = `${dot}<span>${c.name} <strong style="color:${c.color}">${c.score}%</strong></span>`;
-    legend.appendChild(item);
-  });
-  document.getElementById('chartSection').appendChild(legend);
-}
-
-// ── Build plain-text report for email ──
-function buildPieSVG(components) {
-  const colors = ['#4e79a7','#e15759','#59a14f','#f28e2b','#b07aa1'];
-  const cx = 90, cy = 90, r = 80;
-  const total = components.reduce((s,c) => s + c.score, 0) || 1;
-  let startAngle = -Math.PI / 2;
-  let slices = '';
-  let legendRows = '';
-
-  components.forEach((c, i) => {
-    const slice = (c.score / total) * 2 * Math.PI;
-    const endAngle = startAngle + slice;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(endAngle);
-    const y2 = cy + r * Math.sin(endAngle);
-    const large = slice > Math.PI ? 1 : 0;
-    const col = colors[i % colors.length];
-    slices += `<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${col}" stroke="#ffffff" stroke-width="2"/>`;
-    // legend row
-    const shortName = c.name.replace('Under Load','').replace('Response','').replace('& Self-Doubt','').trim();
-    legendRows += `
-      <tr>
-        <td style="padding:4px 8px 4px 0;vertical-align:middle;">
-          <div style="width:12px;height:12px;border-radius:3px;background:${col};display:inline-block;"></div>
-        </td>
-        <td style="padding:4px 8px 4px 0;font-size:12px;color:#333;font-family:Arial,sans-serif;">${shortName}</td>
-        <td style="padding:4px 0;font-size:12px;font-weight:bold;color:${col};font-family:Arial,sans-serif;">${c.score}%</td>
-      </tr>`;
-    startAngle = endAngle;
-  });
-
-  // donut hole
-  slices += `<circle cx="${cx}" cy="${cy}" r="38" fill="#ffffff"/>`;
-  // centre text
-  slices += `<text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="18" font-weight="bold" fill="#1a1a1a" font-family="Arial">${components.reduce((s,c)=>s+c.score,0)/components.length|0}%</text>`;
-  slices += `<text x="${cx}" y="${cy + 12}" text-anchor="middle" font-size="9" fill="#888" font-family="Arial">avg score</text>`;
-
-  return `
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
-  <tr>
-    <td align="center" valign="top" style="padding-right:20px;">
-      <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
-        ${slices}
-      </svg>
-    </td>
-    <td valign="middle">
-      <table cellpadding="0" cellspacing="0" border="0">
-        ${legendRows}
-      </table>
-    </td>
-  </tr>
-</table>`;
-}
-
-function buildEmailReport(contact, score, profile, components, isQualified, aiText) {
-  const pieSVG = buildPieSVG(components);
-  const barRows = components.map(c => {
-    const barWidth = Math.round(c.score * 3.6); // max ~360px at 100%
-    const colors = ['#4e79a7','#e15759','#59a14f','#f28e2b','#b07aa1'];
-    const col = colors[components.indexOf(c) % colors.length];
-    return `
-      <tr>
-        <td style="padding:5px 0;">
-          <div style="font-size:12px;color:#333;font-family:Arial,sans-serif;margin-bottom:4px;">${c.name}</div>
-          <table width="100%" cellpadding="0" cellspacing="0"><tr>
-            <td width="${c.score}%" style="background:${col};height:8px;border-radius:4px 0 0 4px;"></td>
-            <td width="${100-c.score}%" style="background:#eeeeee;height:8px;border-radius:0 4px 4px 0;"></td>
-            <td style="width:36px;padding-left:8px;font-size:11px;font-weight:bold;color:${col};font-family:Arial,sans-serif;white-space:nowrap;">${c.score}%</td>
-          </tr></table>
-        </td>
-      </tr>`;
-  }).join('');
-
-  return `<!DOCTYPE html>
-<html><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f4f0eb;font-family:Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f0eb;padding:32px 16px;">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:580px;">
-
-  <!-- HEADER -->
-  <tr><td align="center" style="padding-bottom:24px;">
-    <div style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9a8f84;margin-bottom:8px;">Trigger Assessment Report</div>
-    <div style="font-size:26px;font-weight:700;color:#1a1a1a;font-family:Georgia,serif;">New Response Received</div>
-  </td></tr>
-
-  <!-- QUALIFIER BANNER -->
-  <tr><td style="padding-bottom:18px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#111111;border-radius:14px;overflow:hidden;">
-      <tr><td style="padding:24px 28px;text-align:center;">
-        <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(201,169,110,0.8);font-weight:700;margin-bottom:8px;">⚡ Qualification Status</div>
-        <div style="font-size:20px;font-weight:700;color:#ffffff;font-family:Georgia,serif;margin-bottom:6px;">${isQualified ? '🔥 QUALIFIED — Book a Call' : 'Not Qualified (under 70%)'}</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.5);">Overall Trigger Score: <strong style="color:#c9a96e;">${score}%</strong> &nbsp;·&nbsp; ${profile.title}</div>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- RESPONDENT -->
-  <tr><td style="padding-bottom:18px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;border:1px solid #e8e0d6;overflow:hidden;">
-      <tr><td style="padding:12px 22px;background:#fdf6ec;border-bottom:1px solid #f0e9e0;">
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#a07830;font-weight:700;">👤 Respondent Details</div>
-      </td></tr>
-      <tr><td style="padding:18px 22px;">
-        <table width="100%" cellpadding="0" cellspacing="0">
-          <tr>
-            <td style="padding-bottom:10px;width:50%;">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#a8978c;margin-bottom:3px;font-weight:600;">Name</div>
-              <div style="font-size:14px;color:#1a1a1a;font-weight:600;">${contact.firstName} ${contact.lastName}</div>
-            </td>
-            <td style="padding-bottom:10px;">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#a8978c;margin-bottom:3px;font-weight:600;">Email</div>
-              <div style="font-size:14px;color:#1a1a1a;">${contact.email}</div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#a8978c;margin-bottom:3px;font-weight:600;">Phone</div>
-              <div style="font-size:14px;color:#1a1a1a;">${contact.phone || 'Not provided'}</div>
-            </td>
-          </tr>
-        </table>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- PIE CHART SECTION -->
-  <tr><td style="padding-bottom:18px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;border:1px solid #e8e0d6;overflow:hidden;">
-      <tr><td style="padding:12px 22px;background:#edf4f0;border-bottom:1px solid #e0ece7;">
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#5a8070;font-weight:700;">📊 Score Breakdown</div>
-      </td></tr>
-      <tr><td style="padding:22px;">
-        ${pieSVG}
-        <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #f0e9e0;padding-top:16px;margin-top:4px;">
-          ${barRows}
-        </table>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- AI ANALYSIS -->
-  <tr><td style="padding-bottom:18px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;border:1px solid #e8e0d6;overflow:hidden;">
-      <tr><td style="padding:12px 22px;background:#fdf0ec;border-bottom:1px solid #f0e4df;">
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#8c5e51;font-weight:700;">🧠 AI Personal Analysis</div>
-      </td></tr>
-      <tr><td style="padding:22px;">
-        <div style="font-size:13.5px;color:#5a4d45;line-height:1.85;">${(aiText||'Not available').replace(/\n/g,'<br>')}</div>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- RAW ANSWERS -->
-  <tr><td style="padding-bottom:18px;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:14px;border:1px solid #e8e0d6;overflow:hidden;">
-      <tr><td style="padding:12px 22px;background:#f5f0eb;border-bottom:1px solid #ede5db;">
-        <div style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#6b5a50;font-weight:700;">📋 Raw Answers</div>
-      </td></tr>
-      <tr><td style="padding:22px;">
-        <table width="100%" cellpadding="0" cellspacing="0">
-          ${[
-            ['Reactivity speed',     answers.q1?.val || answers.q1?.score || '—'],
-            ['Life areas',           (answers.q2?.vals || [answers.q2?.val]).filter(Boolean).join(', ') || '—'],
-            ['Fight/flight response',answers.q3?.val || '—'],
-            ['Stress duration',      answers.q4?.val || answers.q4?.score || '—'],
-            ['Insecurity reaction',  answers.q5?.val || '—'],
-            ['Defensiveness',        answers.q6?.val || answers.q6?.score || '—'],
-            ['Top triggers',         (answers.q7?.vals || [answers.q7?.val]).filter(Boolean).join(', ') || '—'],
-            ['Baseline stress',      answers.q8?.val || answers.q8?.score || '—'],
-            ['Relationship spillover',answers.q9?.val || '—'],
-            ['Self-awareness',       answers.q10?.val || answers.q10?.score || '—'],
-          ].map(([q,a]) => `
-          <tr style="border-bottom:1px solid #f5f0eb;">
-            <td style="padding:8px 12px 8px 0;font-size:11px;color:#a8978c;text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap;vertical-align:top;width:38%;">${q}</td>
-            <td style="padding:8px 0;font-size:13px;color:#2d2420;">${a}</td>
-          </tr>`).join('')}
-        </table>
-      </td></tr>
-    </table>
-  </td></tr>
-
-  <!-- FOOTER -->
-  <tr><td align="center" style="padding:16px 0 32px;">
-    <div style="font-size:11px;color:#a8978c;line-height:1.7;">
-      Automatically generated by<br>
-      <strong style="color:#c9a96e;">Aligned Order Trigger Assessment</strong>
-    </div>
-  </td></tr>
-
-</table>
-</td></tr></table>
-</body></html>`;
-}
-
-// ── Call Claude API for AI analysis ──
-async function generateAIAnalysis(contact, score, profile, components) {
-  const componentSummary = components.map(c => `${c.name}: ${c.score}%`).join(', ');
-  const q2vals = (answers.q2?.vals || [answers.q2?.val || '']).join(', ');
-  const q3val  = answers.q3?.val || '—';
-  const q5val  = answers.q5?.val || '—';
-  const q7vals = (answers.q7?.vals || [answers.q7?.val || '']).join(', ');
-  const q9val  = answers.q9?.val || '—';
-
-  const prompt = `You are an empathetic stress and reactivity coach writing a personalised report for a client.
-
-CLIENT: ${contact.firstName} ${contact.lastName}
-OVERALL TRIGGER SCORE: ${score}% (${profile.title})
-COMPONENT SCORES: ${componentSummary}
-KEY ANSWERS:
-- Life areas causing most stress: ${q2vals}
-- Fight/flight response: ${q3val}
-- Reaction to criticism: ${q5val}
-- Top triggers: ${q7vals}
-- Relationship spillover: ${q9val}
-
-Write a warm, insightful, 3-paragraph personal analysis for ${contact.firstName}. 
-Paragraph 1: Acknowledge what their score reveals about their current state — be specific to their answers, not generic.
-Paragraph 2: Identify the 1-2 most critical patterns driving their reactivity based on their component scores and key answers.
-Paragraph 3: A compassionate closing that validates their experience and hints that change is possible.
-Keep it under 220 words. Write directly to them (use "you"). Do NOT use bullet points. Do NOT mention scoring systems or numbers — speak to their lived experience.`;
-
-  try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-dangerous-request-origin': 'https://alignedorder.netlify.app'
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':'',
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-request-origin':'https://thealignedorder.netlify.app'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        model:'claude-sonnet-4-6',
+        max_tokens:300,
+        messages:[{
+          role:'user',
+          content:`You are a compassionate emotional intelligence coach. Write a 3-sentence personalised insight for someone who just completed a trigger assessment.
+Score: ${score}%
+Profile: ${profile.title}
+Top components: ${compSummary}
+Mid-quiz diagnoses: ${diagSummary}
+Write warmly, directly addressing "you". Be specific to their score and patterns. End with one sentence about their potential for growth. No headings or bullets.`
+        }]
       })
     });
-    if (!res.ok) {
-      console.warn('AI analysis skipped — API response:', res.status);
-      return null;
-    }
     const data = await res.json();
-    return data.content?.[0]?.text || null;
-  } catch (e) {
-    console.warn('AI analysis skipped —', e.message);
-    return null;
+    const aiText = data.content?.[0]?.text || '';
+    document.getElementById('aiText').textContent = aiText;
+  } catch(e) {
+    document.getElementById('aiText').textContent = `With a trigger score of ${score}%, your emotional system shows clear patterns that are worth understanding and addressing. The patterns identified across your responses reveal specific areas where emotional reactivity is shaping your daily experience. With the right support, these patterns can be rewired — and that's exactly what Aligned Order is designed to help you do.`;
   }
+
+  // Qualifier card
+  document.getElementById('qualCard').innerHTML = isQual ? `
+    <div class="qual-card">
+      <h3>You Qualify for a Free Discovery Call</h3>
+      <p>Based on your assessment, you are a strong candidate for the Aligned Order coaching programme. Your trigger patterns are significant enough that targeted work could create real transformation in your life.</p>
+      <button class="book-btn" onclick="window.open('${DISCOVERY_URL}','_blank')">Book My Free Call →</button>
+    </div>` : `
+    <div class="thankyou-card">
+      <h3>Thank You for Completing the Assessment</h3>
+      <p>Your results have been sent to your email. If you feel ready to explore your triggers more deeply, reach out to us at any time.</p>
+    </div>`;
+
+  // Save lead
+  saveLead(contact, score, profile, components, isQual);
 }
 
-// ── Send email via EmailJS ──
-const GAS_URL = '/.netlify/functions/leads';
-
-async function saveLeadToDashboard(contact, score, profile, components, isQualified, aiText) {
+async function saveLead(contact, score, profile, components, isQual) {
   const comps = {};
   components.forEach(c => { comps[c.name.split(' ')[0]] = c.score; });
 
   const lead = {
-    first_name:  contact.firstName,
-    last_name:   contact.lastName,
-    email:       contact.email,
-    phone:       contact.phone || '',
-    score:       score,
-    profile:     profile.title,
-    qualified:   isQualified ? 'true' : 'false',
-    components:  JSON.stringify(comps),
-    analysis:    aiText || '',
-    created_at:  new Date().toISOString()
+    first_name: contact.firstName,
+    last_name:  contact.lastName,
+    email:      contact.email,
+    phone:      contact.phone || '',
+    score,
+    profile:    profile.title,
+    qualified:  isQual ? 'true' : 'false',
+    components: JSON.stringify(comps),
+    analysis:   document.getElementById('aiText').textContent || '',
+    created_at: new Date().toISOString()
   };
 
-  // Save to SheetDB (cross-device real-time)
   try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      redirect: 'follow',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(lead)
+    await fetch(GAS_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(lead),
+      redirect:'follow'
     });
-    if(res.ok) {
-      console.log('Lead saved to SheetDB:', contact.firstName, contact.lastName, score + '%');
-    } else {
-      const err = await res.text();
-      console.warn('SheetDB save failed:', err);
-    }
-  } catch(e) {
-    console.warn('SheetDB error:', e);
-  }
+  } catch(e) { console.warn('Save error:', e); }
 
-  // Also save to localStorage as backup
+  // EmailJS
   try {
-    const STORAGE_KEY = 'ao_leads_v1';
-    let existing = [];
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw) existing = JSON.parse(raw);
-    existing.unshift({
-      id: 'r' + Date.now(),
-      firstName: contact.firstName,
-      lastName:  contact.lastName,
-      email:     contact.email,
-      phone:     contact.phone || '',
-      score, profile: profile.title,
-      qualified: isQualified,
-      date: new Date().toISOString(),
-      components: comps,
-      analysis: aiText || ''
+    await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, {
+      to_name:    'Aligned Order',
+      from_name:  contact.firstName + ' ' + contact.lastName,
+      from_email: contact.email,
+      score:      score + '%',
+      profile:    profile.title,
+      qualified:  isQual ? 'YES — Qualified' : 'No',
+      analysis:   document.getElementById('aiText').textContent || '',
+      components: components.map(c => `${c.name}: ${c.score}%`).join('\n')
     });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
-  } catch(e) {}
+  } catch(e) { console.warn('Email error:', e); }
 }
-
-async function sendReportEmail(contact, score, profile, components, isQualified, aiText) {
-  // EmailJS configured
-  try {
-    if(typeof emailjs === 'undefined') { console.warn('EmailJS not loaded'); throw new Error('EmailJS not loaded'); }
-    emailjs.init({ publicKey: EMAILJS_KEY });
-    const reportText = buildEmailReport(contact, score, profile, components, isQualified, aiText);
-    await (window.emailjs || emailjs).send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
-      to_email:         REPORT_EMAIL,
-      subject:          `${isQualified ? '🔥 QUALIFIED LEAD' : 'New Response'} — ${contact.firstName} ${contact.lastName} scored ${score}%`,
-      respondent:       `${contact.firstName} ${contact.lastName}`,
-      respondent_email: contact.email,
-      respondent_phone: contact.phone || 'Not provided',
-      score:            `${score}%`,
-      profile:          profile.title,
-      qualified:        isQualified ? '🔥 YES — Book a Call' : '❌ No (under 70%)',
-      report:           reportText,
-      ai_analysis:      aiText || 'Not available',
-    });
-  } catch (e) {
-    console.warn('EmailJS send failed:', e);
-  }
-  // Always save to dashboard regardless of email result
-  await saveLeadToDashboard(contact, score, profile, components, isQualified, aiText);
-}
-
-function bookCall() {
-  // Replace with your Calendly / booking link
-  window.open('https://calendly.com/alignedorder/30min', '_blank');
-}
-
-async function showResults() {
-  try {
-  // Hide any lingering question cards
-  document.querySelectorAll('.card.active').forEach(c => c.classList.remove('active'));
-  document.getElementById('progressSection').style.display = 'none';
-  document.getElementById('navBtns').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
-
-  const score      = calcScore();
-  const profile    = scoreProfile(score);
-  const components = componentScores();
-  const contact    = answers.contact || { firstName: 'User', lastName: '', email: '', phone: '' };
-  const isQualified = score >= 70;
-
-  // ── Ring animation ──
-  const circumference = 2 * Math.PI * 65;
-  const offset = circumference - (score / 100) * circumference;
-  const ringFill = document.getElementById('ringFill');
-  const ringColor = score <= 35 ? '#c9a96e' : score <= 60 ? '#e8c97a' : '#c9a96e';
-  ringFill.style.stroke = ringColor;
-  ringFill.style.strokeDasharray = circumference;
-  ringFill.style.strokeDashoffset = circumference;
-  setTimeout(() => { ringFill.style.strokeDashoffset = offset; }, 120);
-
-  let n = 0;
-  const el = document.getElementById('ringNumber');
-  const step = Math.ceil(score / 60);
-  const timer = setInterval(() => {
-    n = Math.min(n + step, score);
-    el.textContent = n;
-    if (n >= score) clearInterval(timer);
-  }, 22);
-
-  document.getElementById('scoreTitleText').textContent = profile.title;
-  document.getElementById('scoreDescText').textContent  = profile.desc;
-  document.getElementById('reassuranceText').innerHTML  = profile.reassurance;
-
-  // ── Pie chart ──
-  drawPieChart(components);
-  buildPieLegend(components);
-
-  // ── Components list ──
-  const list = document.getElementById('componentList');
-  list.innerHTML = '';
-  components.forEach((c, i) => {
-    const item = document.createElement('div');
-    item.className = 'component-item';
-    item.innerHTML = `
-      <div class="comp-icon" style="background:${c.iconBg}">${c.icon}</div>
-      <div class="comp-body">
-        <div class="comp-name">${c.name}</div>
-        <div class="comp-desc">${c.desc}</div>
-      </div>
-      <div class="comp-bar-wrap">
-        <div class="comp-pct-label" style="color:${c.color}">${c.score}%</div>
-        <div class="comp-bar-track">
-          <div class="comp-bar-fill" style="background:${c.color}"></div>
-        </div>
-      </div>`;
-    list.appendChild(item);
-    setTimeout(() => {
-      item.classList.add('visible');
-      item.querySelector('.comp-bar-fill').style.width = c.score + '%';
-    }, 200 + i * 140);
-  });
-
-  // ── AI Analysis (async) ──
-  const revealDelay = 200 + components.length * 140 + 400;
-  setTimeout(async () => {
-    document.getElementById('analysisLoading').style.display = 'block';
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-
-    const aiText = await generateAIAnalysis(contact, score, profile, components);
-
-    document.getElementById('analysisLoading').style.display = 'none';
-
-    if (aiText) {
-      const aiSection = document.getElementById('aiAnalysisSection');
-      document.getElementById('aiAnalysisBody').textContent = aiText;
-      aiSection.classList.add('visible');
-    }
-
-    // ── Qualifier / Thank-You card ──
-    const tyEl = document.getElementById(isQualified ? 'qualifierCard' : 'thankyouCard');
-    tyEl.style.display = 'block';
-    tyEl.style.animation = 'softRise 0.7s cubic-bezier(0.22,1,0.36,1) both';
-    if (isQualified) {
-      document.getElementById('qualifierScoreLine').textContent =
-        `Your trigger score is ${score}% — that places you in the top tier of people ready for change.`;
-    }
-
-    // ── Share strip + restart ──
-    setTimeout(() => {
-      ['shareStrip','restartBtn'].forEach((id, i) => {
-        setTimeout(() => {
-          const el2 = document.getElementById(id);
-          el2.style.display = id === 'shareStrip' ? 'flex' : 'block';
-          el2.style.animation = 'softRise 0.6s cubic-bezier(0.22,1,0.36,1) both';
-        }, i * 180);
-      });
-    }, 400);
-
-    // ── Send email report ──
-    try {
-      await sendReportEmail(contact, score, profile, components, isQualified, aiText);
-    } catch(e) {
-      console.warn('Report send error:', e);
-      // Still save to dashboard even if email fails
-      try { saveLeadToDashboard(contact, score, profile, components, isQualified, aiText); } catch(e2) {}
-    }
-
-  }, revealDelay);
-  } catch(globalErr) {
-    console.error('showResults error:', globalErr);
-    // Still show results even if something crashed
-    document.getElementById('results').style.display = 'block';
-  }
-}
-
-function handleShare() {
-  if (navigator.share) {
-    navigator.share({
-      title: 'How Reactive Are You? Take this 2-min assessment',
-      text: 'I just discovered my trigger score. Find out yours — it only takes 2 minutes.',
-      url: window.location.href
-    }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('Link copied to clipboard!');
-    }).catch(() => {});
-  }
-}
-
-function shareWhatsApp() {
-  const msg = encodeURIComponent('I just took this 2-min assessment to find out how reactive I am under pressure — you might want to try it too: ' + window.location.href);
-  window.open('https://wa.me/?text=' + msg, '_blank');
-}
-
-function restart() {
-  current = 1;
-  Object.keys(answers).forEach(k => delete answers[k]);
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-  document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelectorAll('.other-input').forEach(i => {
-    i.value = '';
-    i.closest('.other-box').querySelector('.char-count').textContent = '0/100';
-  });
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('contactCard').classList.remove('active');
-  document.getElementById('thankyouCard').style.display = 'none';
-  // Reset contact fields
-  ['fieldFirstName','fieldLastName','fieldEmail','fieldPhone'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.value = ''; el.classList.remove('error'); }
-  });
-  ['errFirstName','errLastName','errEmail'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('visible');
-  });
-  document.getElementById('shareStrip').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'none';
-  document.getElementById('progressSection').style.display = 'block';
-  document.getElementById('navBtns').style.display = 'flex';
-  document.getElementById('q1').classList.add('active');
-  document.getElementById('backBtn').style.visibility = 'hidden';
-  document.getElementById('nextBtn').textContent = 'Continue →';
-  document.getElementById('nextBtn').disabled = true;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  updateProgress();
-}
-
-updateProgress();
-
-// Clear errors on input
-['fieldFirstName','fieldLastName','fieldEmail'].forEach(id => {
-  document.getElementById(id).addEventListener('input', function() {
-    this.classList.remove('error');
-    const errId = 'err' + id.replace('field','');
-    document.getElementById(errId).classList.remove('visible');
-  });
-});
 </script>
 </body>
 </html>
