@@ -205,6 +205,10 @@ td{padding:13px 16px;font-size:12.5px;vertical-align:middle;}
 </style>
 </head>
 <body>
+<div class="mobile-topbar">
+  <div class="mobile-topbar-title">Aligned Order</div>
+  <button class="btn" onclick="refresh()" style="padding:6px 12px;font-size:11px;">↺</button>
+</div>
 <div class="shell">
 
   <!-- SIDEBAR -->
@@ -901,10 +905,32 @@ setInterval(async()=>{
 load();
 </script>
 
+function setMobileNav(page) {
+  document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('mnav-'+page);
+  if(el) el.classList.add('active');
+}
+
 function logout() {
   localStorage.removeItem('ao_auth_session');
   window.location.href = 'login.html';
 }
 
+<div class="mobile-nav">
+  <div class="mobile-nav-items">
+    <button class="mobile-nav-item active" id="mnav-leads" onclick="showPage('leads');setMobileNav('leads')">
+      <span>◈</span><span>Overview</span>
+    </button>
+    <button class="mobile-nav-item" id="mnav-qualified" onclick="showPage('qualified');setMobileNav('qualified')">
+      <span>★</span><span>Qualified</span>
+    </button>
+    <button class="mobile-nav-item" id="mnav-unqualified" onclick="showPage('unqualified');setMobileNav('unqualified')">
+      <span>◎</span><span>Others</span>
+    </button>
+    <button class="mobile-nav-item" id="mnav-sessions" onclick="showPage('sessions');setMobileNav('sessions')">
+      <span>◷</span><span>Sessions</span>
+    </button>
+  </div>
+</div>
 </body>
 </html>

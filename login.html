@@ -25,7 +25,7 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:400px;heig
 .form-group{margin-bottom:18px;}
 .form-label{display:block;font-size:11px;font-weight:700;color:#8888b0;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
 .input-wrap{position:relative;}
-.form-input{width:100%;background:#fff;border:1.5px solid #d8d8ec;border-radius:12px;padding:13px 16px;color:#e8e8f4;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:all 0.2s;-webkit-text-fill-color:#e8e8f4;}
+.form-input{width:100%;background:#fff;border:1.5px solid #d0d0e8;border-radius:12px;padding:13px 16px;color:#000000;font-family:'Raleway',sans-serif;font-size:14px;font-weight:500;outline:none;transition:all 0.2s;-webkit-text-fill-color:#000000;}
 .form-input:focus{border-color:#4a3ab5;box-shadow:0 0 0 3px rgba(74,58,181,0.1);}
 .form-input.error{border-color:#e05a5a;box-shadow:0 0 0 3px rgba(224,90,90,0.1);}
 .toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#888;cursor:pointer;font-size:16px;padding:4px;}
@@ -42,6 +42,14 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:400px;heig
 
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .shake{animation:shake 0.4s ease;}
+
+@media(max-width:480px){
+  .card{border-radius:16px;margin:0 8px;}
+  .card-top{padding:28px 20px 22px;}
+  .card-body{padding:24px 20px;}
+  .title{font-size:20px;}
+  body{padding:12px;}
+}
 </style>
 </head>
 <body>

@@ -898,6 +898,7 @@ async function saveLead(contact, score, profile, components, isQual) {
   // EmailJS
   try {
     await emailjs.send(EMAILJS_SVC, EMAILJS_TPL, {
+      subject:    `New Lead: ${contact.firstName} ${contact.lastName} — ${score}% Trigger Score`,
       to_name:    'Aligned Order',
       from_name:  contact.firstName + ' ' + contact.lastName,
       from_email: contact.email,

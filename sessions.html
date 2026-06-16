@@ -152,6 +152,10 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
 </style>
 </head>
 <body>
+<div class="mobile-topbar-s">
+  <div class="mobile-topbar-title">Sessions</div>
+  <button class="btn" onclick="refresh()" style="padding:6px 12px;font-size:11px;">↺</button>
+</div>
 <div class="shell">
   <div class="sidebar">
     <div class="logo-area">
@@ -973,5 +977,10 @@ function logout() {
   window.location.href = 'login.html';
 }
 
+<div class="mobile-sess-actions">
+  <button class="btn green" onclick="openCalendly('discovery')" style="flex:1;justify-content:center;">📞 Discovery</button>
+  <button class="btn green" onclick="openCalendly('coaching')" style="flex:1;justify-content:center;">🔥 Coaching</button>
+  <button class="btn" onclick="openScheduleModal()" style="flex:1;justify-content:center;">+ Schedule</button>
+</div>
 </body>
 </html>
