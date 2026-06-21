@@ -171,6 +171,20 @@ h1 em{font-style:italic;color:var(--gold);}
     </div>
 
     <div class="form-group">
+      <label class="form-label">How did you hear about us?</label>
+      <select class="form-select" id="fReferral">
+        <option value="">Select an option…</option>
+        <option>Instagram</option>
+        <option>TikTok</option>
+        <option>YouTube</option>
+        <option>Google Search</option>
+        <option>Friend / Family Referral</option>
+        <option>Existing Client</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
       <label class="form-label">What's the #1 thing you want from this session?</label>
       <textarea class="form-textarea" id="fGoal" placeholder="Be specific — the more honest you are, the more we can help…"></textarea>
     </div>
@@ -210,6 +224,7 @@ async function submitBooking() {
   const email    = document.getElementById('fEmail').value.trim();
   const phone    = document.getElementById('fPhone').value.trim();
   const timezone = document.getElementById('fTimezone').value;
+  const referral = document.getElementById('fReferral').value;
   const goal     = document.getElementById('fGoal').value.trim();
 
   if (!selectedType) { alert('Please select a session type.'); return; }
@@ -222,22 +237,24 @@ async function submitBooking() {
   btn.textContent = 'Sending…';
 
   const booking = {
+    sheet:         'bookings',
     first_name:    first,
     last_name:     last,
     email:         email,
     phone:         phone,
     session_type:  selectedType === 'discovery' ? 'Discovery Call (Free · 30 min)' : 'Coaching Session (Paid · 60 min)',
     timezone:      timezone,
+    referral_source: referral || 'Not specified',
     goal:          goal,
     status:        'Pending',
     created_at:    new Date().toISOString()
   };
 
   try {
-    // Save to SheetDB bookings sheet
+    // Save to GAS bookings sheet
     await fetch(SHEETDB, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(booking)
     });
   } catch(e) {

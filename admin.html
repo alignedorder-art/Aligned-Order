@@ -221,6 +221,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   <div class="nav-tab" onclick="showPage('leads',this)">◉ Leads</div>
   <div class="nav-tab" onclick="showPage('sessions',this)">◷ Sessions</div>
   <div class="nav-tab" onclick="showPage('revenue',this)">💰 Revenue</div>
+  <div class="nav-tab" onclick="showPage('growth',this)">📈 Growth</div>
 </div>
 
 <!-- ═══════════════ OVERVIEW ═══════════════ -->
@@ -426,6 +427,125 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   </div>
 
 </div>
+
+<!-- ═══════════════ GROWTH ═══════════════ -->
+<div class="page" id="page-growth">
+
+  <div class="metrics-4">
+    <div class="metric gold">
+      <div class="metric-icon">📥</div>
+      <div class="metric-label">Acquisition</div>
+      <div class="metric-value" id="g-acq">—</div>
+      <div class="metric-sub" id="g-acqSub">new leads this period</div>
+    </div>
+    <div class="metric green">
+      <div class="metric-icon">🔁</div>
+      <div class="metric-label">Retention</div>
+      <div class="metric-value" id="g-ret">—</div>
+      <div class="metric-sub">book a 2nd+ session</div>
+    </div>
+    <div class="metric blue">
+      <div class="metric-icon">🔗</div>
+      <div class="metric-label">Top Referral</div>
+      <div class="metric-value" id="g-topRef" style="font-size:18px;">—</div>
+      <div class="metric-sub" id="g-topRefSub">leading source</div>
+    </div>
+    <div class="metric purple">
+      <div class="metric-icon">⭐</div>
+      <div class="metric-label">Experience</div>
+      <div class="metric-value" id="g-exp">—</div>
+      <div class="metric-sub" id="g-expSub">avg session rating</div>
+    </div>
+  </div>
+
+  <!-- ACQUISITION -->
+  <div class="table-card" style="margin-bottom:16px;">
+    <div class="table-head">
+      <div class="table-title">📥 Acquisition</div>
+      <div style="display:flex;background:var(--s2);border-radius:8px;padding:3px;border:1px solid var(--b2);">
+        <button id="acqBtnFunnel" class="btn ghost" style="padding:5px 12px;font-size:11px;border:none;" onclick="setAcqView('funnel')">Funnel</button>
+        <button id="acqBtnPaying" class="btn ghost" style="padding:5px 12px;font-size:11px;border:none;" onclick="setAcqView('paying')">Paying Clients</button>
+      </div>
+    </div>
+    <div style="padding:24px;">
+      <div id="acqFunnelView">
+        <div class="charts-3" style="margin-bottom:0;">
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--text);" id="g-acqLeads">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">New Leads</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--gold);" id="g-acqQual">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Qualified (70%+)</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--green);" id="g-acqRate">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Qualification Rate</div>
+          </div>
+        </div>
+      </div>
+      <div id="acqPayingView" style="display:none;">
+        <div class="charts-3" style="margin-bottom:0;">
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--text);" id="g-acqLeads2">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">New Leads</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--purple);" id="g-acqPaying">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">New Paying Clients</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--green);" id="g-acqToPayRate">—</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;">Lead → Paying Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-2">
+    <!-- RETENTION -->
+    <div class="chart-card">
+      <div class="chart-title">🔁 Retention — Repeat Bookings</div>
+      <div class="chart-sub">Clients who came back for another session</div>
+      <div style="position:relative;height:200px;"><canvas id="retentionChart"></canvas></div>
+      <div id="retentionLegend" style="display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;"></div>
+    </div>
+    <!-- REFERRALS -->
+    <div class="chart-card">
+      <div class="chart-title">🔗 Referrals — Where Clients Come From</div>
+      <div class="chart-sub">Self-reported source at time of booking</div>
+      <div style="position:relative;height:200px;"><canvas id="referralChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div class="chart-title">⭐ Experience — Session Ratings</div>
+    <div class="chart-sub">Feedback collected after sessions</div>
+    <div class="charts-2" style="margin-top:16px;margin-bottom:0;">
+      <div style="display:flex;align-items:center;gap:24px;">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-family:'Cinzel',serif;font-size:44px;font-weight:700;color:var(--gold);" id="g-avgStars">—</div>
+          <div style="color:var(--gold);font-size:16px;letter-spacing:2px;" id="g-starIcons">★★★★★</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:6px;" id="g-feedbackCount">0 reviews</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px;" id="starBreakdown"></div>
+      </div>
+      <div style="position:relative;height:180px;"><canvas id="experienceChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head"><div class="table-title">Recent Feedback</div></div>
+    <table>
+      <thead><tr><th>Client</th><th>Rating</th><th>Comment</th><th>Date</th></tr></thead>
+      <tbody id="feedbackTableBody"></tbody>
+    </table>
+    <div id="feedbackTableEmpty" class="empty-state" style="display:none;">No feedback submitted yet. Share the feedback link after completed sessions.</div>
+  </div>
+
+</div>
 </div>
 
 <script>
@@ -434,8 +554,11 @@ const SESSIONS_API = '/.netlify/functions/sessions';
 
 let allLeads    = [];
 let allSessions = [];
+let allBookings = [];
+let allFeedback = [];
 let charts      = {};
 let sessionPrice = 150;
+let acqView = 'funnel';
 
 // ── CONFIG ────────────────────────────────────────
 function loadConfig() {
@@ -522,6 +645,38 @@ function fmtDateTime(iso){
 }
 function isPaid(s){ return s.sessionType && (s.sessionType.toLowerCase().includes('paid') || s.sessionType.toLowerCase().includes('coaching')); }
 
+async function fetchBookings() {
+  try {
+    const r = await fetch(LEADS_API + '?sheet=bookings', { cache: 'no-store' });
+    if(!r.ok) return [];
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(row => ({
+      firstName: String(row.first_name || ''),
+      lastName:  String(row.last_name  || ''),
+      email:     String(row.email      || ''),
+      referral:  String(row.referral_source || 'Not specified'),
+      createdAt: String(row.created_at || '')
+    })).filter(b => b.email);
+  } catch(e) { return []; }
+}
+
+async function fetchFeedback() {
+  try {
+    const r = await fetch(LEADS_API + '?sheet=feedback', { cache: 'no-store' });
+    if(!r.ok) return [];
+    const rows = await r.json();
+    if(!Array.isArray(rows)) return [];
+    return rows.map(row => ({
+      firstName: String(row.first_name || ''),
+      email:     String(row.email      || ''),
+      rating:    parseInt(row.rating)  || 0,
+      comment:   String(row.comment    || ''),
+      createdAt: String(row.created_at || '')
+    })).filter(f => f.rating > 0);
+  } catch(e) { return []; }
+}
+
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
 // ── RENDER ALL ────────────────────────────────────
@@ -530,12 +685,13 @@ async function refreshAll() {
   btn.innerHTML = '<span class="spinning">↺</span>';
   btn.disabled = true;
 
-  [allLeads, allSessions] = await Promise.all([fetchLeads(), fetchSessions()]);
+  [allLeads, allSessions, allBookings, allFeedback] = await Promise.all([fetchLeads(), fetchSessions(), fetchBookings(), fetchFeedback()]);
 
   renderOverview();
   renderLeadsPage();
   renderSessionsPage();
   renderRevenuePage();
+  renderGrowthPage();
 
   const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   document.getElementById('lastUpdated').textContent = 'Updated ' + t;
@@ -843,15 +999,144 @@ function updateRevenue() {
     <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:#4a3ab5"></div>Paid: ${paidCount} · $${total.toLocaleString()}</div>`;
 }
 
+// ── GROWTH PAGE ───────────────────────────────────
+function setAcqView(view) {
+  acqView = view;
+  document.getElementById('acqFunnelView').style.display = view === 'funnel' ? 'block' : 'none';
+  document.getElementById('acqPayingView').style.display = view === 'paying' ? 'block' : 'none';
+  document.getElementById('acqBtnFunnel').style.background = view === 'funnel' ? 'var(--gold-d)' : 'transparent';
+  document.getElementById('acqBtnFunnel').style.color = view === 'funnel' ? 'var(--gold)' : 'var(--muted)';
+  document.getElementById('acqBtnPaying').style.background = view === 'paying' ? 'var(--gold-d)' : 'transparent';
+  document.getElementById('acqBtnPaying').style.color = view === 'paying' ? 'var(--gold)' : 'var(--muted)';
+}
+
+function renderGrowthPage() {
+  // ── ACQUISITION ──
+  const totLeads = allLeads.length;
+  const qualLeads = allLeads.filter(l => l.qualified).length;
+  const qualRate = totLeads ? Math.round((qualLeads/totLeads)*100) : 0;
+  const payingClients = new Set(allSessions.filter(s => isPaid(s) && s.status==='completed').map(s => s.email)).size;
+  const leadToPayRate = totLeads ? Math.round((payingClients/totLeads)*100) : 0;
+
+  document.getElementById('g-acq').textContent = totLeads;
+  document.getElementById('g-acqLeads').textContent = totLeads;
+  document.getElementById('g-acqQual').textContent = qualLeads;
+  document.getElementById('g-acqRate').textContent = qualRate + '%';
+  document.getElementById('g-acqLeads2').textContent = totLeads;
+  document.getElementById('g-acqPaying').textContent = payingClients;
+  document.getElementById('g-acqToPayRate').textContent = leadToPayRate + '%';
+  setAcqView(acqView);
+
+  // ── RETENTION ──
+  const sessionsByEmail = {};
+  allSessions.forEach(s => {
+    if(!s.email || s.status === 'cancelled') return;
+    sessionsByEmail[s.email] = (sessionsByEmail[s.email] || 0) + 1;
+  });
+  const uniqueClients = Object.keys(sessionsByEmail).length;
+  const repeatClients = Object.values(sessionsByEmail).filter(c => c >= 2).length;
+  const oneTimeClients = uniqueClients - repeatClients;
+  const retentionRate = uniqueClients ? Math.round((repeatClients/uniqueClients)*100) : 0;
+  document.getElementById('g-ret').textContent = retentionRate + '%';
+
+  destroyChart('retention');
+  charts['retention'] = new Chart(document.getElementById('retentionChart'), {
+    type:'doughnut',
+    data:{labels:['Repeat (2+ sessions)','One-time'],
+      datasets:[{data:[repeatClients, oneTimeClients],
+        backgroundColor:['rgba(76,175,125,0.75)','rgba(255,255,255,0.06)'],
+        borderColor:['#4caf7d','rgba(255,255,255,0.08)'],borderWidth:1.5
+      }]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false}}}
+  });
+  document.getElementById('retentionLegend').innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:#4caf7d"></div>Repeat: ${repeatClients}</div>
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.15);border:1px solid #2a2a2a"></div>One-time: ${oneTimeClients}</div>`;
+
+  // ── REFERRALS ──
+  const refCounts = {};
+  allBookings.forEach(b => {
+    const r = b.referral || 'Not specified';
+    refCounts[r] = (refCounts[r] || 0) + 1;
+  });
+  const refLabels = Object.keys(refCounts);
+  const refData = Object.values(refCounts);
+  let topRef = '—', topRefCount = 0;
+  refLabels.forEach((l,i) => { if(refData[i] > topRefCount) { topRefCount = refData[i]; topRef = l; } });
+  document.getElementById('g-topRef').textContent = topRef;
+  document.getElementById('g-topRefSub').textContent = topRefCount ? topRefCount + ' bookings' : 'no data yet';
+
+  destroyChart('referral');
+  if(refLabels.length) {
+    const refColors = ['#4a3ab5','#d4a84b','#4caf7d','#5b8dd9','#e05a5a','#9b59b6','#e8a84a'];
+    charts['referral'] = new Chart(document.getElementById('referralChart'), {
+      type:'bar',
+      data:{labels:refLabels,datasets:[{data:refData,backgroundColor:refLabels.map((_,i)=>refColors[i%refColors.length]),borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},
+        scales:{x:{ticks:{color:'#666',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true},
+                y:{ticks:{color:'#666',font:{size:10}},grid:{display:false}}}}
+    });
+  }
+
+  // ── EXPERIENCE ──
+  const totalFb = allFeedback.length;
+  const avgRating = totalFb ? (allFeedback.reduce((s,f)=>s+f.rating,0)/totalFb) : 0;
+  document.getElementById('g-exp').textContent = totalFb ? avgRating.toFixed(1) : '—';
+  document.getElementById('g-avgStars').textContent = totalFb ? avgRating.toFixed(1) : '—';
+  document.getElementById('g-feedbackCount').textContent = totalFb + (totalFb===1?' review':' reviews');
+  document.getElementById('g-starIcons').textContent = totalFb ? '★'.repeat(Math.round(avgRating)) + '☆'.repeat(5-Math.round(avgRating)) : '☆☆☆☆☆';
+
+  const starCounts = [0,0,0,0,0];
+  allFeedback.forEach(f => { if(f.rating>=1 && f.rating<=5) starCounts[f.rating-1]++; });
+  document.getElementById('starBreakdown').innerHTML = [5,4,3,2,1].map(star => {
+    const count = starCounts[star-1];
+    const pct = totalFb ? Math.round((count/totalFb)*100) : 0;
+    return `<div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;color:var(--muted);width:36px;">${star} star</span>
+      <div style="flex:1;background:var(--s2);border-radius:99px;height:6px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:var(--gold);border-radius:99px;"></div></div>
+      <span style="font-size:11px;color:var(--muted2);width:24px;text-align:right;">${count}</span>
+    </div>`;
+  }).join('');
+
+  destroyChart('experience');
+  charts['experience'] = new Chart(document.getElementById('experienceChart'), {
+    type:'bar',
+    data:{labels:['1★','2★','3★','4★','5★'],datasets:[{data:starCounts,backgroundColor:'rgba(212,168,75,0.6)',borderColor:'#d4a84b',borderWidth:1.5,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'#666',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+              y:{ticks:{color:'#666',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
+  });
+
+  // Feedback table
+  const fbBody = document.getElementById('feedbackTableBody');
+  const fbEmpty = document.getElementById('feedbackTableEmpty');
+  if(!allFeedback.length) { fbBody.innerHTML=''; fbEmpty.style.display='block'; }
+  else {
+    fbEmpty.style.display='none';
+    const sorted = [...allFeedback].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+    fbBody.innerHTML = sorted.slice(0,20).map(f => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:9px;">
+          <div class="avatar">${(f.firstName||'?')[0].toUpperCase()}</div>
+          <div><div style="font-weight:600;color:var(--text)">${f.firstName}</div><div style="font-size:11px;color:var(--muted)">${f.email}</div></div>
+        </div></td>
+        <td><span style="color:var(--gold);">${'★'.repeat(f.rating)}${'☆'.repeat(5-f.rating)}</span></td>
+        <td style="font-size:12px;color:var(--muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.comment || '—'}</td>
+        <td style="font-size:11px;color:var(--muted)">${fmtDate(f.createdAt)}</td>
+      </tr>`).join('');
+  }
+}
+
 // ── PAGE NAV ──────────────────────────────────────
 function showPage(page, tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   if(tab) tab.classList.add('active');
-  const titles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue'};
+  const titles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics'};
   document.getElementById('pageTitle').textContent = titles[page]||'';
   if(page==='revenue') updateRevenue();
+  if(page==='growth') renderGrowthPage();
 }
 
 // ── INIT ──────────────────────────────────────────

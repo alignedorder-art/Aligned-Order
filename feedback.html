@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Session Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--surface:#f4f4f8;--border:#d0d0e8;
+  --indigo:#4a3ab5;--indigo-d:rgba(74,58,181,0.1);
+  --gold:#d4a84b;--text:#1a1a2e;--muted:#6a6a9a;--muted2:#9090c0;
+  --green:#2e7d52;
+}
+body{background:var(--bg);color:var(--text);font-family:'Raleway',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.card{width:100%;max-width:460px;background:#fff;border:1px solid var(--border);border-radius:24px;padding:40px 32px;box-shadow:0 20px 60px rgba(74,58,181,0.08);}
+.logo{display:flex;justify-content:center;margin-bottom:16px;}
+.brand{font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--indigo);text-align:center;margin-bottom:14px;font-weight:600;}
+h1{font-family:'Cinzel',serif;font-size:24px;font-weight:700;text-align:center;margin-bottom:10px;}
+.sub{font-size:13.5px;color:var(--muted);text-align:center;line-height:1.7;margin-bottom:32px;}
+
+.stars-wrap{display:flex;justify-content:center;gap:10px;margin-bottom:8px;}
+.star-btn{background:none;border:none;font-size:38px;cursor:pointer;color:#e0ddf0;transition:all 0.15s;line-height:1;padding:2px;}
+.star-btn.filled{color:var(--gold);transform:scale(1.05);}
+.star-label{text-align:center;font-size:12.5px;color:var(--muted2);font-weight:600;margin-bottom:28px;min-height:18px;}
+
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.form-input,.form-textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px var(--indigo-d);}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.submit-btn{width:100%;padding:15px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;background:linear-gradient(135deg,var(--indigo),#3a2aa0);color:#fff;box-shadow:0 6px 24px rgba(74,58,181,0.3);transition:all 0.2s;margin-top:6px;}
+.submit-btn:hover{transform:translateY(-2px);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+.success{display:none;text-align:center;}
+.success.show{display:block;}
+.success-icon{font-size:46px;margin-bottom:16px;}
+.success h2{font-family:'Cinzel',serif;font-size:20px;margin-bottom:10px;}
+.success p{font-size:13.5px;color:var(--muted);line-height:1.7;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="formView">
+    <div class="logo">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="22" stroke="#4a3ab5" stroke-width="1.1" opacity="0.6"/>
+        <polygon points="24,6 40,38 8,38" fill="none" stroke="#4a3ab5" stroke-width="1.6"/>
+        <polygon points="24,18 32,38 16,38" fill="rgba(74,58,181,0.15)" stroke="#4a3ab5" stroke-width="1.1"/>
+        <polygon points="24,5 26,11 22,11" fill="#d4a84b"/>
+      </svg>
+    </div>
+    <div class="brand">Aligned Order</div>
+    <h1>How Was Your Session?</h1>
+    <p class="sub">Your feedback takes 30 seconds and helps us keep every session worth showing up for.</p>
+
+    <div class="stars-wrap" id="starsWrap">
+      <button class="star-btn" data-val="1" onclick="rate(1)">★</button>
+      <button class="star-btn" data-val="2" onclick="rate(2)">★</button>
+      <button class="star-btn" data-val="3" onclick="rate(3)">★</button>
+      <button class="star-btn" data-val="4" onclick="rate(4)">★</button>
+      <button class="star-btn" data-val="5" onclick="rate(5)">★</button>
+    </div>
+    <div class="star-label" id="starLabel">Tap a star to rate</div>
+
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">First Name</label><input class="form-input" id="fbFirst" placeholder="Your name"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="fbEmail" type="email" placeholder="you@email.com"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">What stood out? (optional)</label>
+      <textarea class="form-textarea" id="fbComment" placeholder="Anything you'd like to share about your session…"></textarea>
+    </div>
+
+    <button class="submit-btn" id="fbSubmit" onclick="submitFeedback()">Submit Feedback →</button>
+  </div>
+
+  <div class="success" id="successView">
+    <div class="success-icon">✦</div>
+    <h2>Thank You</h2>
+    <p>Your feedback has been received. We're grateful you took the time to share it.</p>
+  </div>
+</div>
+
+<script>
+const GAS_URL = '/.netlify/functions/leads';
+let selectedRating = 0;
+const LABELS = {1:'Needs improvement',2:'Below expectations',3:'It was okay',4:'Really good',5:'Excellent — loved it'};
+
+function rate(val) {
+  selectedRating = val;
+  document.querySelectorAll('.star-btn').forEach(b => {
+    b.classList.toggle('filled', parseInt(b.dataset.val) <= val);
+  });
+  document.getElementById('starLabel').textContent = LABELS[val];
+}
+
+async function submitFeedback() {
+  const first = document.getElementById('fbFirst').value.trim();
+  const email = document.getElementById('fbEmail').value.trim();
+  const comment = document.getElementById('fbComment').value.trim();
+
+  if (!selectedRating) { alert('Please select a star rating.'); return; }
+  if (!first || !email) { alert('Please enter your name and email.'); return; }
+
+  const btn = document.getElementById('fbSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  const feedback = {
+    sheet: 'feedback',
+    first_name: first,
+    email: email,
+    rating: selectedRating,
+    comment: comment,
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(feedback)
+    });
+  } catch(e) { console.warn('Feedback save error:', e); }
+
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').classList.add('show');
+}
+</script>
+</body>
+</html>

@@ -553,6 +553,7 @@ function renderList(listId, items, status) {
         ${s.status === 'pending'    ? `<button class="sess-btn confirm" onclick="updateStatus('${s.id}','confirmed')">Confirm</button>` : ''}
         ${s.status === 'confirmed'  ? `<button class="sess-btn blue"    onclick="openNotes('${s.id}')">✎ Notes</button>` : ''}
         ${s.status === 'confirmed'  ? `<button class="sess-btn confirm" onclick="updateStatus('${s.id}','completed')">Complete</button>` : ''}
+        ${s.status === 'completed' ? `<button class="sess-btn confirm" onclick="requestFeedback('${s.id}')">★ Feedback</button>` : ''}
         <button class="sess-btn" onclick="emailSession('${s.id}')">✉</button>
         <button class="sess-btn" onclick="waSession('${s.id}')">💬</button>
         ${s.status !== 'completed' ? `<button class="sess-btn danger" onclick="cancelSession('${s.id}')">✕</button>` : ''}
@@ -601,6 +602,14 @@ function waSession(id) {
   const ph = (s.phone || '').replace(/[^0-9+]/g, '');
   const msg = encodeURIComponent(`Hi ${s.first_name}, your Aligned Order ${s.session_type} is confirmed for ${fmtDateTime(s.datetime)}.${s.meeting_link ? ' Link: ' + s.meeting_link : ''} See you then!`);
   window.open(`https://wa.me/${ph}?text=${msg}`, '_blank');
+}
+
+function requestFeedback(id) {
+  const s = sessions.find(x => x.id === id);
+  if(!s) return;
+  const feedbackUrl = 'https://thealignedorder.netlify.app/feedback';
+  const body = `Hi ${s.first_name},%0D%0A%0D%0AThank you for your session with Aligned Order. We'd love to hear how it went — it takes just 30 seconds:%0D%0A%0D%0A${feedbackUrl}%0D%0A%0D%0AWarm regards,%0D%0AAligned Order`;
+  window.open(`mailto:${s.email}?subject=How was your session?&body=${body}`, '_blank');
 }
 
 function openCalendly(type) {
