@@ -14,7 +14,9 @@ exports.handler = async (event) => {
 
   try {
     if (event.httpMethod === 'GET') {
-      const res = await fetch(GAS_URL, { redirect: 'follow' });
+      const sheetParam = event.queryStringParameters && event.queryStringParameters.sheet;
+      const url = sheetParam ? `${GAS_URL}?sheet=${encodeURIComponent(sheetParam)}` : GAS_URL;
+      const res = await fetch(url, { redirect: 'follow' });
       const text = await res.text();
       return { statusCode: 200, headers, body: text };
     }
