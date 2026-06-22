@@ -9,588 +9,996 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --cream:#fbf8f2;
-  --parchment:#f3ece1;
-  --sage:#6b7d5a;
-  --sage-dark:#4a5940;
-  --sage-light:#eef2eb;
-  --terracotta:#c9692f;
-  --terra-light:#fdf0e8;
-  --ink:#231f18;
-  --muted:#6b6560;
-  --border:rgba(35,31,24,0.1);
-  --card:#ffffff;
-  --sidebar-w:240px;
+  --cream:#fbf8f2;--parchment:#f3ece1;--sage:#6b7d5a;--sage-dark:#4a5940;
+  --sage-light:#eef2eb;--terracotta:#c9692f;--terra-light:#fdf0e8;
+  --ink:#231f18;--muted:#6b6560;--border:rgba(35,31,24,0.1);
+  --card:#ffffff;--sidebar-w:240px;
 }
 body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;display:flex}
+h1,h2,h3{font-family:'Fraunces',serif}
 
-/* ── Sidebar ── */
-.sidebar{width:var(--sidebar-w);background:var(--sage-dark);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
-.sidebar-logo{padding:24px 22px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px}
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--sage-dark);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:10px;flex-shrink:0}
 .logo-mark{width:30px;height:30px;background:rgba(255,255,255,0.15);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .logo-mark svg{width:15px;height:15px}
-.logo-text{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:white;line-height:1.2}
-.logo-text span{display:block;font-family:'Inter',sans-serif;font-size:10px;font-weight:400;color:rgba(255,255,255,0.45);letter-spacing:.04em;margin-top:1px}
-
-.sidebar-section{padding:20px 12px 8px;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin:2px 8px;font-size:14px;color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:none;transition:background .15s,color .15s;position:relative}
+.logo-text{font-family:'Fraunces',serif;font-size:13px;font-weight:600;color:white;line-height:1.2}
+.logo-text span{display:block;font-family:'Inter',sans-serif;font-size:10px;font-weight:400;color:rgba(255,255,255,0.4);letter-spacing:.04em;margin-top:1px}
+.sidebar-section{padding:18px 12px 6px;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:8px;margin:2px 8px;font-size:13px;color:rgba(255,255,255,0.65);cursor:pointer;text-decoration:none;transition:background .15s,color .15s}
 .nav-item:hover{background:rgba(255,255,255,0.08);color:white}
 .nav-item.active{background:rgba(255,255,255,0.12);color:white;font-weight:500}
-.nav-item svg{width:18px;height:18px;flex-shrink:0}
-.nav-item .badge{position:absolute;right:14px;font-size:10px;background:var(--terracotta);color:white;padding:2px 6px;border-radius:10px;font-weight:500}
-.nav-item .soon{position:absolute;right:14px;font-size:10px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.4);padding:2px 7px;border-radius:10px}
-
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.nav-item .soon{margin-left:auto;font-size:9px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.35);padding:2px 6px;border-radius:8px}
 .sidebar-spacer{flex:1}
-.sidebar-client{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08)}
-.client-avatar{width:34px;height:34px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:white;flex-shrink:0}
-.client-info-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.client-name-sidebar{font-size:13px;font-weight:500;color:white}
-.client-email-sidebar{font-size:11px;color:rgba(255,255,255,0.4)}
-.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);border:none;border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;text-align:left;padding-left:12px;transition:background .15s}
-.btn-logout:hover{background:rgba(255,255,255,0.14);color:white}
+.sidebar-client{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0}
+.client-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.client-avatar{width:32px;height:32px;border-radius:50%;background:var(--terracotta);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:white;flex-shrink:0}
+.client-name{font-size:12px;font-weight:500;color:white}
+.client-email{font-size:10px;color:rgba(255,255,255,0.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-logout{width:100%;padding:7px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer;text-align:left;padding-left:10px;transition:background .15s}
+.btn-logout:hover{background:rgba(255,255,255,0.12);color:white}
 
-/* ── Main ── */
+/* ── MAIN ── */
 .main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
-
-/* ── Topbar ── */
-.topbar{background:white;border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar-left{display:flex;align-items:center;gap:16px}
-.topbar-title{font-size:16px;font-weight:600;color:var(--ink)}
-.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar{background:white;border-bottom:1px solid var(--border);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:var(--ink)}
 .topbar-greeting{font-size:13px;color:var(--muted)}
-
-/* ── Pages ── */
-.page{display:none;padding:32px}
+.page{display:none;padding:28px 32px;flex:1}
 .page.active{display:block}
 
-/* ── Welcome banner ── */
-.welcome-banner{background:linear-gradient(135deg,var(--sage-dark) 0%,var(--sage) 100%);border-radius:16px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;overflow:hidden;position:relative}
-.welcome-banner::after{content:'';position:absolute;right:-30px;top:-30px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.05)}
-.welcome-text h2{font-family:'Fraunces',serif;font-size:24px;font-weight:600;color:white;margin-bottom:6px}
-.welcome-text p{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.5}
-.welcome-cta{background:white;color:var(--sage-dark);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:opacity .15s;z-index:1}
+/* ── DASHBOARD SPECIFICS ── */
+.welcome-banner{background:linear-gradient(135deg,var(--sage-dark),var(--sage));border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;overflow:hidden;position:relative}
+.welcome-banner::after{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.05)}
+.welcome-text h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:white;margin-bottom:4px}
+.welcome-text p{font-size:13px;color:rgba(255,255,255,0.7)}
+.welcome-cta{background:white;color:var(--sage-dark);padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;z-index:1;white-space:nowrap;transition:opacity .15s}
 .welcome-cta:hover{opacity:.9}
-
-/* ── Metric cards ── */
-.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
-.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
-.metric-label{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500}
-.metric-value{font-size:26px;font-weight:600;color:var(--ink);font-family:'Fraunces',serif;line-height:1}
-.metric-sub{font-size:12px;color:var(--muted);margin-top:5px}
-
-/* ── Two-col ── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-
-/* ── Section card ── */
-.section-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.card-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:14px;font-weight:600;color:var(--ink)}
-.card-body{padding:18px 22px}
-
-/* ── Session item ── */
-.session-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.metric-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.metric-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500}
+.metric-value{font-size:24px;font-weight:600;color:var(--ink);font-family:'Fraunces',serif;line-height:1}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:4px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:600;color:var(--ink)}
+.card-body{padding:16px 18px}
+.session-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
 .session-item:last-child{border-bottom:none;padding-bottom:0}
-.session-date-block{text-align:center;background:var(--parchment);border-radius:8px;padding:8px 10px;min-width:44px;flex-shrink:0}
-.session-day{font-size:18px;font-weight:600;color:var(--ink);line-height:1}
-.session-month{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:2px}
-.session-info{}
-.session-type{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px}
-.session-time{font-size:12px;color:var(--muted)}
-.session-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:500;margin-top:5px}
+.session-date-block{text-align:center;background:var(--parchment);border-radius:7px;padding:7px 9px;min-width:40px;flex-shrink:0}
+.session-day{font-size:16px;font-weight:600;color:var(--ink);line-height:1}
+.session-month{font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:1px}
+.session-type{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:2px}
+.session-time{font-size:11px;color:var(--muted)}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;margin-top:4px}
 .badge-confirmed{background:#dcfce7;color:#166534}
-.badge-pending{background:#fef9c3;color:#854d0e}
 .badge-completed{background:var(--parchment);color:var(--muted)}
+.badge-cancelled{background:#fee2e2;color:#991b1b}
+.next-card{background:var(--terra-light);border:1px solid rgba(201,105,47,0.2);border-radius:12px;padding:18px 20px;margin-bottom:20px}
+.next-eyebrow{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--terracotta);margin-bottom:8px}
+.next-title{font-family:'Fraunces',serif;font-size:18px;color:var(--ink);margin-bottom:4px}
+.next-meta{font-size:12px;color:var(--muted);margin-bottom:14px}
+.next-actions{display:flex;gap:8px}
 
-/* ── Next session card ── */
-.next-card{background:var(--terra-light);border:1px solid rgba(201,105,47,0.2);border-radius:14px;padding:22px 24px;margin-bottom:24px}
-.next-eyebrow{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--terracotta);margin-bottom:10px}
-.next-title{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--ink);margin-bottom:6px}
-.next-meta{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
-.next-actions{display:flex;gap:10px}
-.btn-primary{padding:10px 20px;background:var(--terracotta);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .15s}
+/* ── BUTTONS ── */
+.btn-primary{padding:9px 18px;background:var(--terracotta);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s}
 .btn-primary:hover{opacity:.88}
-.btn-outline{padding:10px 20px;background:transparent;color:var(--terracotta);border:1px solid var(--terracotta);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .15s}
+.btn-outline{padding:9px 18px;background:transparent;color:var(--terracotta);border:1px solid var(--terracotta);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;transition:background .15s}
 .btn-outline:hover{background:var(--terra-light)}
+.btn-sage{padding:9px 18px;background:var(--sage);color:white;border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-sage:hover{opacity:.88}
+.btn-ghost{padding:8px 14px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;transition:background .15s}
+.btn-ghost:hover{background:var(--parchment)}
 
-/* ── Tools grid ── */
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
-.tool-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s}
+/* ── TOOLS HUB ── */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:border-color .15s,transform .15s}
 .tool-card:hover{border-color:var(--sage);transform:translateY(-2px)}
-.tool-card.locked{opacity:.6;cursor:default}
-.tool-card.locked:hover{transform:none;border-color:var(--border)}
-.tool-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.tool-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center}
 .tool-icon.sage{background:var(--sage-light)}
 .tool-icon.terra{background:var(--terra-light)}
-.tool-icon svg{width:20px;height:20px}
-.tool-name{font-size:14px;font-weight:500;color:var(--ink)}
-.tool-desc{font-size:12px;color:var(--muted);line-height:1.5}
-.tool-tag{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;align-self:flex-start;margin-top:2px}
-.tag-available{background:var(--sage-light);color:var(--sage-dark)}
-.tag-soon{background:var(--parchment);color:var(--muted)}
+.tool-icon svg{width:18px;height:18px}
+.tool-name{font-size:14px;font-weight:600;color:var(--ink)}
+.tool-desc{font-size:12px;color:var(--muted);line-height:1.5;flex:1}
+.tag-live{font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;background:var(--sage-light);color:var(--sage-dark);align-self:flex-start}
+.tag-soon{font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;background:var(--parchment);color:var(--muted);align-self:flex-start}
 
-/* ── Progress arc ── */
-.progress-section{margin-bottom:24px}
-.progress-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.progress-name{font-size:13px;font-weight:500;color:var(--ink)}
-.progress-count{font-size:12px;color:var(--muted)}
-.progress-bar{height:8px;background:var(--parchment);border-radius:4px;overflow:hidden}
-.progress-fill{height:100%;background:var(--sage);border-radius:4px;transition:width .6s ease}
+/* ── TOOL PAGES COMMON ── */
+.tool-page-header{margin-bottom:24px;display:flex;align-items:center;gap:14px}
+.tool-back{background:none;border:none;color:var(--sage);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;margin-bottom:16px;transition:opacity .15s}
+.tool-back:hover{opacity:.7}
+.tool-page-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink)}
+.tool-page-sub{font-size:13px;color:var(--muted);margin-top:4px}
 
-/* ── Empty state ── */
-.empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
-.empty-state svg{margin-bottom:16px;opacity:.35}
-.empty-state p{font-size:14px;line-height:1.6}
+/* ── SHADOW JOURNAL ── */
+.journal-prompt-card{background:linear-gradient(135deg,var(--sage-dark),var(--sage));border-radius:14px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.journal-prompt-card::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.prompt-eyebrow{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.prompt-text{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:white;line-height:1.5;position:relative;z-index:1}
+.prompt-day{font-size:11px;color:rgba(255,255,255,0.4);margin-top:10px}
+.journal-editor{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.journal-editor label{font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:8px}
+.journal-textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--cream);resize:vertical;min-height:160px;line-height:1.65;outline:none;transition:border-color .15s}
+.journal-textarea:focus{border-color:var(--sage);background:white}
+.journal-toolbar{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.char-count{font-size:11px;color:var(--muted)}
+.journal-history{display:flex;flex-direction:column;gap:12px}
+.journal-entry{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.entry-date{font-size:11px;color:var(--muted);margin-bottom:6px}
+.entry-prompt{font-size:12px;font-style:italic;color:var(--sage);margin-bottom:8px;line-height:1.5}
+.entry-response{font-size:13px;color:var(--ink);line-height:1.7}
 
-/* ── Mobile topbar ── */
-.mobile-topbar{display:none;background:var(--sage-dark);padding:14px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.mobile-menu-btn{background:none;border:none;cursor:pointer;padding:4px}
-.mobile-title{font-family:'Fraunces',serif;font-size:15px;color:white;font-weight:600}
+/* ── EMOTIONAL CHECK-IN ── */
+.emotion-categories{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.emotion-cat{border-radius:12px;padding:14px;border:2px solid transparent;cursor:pointer;transition:all .2s}
+.emotion-cat:hover{transform:translateY(-2px)}
+.emotion-cat.selected{border-width:2px}
+.emotion-cat-name{font-size:13px;font-weight:600;margin-bottom:8px}
+.emotion-pills{display:flex;flex-direction:column;gap:4px}
+.emotion-pill{font-size:11px;padding:4px 8px;border-radius:20px;background:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;border:none;font-family:'Inter',sans-serif;text-align:left;width:100%}
+.emotion-pill:hover{background:rgba(255,255,255,0.8)}
+.emotion-pill.selected{background:white;font-weight:600}
+.checkin-note{margin-bottom:16px}
+.checkin-note textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);background:white;resize:none;height:80px;outline:none;line-height:1.6}
+.checkin-note textarea:focus{border-color:var(--sage)}
+.checkin-history{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.checkin-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.emotion-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.checkin-item-info{flex:1}
+.checkin-emotion{font-size:13px;font-weight:500;color:var(--ink)}
+.checkin-note-text{font-size:11px;color:var(--muted);margin-top:2px}
+.checkin-time{font-size:10px;color:var(--muted)}
 
-/* ── Overlay ── */
+/* ── TRIGGER LOG ── */
+.trigger-form{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.form-input,.form-select,.form-textarea-sm{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;color:var(--ink);background:var(--cream);outline:none;transition:border-color .15s}
+.form-input:focus,.form-select:focus,.form-textarea-sm:focus{border-color:var(--sage);background:white}
+.form-textarea-sm{resize:none;height:70px;line-height:1.6}
+.intensity-row{display:flex;align-items:center;gap:10px}
+.intensity-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--parchment);outline:none;cursor:pointer}
+.intensity-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--terracotta);cursor:pointer}
+.intensity-val{font-size:14px;font-weight:600;color:var(--terracotta);min-width:24px;text-align:center}
+.heatmap-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.heatmap-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px}
+.heatmap-grid{display:flex;gap:3px;flex-wrap:wrap}
+.heatmap-day{width:14px;height:14px;border-radius:3px;background:var(--parchment)}
+.heatmap-day.l1{background:rgba(201,105,47,0.2)}
+.heatmap-day.l2{background:rgba(201,105,47,0.45)}
+.heatmap-day.l3{background:rgba(201,105,47,0.7)}
+.heatmap-day.l4{background:var(--terracotta)}
+.trigger-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto}
+.trigger-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px}
+.trigger-intensity-badge{min-width:28px;height:28px;border-radius:6px;background:var(--terra-light);color:var(--terracotta);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.trigger-desc{font-size:13px;color:var(--ink);margin-bottom:3px}
+.trigger-meta{font-size:11px;color:var(--muted)}
+
+/* ── VALUES COMPASS ── */
+.values-intro{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.values-counter{font-size:12px;font-weight:600;color:var(--sage);margin-bottom:14px}
+.values-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:20px}
+.value-chip{padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:center;color:var(--ink)}
+.value-chip:hover{border-color:var(--sage);background:var(--sage-light)}
+.value-chip.selected{border-color:var(--sage);background:var(--sage);color:white}
+.values-ranked{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.rank-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px}
+.rank-num{width:24px;height:24px;border-radius:6px;background:var(--sage);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-name{font-size:13px;font-weight:500;color:var(--ink);flex:1}
+.rank-why{flex:2}
+.rank-why input{width:100%;border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);background:var(--cream);outline:none}
+.rank-why input:focus{border-color:var(--sage);background:white}
+.saved-values-card{background:var(--sage-light);border:1px solid rgba(107,125,90,0.25);border-radius:12px;padding:16px;margin-bottom:18px}
+.saved-values-title{font-size:12px;font-weight:600;color:var(--sage-dark);margin-bottom:10px}
+
+/* ── SHADOW DIALOGUE ── */
+.shadow-intro{background:linear-gradient(135deg,rgba(35,31,24,0.05),rgba(107,125,90,0.08));border:1px solid rgba(35,31,24,0.1);border-radius:12px;padding:16px 18px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.7}
+.shadow-form{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
+.shadow-chat{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.shadow-msg{display:flex;gap:10px;align-items:flex-start}
+.shadow-msg.user{flex-direction:row-reverse}
+.shadow-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.shadow-avatar.user{background:var(--terracotta);color:white}
+.shadow-avatar.shadow{background:var(--ink);color:white}
+.shadow-bubble{max-width:80%;padding:12px 15px;border-radius:12px;font-size:13px;line-height:1.7}
+.shadow-msg.user .shadow-bubble{background:var(--terra-light);border:1px solid rgba(201,105,47,0.2);color:var(--ink)}
+.shadow-msg.shadow .shadow-bubble{background:var(--ink);color:rgba(255,255,255,0.9)}
+.shadow-typing{display:flex;gap:5px;align-items:center;padding:12px 15px}
+.shadow-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.5);animation:shadowBounce 1.2s infinite}
+.shadow-dot:nth-child(2){animation-delay:.2s}
+.shadow-dot:nth-child(3){animation-delay:.4s}
+@keyframes shadowBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.reflection-card{background:var(--sage-light);border:1px solid rgba(107,125,90,0.25);border-radius:12px;padding:16px;margin-top:16px}
+.reflection-title{font-size:12px;font-weight:600;color:var(--sage-dark);margin-bottom:10px}
+.reflection-q{font-size:13px;color:var(--ink);margin-bottom:6px;padding-left:12px;border-left:2px solid var(--sage)}
+
+/* ── DAILY REFLECTION ── */
+.reflection-prompt-card{background:linear-gradient(135deg,var(--sage-dark),var(--sage));border-radius:14px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+.reflection-prompt-card::after{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.06)}
+.reflection-prompt-card .prompt-text{font-family:'Fraunces',serif;font-size:17px;color:white;line-height:1.6;position:relative;z-index:1}
+.reflection-prompt-card .prompt-eyebrow{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:10px}
+.reflection-loading{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,0.6);font-size:13px}
+.reflection-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);animation:shadowBounce 1.2s infinite}
+.reflection-dot:nth-child(2){animation-delay:.2s}
+.reflection-dot:nth-child(3){animation-delay:.4s}
+.reflection-answer{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.reflection-answer label{font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:8px}
+.past-reflections{display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto}
+.past-ref-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.past-ref-date{font-size:10px;color:var(--muted);margin-bottom:6px}
+.past-ref-q{font-size:12px;font-style:italic;color:var(--sage);margin-bottom:6px;line-height:1.5}
+.past-ref-a{font-size:13px;color:var(--ink);line-height:1.65}
+
+/* ── REGULATION EXERCISES ── */
+.reg-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.reg-tab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:transparent;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+.reg-tab:hover{border-color:var(--sage);color:var(--sage)}
+.reg-tab.active{background:var(--sage);color:white;border-color:var(--sage)}
+.reg-panel{display:none}
+.reg-panel.active{display:block}
+.breathing-container{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px;text-align:center;margin-bottom:16px}
+.breathing-visual{margin:0 auto 28px;position:relative;display:flex;align-items:center;justify-content:center}
+.breathing-square{width:140px;height:140px;border:3px solid var(--sage);border-radius:16px;transition:all 0.8s cubic-bezier(0.4,0,0.2,1);position:relative;display:flex;align-items:center;justify-content:center}
+.breathing-phase{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--sage)}
+.breathing-count{font-size:36px;font-weight:600;color:var(--terracotta);margin:16px 0 8px}
+.breathing-label{font-size:13px;color:var(--muted)}
+.grounding-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.grounding-step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;transition:border-color .2s}
+.grounding-step.current{border-color:var(--sage);background:var(--sage-light)}
+.step-sense{width:36px;height:36px;border-radius:9px;background:var(--sage-light);color:var(--sage-dark);font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.grounding-step.current .step-sense{background:var(--sage);color:white}
+.step-title{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.step-instruction{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── EMPTY STATES ── */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state svg{margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:13px;line-height:1.6}
+
+/* ── PROGRESS PAGE ── */
+.progress-coming{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:48px;text-align:center;max-width:520px}
+
+/* ── MOBILE ── */
+.mobile-topbar{display:none;background:var(--sage-dark);padding:12px 18px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.mobile-menu-btn{background:none;border:none;cursor:pointer;padding:2px}
+.mobile-title{font-family:'Fraunces',serif;font-size:14px;color:white;font-weight:600}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99}
-
-/* ── Loading ── */
-.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
-
 @media(max-width:768px){
-  .sidebar{transform:translateX(-100%);transition:transform .25s ease}
+  .sidebar{transform:translateX(-100%);transition:transform .25s}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
   .mobile-topbar{display:flex}
   .topbar{display:none}
-  .page{padding:20px}
+  .page{padding:16px}
   .two-col{grid-template-columns:1fr}
-  .welcome-banner{flex-direction:column;gap:16px;align-items:flex-start}
+  .emotion-categories{grid-template-columns:repeat(2,1fr)}
   .overlay.open{display:block}
 }
+.loading-text{font-size:13px;color:var(--muted);padding:20px 0}
 </style>
 </head>
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
-      </svg>
-    </div>
-    <div class="logo-text">Aligned Order <span>Client Portal</span></div>
+    <div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></div>
+    <div class="logo-text">Aligned Order<span>Client Portal</span></div>
   </div>
 
   <div class="sidebar-section">My Journey</div>
-
   <a class="nav-item active" data-page="dashboard" onclick="showPage('dashboard',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
     Dashboard
   </a>
-
   <a class="nav-item" data-page="sessions" onclick="showPage('sessions',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
     My Sessions
   </a>
 
   <div class="sidebar-section">Tools</div>
-
   <a class="nav-item" data-page="journal" onclick="showPage('journal',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     Shadow Journal
-    <span class="soon">soon</span>
   </a>
-
   <a class="nav-item" data-page="tools" onclick="showPage('tools',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
     My Tools
   </a>
-
   <a class="nav-item" data-page="progress" onclick="showPage('progress',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    My Progress
-    <span class="soon">soon</span>
+    My Progress<span class="soon">soon</span>
   </a>
 
   <div class="sidebar-spacer"></div>
-
   <div class="sidebar-client">
-    <div class="client-info-row">
+    <div class="client-row">
       <div class="client-avatar" id="sidebar-avatar">?</div>
-      <div>
-        <div class="client-name-sidebar" id="sidebar-name">Loading…</div>
-        <div class="client-email-sidebar" id="sidebar-email"></div>
-      </div>
+      <div><div class="client-name" id="sidebar-name">Loading…</div><div class="client-email" id="sidebar-email"></div></div>
     </div>
     <button class="btn-logout" onclick="logout()">← Sign out</button>
   </div>
 </div>
 
-<!-- Mobile topbar -->
 <div class="mobile-topbar">
-  <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
+  <button class="mobile-menu-btn" onclick="toggleMobile()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
   <span class="mobile-title">My Portal</span>
-  <div class="client-avatar" id="mobile-avatar" style="width:30px;height:30px;font-size:12px">?</div>
+  <div class="client-avatar" id="mob-avatar" style="width:28px;height:28px;font-size:11px">?</div>
 </div>
+<div class="overlay" id="overlay" onclick="toggleMobile()"></div>
 
-<div class="overlay" id="overlay" onclick="toggleMobileMenu()"></div>
-
-<!-- Main content -->
 <div class="main">
   <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title" id="page-title">Dashboard</div>
-    </div>
-    <div class="topbar-right">
-      <span class="topbar-greeting" id="topbar-greeting">Welcome back</span>
-    </div>
+    <div class="topbar-title" id="page-title">Dashboard</div>
+    <div class="topbar-greeting" id="topbar-greeting">Welcome back</div>
   </div>
 
-  <!-- ── DASHBOARD ── -->
+  <!-- DASHBOARD -->
   <div class="page active" id="page-dashboard">
     <div class="welcome-banner">
-      <div class="welcome-text">
-        <h2 id="welcome-name">Welcome back</h2>
-        <p>Here's your coaching journey at a glance. You're doing the work that matters.</p>
-      </div>
+      <div class="welcome-text"><h2 id="welcome-name">Welcome back 👋</h2><p>Your coaching journey at a glance.</p></div>
       <a href="https://thealignedorder.netlify.app" target="_blank" class="welcome-cta">Take new assessment →</a>
     </div>
-
-    <div class="metrics-row" id="metrics-row">
-      <div class="metric-card">
-        <div class="metric-label">Sessions completed</div>
-        <div class="metric-value" id="metric-completed">—</div>
-        <div class="metric-sub">coaching sessions</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Sessions remaining</div>
-        <div class="metric-value" id="metric-remaining">—</div>
-        <div class="metric-sub">in your package</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Next session</div>
-        <div class="metric-value" id="metric-next" style="font-size:16px;padding-top:4px">—</div>
-        <div class="metric-sub" id="metric-next-type"></div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Journey phase</div>
-        <div class="metric-value" style="font-size:16px;padding-top:4px" id="metric-phase">—</div>
-        <div class="metric-sub">based on sessions</div>
-      </div>
+    <div class="metrics-row">
+      <div class="metric-card"><div class="metric-label">Sessions completed</div><div class="metric-value" id="m-completed">—</div><div class="metric-sub">coaching sessions</div></div>
+      <div class="metric-card"><div class="metric-label">Sessions remaining</div><div class="metric-value" id="m-remaining">—</div><div class="metric-sub">in your bundle</div></div>
+      <div class="metric-card"><div class="metric-label">Next session</div><div class="metric-value" id="m-next" style="font-size:15px;padding-top:4px">—</div><div class="metric-sub" id="m-next-type"></div></div>
+      <div class="metric-card"><div class="metric-label">Journey phase</div><div class="metric-value" id="m-phase" style="font-size:15px;padding-top:4px">—</div><div class="metric-sub">based on sessions</div></div>
     </div>
-
     <div id="next-session-banner"></div>
-
     <div class="two-col">
-      <div class="section-card">
-        <div class="card-header">
-          <div class="card-title">Recent sessions</div>
-          <a href="#" onclick="showPage('sessions',document.querySelector('[data-page=sessions]'))" style="font-size:12px;color:var(--sage);text-decoration:none">View all →</a>
-        </div>
-        <div class="card-body" id="recent-sessions">
-          <div class="loading">Loading sessions…</div>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <div class="card-header"><div class="card-title">Quick tools</div></div>
+      <div class="section-card"><div class="card-header"><div class="card-title">Recent sessions</div><a href="#" onclick="showPage('sessions',document.querySelector('[data-page=sessions]'))" style="font-size:11px;color:var(--sage);text-decoration:none">View all →</a></div><div class="card-body" id="recent-sessions"><div class="loading-text">Loading…</div></div></div>
+      <div class="section-card"><div class="card-header"><div class="card-title">Quick access</div></div>
         <div class="card-body">
-          <div class="tools-grid" style="grid-template-columns:1fr 1fr">
-            <div class="tool-card" onclick="showPage('journal',document.querySelector('[data-page=journal]'))">
-              <div class="tool-icon sage">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-              </div>
-              <div class="tool-name">Shadow Journal</div>
-              <span class="tool-tag tag-soon">Coming soon</span>
-            </div>
-            <div class="tool-card" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">
-              <div class="tool-icon terra">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-              </div>
-              <div class="tool-name">My Tools</div>
-              <span class="tool-tag tag-available">Available</span>
-            </div>
-            <div class="tool-card locked">
-              <div class="tool-icon sage">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-              </div>
-              <div class="tool-name">AI Insights</div>
-              <span class="tool-tag tag-soon">Coming soon</span>
-            </div>
-            <div class="tool-card locked">
-              <div class="tool-icon terra">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
-              </div>
-              <div class="tool-name">Hero's Journey</div>
-              <span class="tool-tag tag-soon">Coming soon</span>
-            </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn-sage" style="width:100%;justify-content:flex-start" onclick="showPage('journal',document.querySelector('[data-page=journal]'))">📓 Shadow Work Journal</button>
+            <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('checkin',document.querySelector('[data-page=checkin]'))">🎯 Emotional Check-in</button>
+            <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('reflection',document.querySelector('[data-page=reflection]'))">✨ Daily Reflection</button>
+            <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('shadow',document.querySelector('[data-page=shadow]'))">🌑 Shadow Dialogue</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── SESSIONS ── -->
+  <!-- SESSIONS -->
   <div class="page" id="page-sessions">
-    <div style="margin-bottom:24px">
-      <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:6px">My Sessions</h2>
-      <p style="font-size:14px;color:var(--muted)">Your full coaching session history with Aligned Order.</p>
-    </div>
-
-    <div id="sessions-list">
-      <div class="loading">Loading your sessions…</div>
-    </div>
+    <h2 style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px">My Sessions</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Your full coaching session history with Aligned Order.</p>
+    <div id="sessions-list"><div class="loading-text">Loading your sessions…</div></div>
   </div>
 
-  <!-- ── TOOLS ── -->
-  <div class="page" id="page-tools">
-    <div style="margin-bottom:24px">
-      <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:6px">My Tools</h2>
-      <p style="font-size:14px;color:var(--muted)">Interactive tools to support your growth between sessions.</p>
+  <!-- SHADOW JOURNAL -->
+  <div class="page" id="page-journal">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Shadow Work Journal</h2>
+    <p class="tool-page-sub">Guided Jungian prompts to explore what's beneath the surface.</p>
+    <div style="height:16px"></div>
+    <div class="journal-prompt-card">
+      <div class="prompt-eyebrow">Today's prompt</div>
+      <div class="prompt-text" id="journal-prompt-text">Loading today's prompt…</div>
+      <div class="prompt-day" id="journal-prompt-day"></div>
     </div>
+    <div class="journal-editor">
+      <label for="journal-response">Your reflection</label>
+      <textarea class="journal-textarea" id="journal-response" placeholder="Write freely here. There are no right or wrong answers — only honest ones…"></textarea>
+      <div class="journal-toolbar">
+        <span class="char-count" id="journal-char-count">0 words</span>
+        <button class="btn-sage" onclick="saveJournalEntry()">Save entry →</button>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:13px;font-weight:600;color:var(--ink)">Past entries</div>
+      <div style="font-size:11px;color:var(--muted)" id="journal-count"></div>
+    </div>
+    <div class="journal-history" id="journal-history"></div>
+  </div>
 
+  <!-- TOOLS HUB -->
+  <div class="page" id="page-tools">
+    <h2 style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px">My Tools</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Interactive tools to support your growth between sessions.</p>
     <div class="tools-grid">
-      <div class="tool-card" onclick="alert('Coming soon — Emotional Check-in Wheel')">
-        <div class="tool-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
-        <div class="tool-name">Emotional Check-in Wheel</div>
-        <div class="tool-desc">Identify exactly where you are emotionally using an interactive Plutchik wheel.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+      <div class="tool-card" onclick="showPage('checkin',document.querySelector('[data-page=checkin]'))">
+        <div class="tool-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></div>
+        <div class="tool-name">Emotional Check-in</div>
+        <div class="tool-desc">Identify where you are emotionally using the Plutchik emotion framework.</div>
+        <span class="tag-live">Live</span>
       </div>
-      <div class="tool-card" onclick="alert('Coming soon — Trigger Log')">
+      <div class="tool-card" onclick="showPage('triggers',document.querySelector('[data-page=triggers]'))">
         <div class="tool-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-        <div class="tool-name">Trigger Log & Heatmap</div>
+        <div class="tool-name">Trigger Log</div>
         <div class="tool-desc">Log triggers with intensity rating and see your emotional patterns over time.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+        <span class="tag-live">Live</span>
       </div>
-      <div class="tool-card" onclick="alert('Coming soon — Values Compass')">
+      <div class="tool-card" onclick="showPage('values',document.querySelector('[data-page=values]'))">
         <div class="tool-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div>
         <div class="tool-name">Values Compass</div>
-        <div class="tool-desc">Rank and reflect on your core values to clarify what matters most.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+        <div class="tool-desc">Identify and rank your core values. Revisit them as you grow.</div>
+        <span class="tag-live">Live</span>
       </div>
-      <div class="tool-card" onclick="alert('Coming soon — Shadow Dialogue')">
-        <div class="tool-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="tool-card" onclick="showPage('shadow',document.querySelector('[data-page=shadow]'))">
+        <div class="tool-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <div class="tool-name">Shadow Dialogue</div>
         <div class="tool-desc">A guided AI conversation with your shadow self, powered by Claude.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+        <span class="tag-live">Live</span>
       </div>
-      <div class="tool-card" onclick="alert('Coming soon — Daily Reflection')">
-        <div class="tool-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg></div>
-        <div class="tool-name">Daily Reflection Prompt</div>
-        <div class="tool-desc">A personalised question generated by AI based on your coaching phase.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+      <div class="tool-card" onclick="showPage('reflection',document.querySelector('[data-page=reflection]'))">
+        <div class="tool-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
+        <div class="tool-name">Daily Reflection</div>
+        <div class="tool-desc">A personalised AI-generated question each day based on your journey.</div>
+        <span class="tag-live">Live</span>
       </div>
-      <div class="tool-card" onclick="alert('Coming soon — Breathwork')">
-        <div class="tool-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="M12 8v4M12 16h.01"/></svg></div>
+      <div class="tool-card" onclick="showPage('regulation',document.querySelector('[data-page=regulation]'))">
+        <div class="tool-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="M12 6v6l4 2"/></svg></div>
         <div class="tool-name">Regulation Exercises</div>
-        <div class="tool-desc">Guided breathwork and grounding tools tailored to your trigger profile.</div>
-        <span class="tool-tag tag-soon">Coming soon</span>
+        <div class="tool-desc">Guided breathwork and grounding to calm your nervous system.</div>
+        <span class="tag-live">Live</span>
       </div>
     </div>
   </div>
 
-  <!-- ── JOURNAL ── -->
-  <div class="page" id="page-journal">
-    <div style="margin-bottom:24px">
-      <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:6px">Shadow Work Journal</h2>
-      <p style="font-size:14px;color:var(--muted)">Guided Jungian prompts to explore what's beneath the surface.</p>
+  <!-- EMOTIONAL CHECK-IN -->
+  <div class="page" id="page-checkin">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Emotional Check-in</h2>
+    <p class="tool-page-sub">Select the emotion that resonates most right now, then add an optional note.</p>
+    <div style="height:16px"></div>
+    <div class="emotion-categories" id="emotion-wheel"></div>
+    <div class="section-card" style="margin-bottom:16px;padding:16px 18px">
+      <div style="font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px">Selected: <strong id="selected-emotion-label" style="color:var(--ink)">None</strong></div>
+      <div class="checkin-note"><textarea id="checkin-note-input" placeholder="What's happening for you right now? (optional)"></textarea></div>
+      <button class="btn-primary" onclick="saveCheckin()">Save check-in →</button>
     </div>
-    <div class="section-card" style="max-width:600px">
-      <div class="card-body" style="text-align:center;padding:60px 40px">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:20px;opacity:.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:10px">Coming soon</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.65;max-width:340px;margin:0 auto">Your Shadow Work Journal is being built. It will include Jungian prompts on the inner critic, projection, shadow gold, and anima/animus — all saved privately for your journey.</p>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Check-in history</div>
+    <div class="checkin-history" id="checkin-history"></div>
+  </div>
+
+  <!-- TRIGGER LOG -->
+  <div class="page" id="page-triggers">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Trigger Log & Heatmap</h2>
+    <p class="tool-page-sub">Log what triggered you, track intensity, and see patterns emerge over time.</p>
+    <div style="height:16px"></div>
+    <div class="trigger-form">
+      <div class="form-group"><label>What triggered you?</label><input class="form-input" id="t-desc" placeholder="Describe what happened…"></div>
+      <div class="form-group">
+        <label>Intensity (1–10)</label>
+        <div class="intensity-row">
+          <input class="intensity-slider" type="range" min="1" max="10" value="5" id="t-intensity" oninput="document.getElementById('t-intensity-val').textContent=this.value">
+          <span class="intensity-val" id="t-intensity-val">5</span>
+        </div>
       </div>
+      <div class="form-group"><label>Emotion</label>
+        <select class="form-select" id="t-emotion">
+          <option value="">Select an emotion…</option>
+          <option>Anger</option><option>Fear</option><option>Sadness</option><option>Disgust</option>
+          <option>Anxiety</option><option>Shame</option><option>Frustration</option><option>Overwhelm</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Context (optional)</label><textarea class="form-textarea-sm" id="t-context" placeholder="Where were you? Who was involved?"></textarea></div>
+      <button class="btn-primary" onclick="saveTrigger()">Log trigger →</button>
+    </div>
+    <div class="heatmap-wrap"><div class="heatmap-title">Activity — past 12 weeks</div><div class="heatmap-grid" id="trigger-heatmap"></div><div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--muted)"><div style="width:12px;height:12px;border-radius:2px;background:var(--parchment)"></div>None<div style="width:12px;height:12px;border-radius:2px;background:rgba(201,105,47,0.45);margin-left:8px"></div>Moderate<div style="width:12px;height:12px;border-radius:2px;background:var(--terracotta);margin-left:8px"></div>Intense</div></div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Recent logs</div>
+    <div class="trigger-list" id="trigger-list"></div>
+  </div>
+
+  <!-- VALUES COMPASS -->
+  <div class="page" id="page-values">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Values Compass</h2>
+    <p class="tool-page-sub">Select your top 5 values, then rank them and write a short why for each.</p>
+    <div style="height:16px"></div>
+    <div id="saved-values-section"></div>
+    <div class="values-counter" id="values-counter">Select up to 5 values</div>
+    <div class="values-grid" id="values-grid"></div>
+    <div id="values-ranking-section" style="display:none">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Rank your values &amp; add your why</div>
+      <div class="values-ranked" id="values-ranked"></div>
+      <button class="btn-sage" onclick="saveValues()">Save my compass →</button>
     </div>
   </div>
 
-  <!-- ── PROGRESS ── -->
+  <!-- SHADOW DIALOGUE -->
+  <div class="page" id="page-shadow">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Shadow Dialogue</h2>
+    <p class="tool-page-sub">A guided conversation with your shadow self, grounded in Jungian psychology.</p>
+    <div style="height:16px"></div>
+    <div class="shadow-intro">The shadow self carries the emotions, fears, and patterns you've pushed out of conscious awareness. In this space, your shadow speaks — not to harm, but to be heard. Describe a triggering situation and meet the part of yourself that reacts.</div>
+    <div class="section-card" style="margin-bottom:16px;padding:20px" id="shadow-input-area">
+      <div class="form-group"><label style="font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:6px">Describe a recent triggering situation</label><textarea class="journal-textarea" id="shadow-situation" style="min-height:100px" placeholder="e.g. My partner dismissed my feelings and I completely shut down / My boss interrupted me in a meeting and I felt rage…"></textarea></div>
+      <button class="btn-primary" onclick="startShadowDialogue()">Begin dialogue →</button>
+    </div>
+    <div id="shadow-dialogue-area" style="display:none">
+      <div class="shadow-chat" id="shadow-chat"></div>
+      <div id="shadow-reflection"></div>
+      <button class="btn-ghost" style="margin-top:12px" onclick="resetShadow()">← Start a new dialogue</button>
+    </div>
+  </div>
+
+  <!-- DAILY REFLECTION -->
+  <div class="page" id="page-reflection">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Daily Reflection</h2>
+    <p class="tool-page-sub">A new personalised question each day, generated by AI based on your coaching journey.</p>
+    <div style="height:16px"></div>
+    <div class="reflection-prompt-card">
+      <div class="prompt-eyebrow">Today's question</div>
+      <div id="reflection-prompt-content"><div class="reflection-loading"><div class="reflection-dot"></div><div class="reflection-dot"></div><div class="reflection-dot"></div><span style="color:rgba(255,255,255,0.5);font-size:13px;margin-left:4px">Generating your question…</span></div></div>
+    </div>
+    <div class="reflection-answer">
+      <label>Your answer</label>
+      <textarea class="journal-textarea" id="reflection-answer" style="min-height:120px" placeholder="Take a few minutes to sit with this question before writing…"></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="btn-sage" onclick="saveReflection()">Save answer →</button></div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px">Past reflections</div>
+    <div class="past-reflections" id="past-reflections"></div>
+  </div>
+
+  <!-- REGULATION -->
+  <div class="page" id="page-regulation">
+    <button class="tool-back" onclick="showPage('tools',document.querySelector('[data-page=tools]'))">← My Tools</button>
+    <h2 class="tool-page-title">Regulation Exercises</h2>
+    <p class="tool-page-sub">Practical tools to calm your nervous system when triggered.</p>
+    <div style="height:16px"></div>
+    <div class="reg-tabs">
+      <button class="reg-tab active" onclick="switchReg('box',this)">Box Breathing</button>
+      <button class="reg-tab" onclick="switchReg('478',this)">4-7-8 Breathing</button>
+      <button class="reg-tab" onclick="switchReg('grounding',this)">5-4-3-2-1 Grounding</button>
+    </div>
+    <!-- Box Breathing -->
+    <div class="reg-panel active" id="reg-box">
+      <div class="breathing-container">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Inhale 4 · Hold 4 · Exhale 4 · Hold 4. Repeat 4 times to activate your parasympathetic system.</p>
+        <div class="breathing-visual"><div class="breathing-square" id="box-square"><div class="breathing-phase" id="box-phase">Ready</div></div></div>
+        <div class="breathing-count" id="box-count">4</div>
+        <div class="breathing-label" id="box-label">Press start to begin</div>
+        <button class="btn-sage" style="margin-top:20px" id="box-btn" onclick="toggleBoxBreath()">Start</button>
+      </div>
+    </div>
+    <!-- 4-7-8 Breathing -->
+    <div class="reg-panel" id="reg-478">
+      <div class="breathing-container">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Inhale 4 · Hold 7 · Exhale 8. Dr. Andrew Weil's technique for rapid nervous system regulation.</p>
+        <div class="breathing-visual"><div class="breathing-square" id="sq478" style="border-color:var(--terracotta)"><div class="breathing-phase" id="phase478" style="color:var(--terracotta)">Ready</div></div></div>
+        <div class="breathing-count" id="count478" style="color:var(--sage)">4</div>
+        <div class="breathing-label" id="label478">Press start to begin</div>
+        <button class="btn-primary" style="margin-top:20px" id="btn478" onclick="toggle478()">Start</button>
+      </div>
+    </div>
+    <!-- 5-4-3-2-1 Grounding -->
+    <div class="reg-panel" id="reg-grounding">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.7">Use your 5 senses to ground yourself in the present moment. This technique interrupts the triggered state and brings you back to now.</p>
+      <div class="grounding-steps" id="grounding-steps"></div>
+      <button class="btn-sage" id="grounding-btn" onclick="nextGrounding()">Begin →</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
   <div class="page" id="page-progress">
-    <div style="margin-bottom:24px">
-      <h2 style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:6px">My Progress</h2>
-      <p style="font-size:14px;color:var(--muted)">Your transformation arc — where you started, where you are, where you're going.</p>
-    </div>
-    <div class="section-card" style="max-width:600px">
-      <div class="card-body" style="text-align:center;padding:60px 40px">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:20px;opacity:.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <h3 style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:10px">Coming soon</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.65;max-width:340px;margin:0 auto">Your Hero's Journey map, trigger score trend line, and milestone tracker will all live here.</p>
-      </div>
+    <h2 style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:6px">My Progress</h2>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Your transformation arc — where you started, where you are, where you're going.</p>
+    <div class="progress-coming">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:16px;opacity:.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <h3 style="font-family:'Fraunces',serif;font-size:18px;margin-bottom:8px">Coming soon</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.65">Your Hero's Journey map, trigger score trend line, and milestone tracker will live here.</p>
     </div>
   </div>
-
-</div><!-- /main -->
+</div>
 
 <script>
-// ── Auth check ───────────────────────────────────────────────
+/* ── AUTH ── */
 const clientEmail = localStorage.getItem('clientEmail');
 const clientName  = localStorage.getItem('clientName');
-if (!localStorage.getItem('clientAuth') || !clientEmail) {
-  window.location.href = '/client-login';
+if(!localStorage.getItem('clientAuth')||!clientEmail){window.location.href='/client-login';}
+
+const initial = clientName?clientName[0].toUpperCase():'?';
+['sidebar-avatar','mob-avatar'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=initial;});
+document.getElementById('sidebar-name').textContent = clientName||'Client';
+document.getElementById('sidebar-email').textContent = clientEmail||'';
+document.getElementById('topbar-greeting').textContent = 'Hi, '+(clientName||'there');
+document.getElementById('welcome-name').textContent = 'Welcome back, '+(clientName||'there')+' 👋';
+
+/* ── NAV ── */
+const pageTitles = {dashboard:'Dashboard',sessions:'My Sessions',journal:'Shadow Journal',tools:'My Tools',checkin:'Emotional Check-in',triggers:'Trigger Log',values:'Values Compass',shadow:'Shadow Dialogue',reflection:'Daily Reflection',regulation:'Regulation Exercises',progress:'My Progress'};
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
+  document.getElementById('page-title').textContent=pageTitles[id]||id;
+  if(window.innerWidth<=768)closeMobile();
+  if(id==='journal')initJournal();
+  if(id==='checkin')initCheckin();
+  if(id==='triggers')initTriggers();
+  if(id==='values')initValues();
+  if(id==='reflection')initReflection();
+  if(id==='regulation')initRegulation();
 }
+function toggleMobile(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('open');}
+function closeMobile(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+function logout(){['clientAuth','clientEmail','clientName'].forEach(k=>localStorage.removeItem(k));window.location.href='/client-login';}
 
-// ── Populate identity ────────────────────────────────────────
-const initial = clientName ? clientName[0].toUpperCase() : '?';
-document.getElementById('sidebar-avatar').textContent  = initial;
-document.getElementById('mobile-avatar').textContent   = initial;
-document.getElementById('sidebar-name').textContent    = clientName || 'Client';
-document.getElementById('sidebar-email').textContent   = clientEmail || '';
-document.getElementById('topbar-greeting').textContent = 'Hi, ' + (clientName || 'there');
-document.getElementById('welcome-name').textContent    = 'Welcome back, ' + (clientName || 'there') + ' 👋';
-
-// ── Page navigation ──────────────────────────────────────────
-const pageTitles = {
-  dashboard:'Dashboard', sessions:'My Sessions',
-  journal:'Shadow Journal', tools:'My Tools', progress:'My Progress'
-};
-
-function showPage(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const pg = document.getElementById('page-' + id);
-  if (pg) pg.classList.add('active');
-  if (el) el.classList.add('active');
-  document.getElementById('page-title').textContent = pageTitles[id] || id;
-  if (window.innerWidth <= 768) closeMobileMenu();
-}
-
-// ── Mobile sidebar ───────────────────────────────────────────
-function toggleMobileMenu() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('open');
-}
-function closeMobileMenu() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('open');
-}
-
-// ── Logout ───────────────────────────────────────────────────
-function logout() {
-  ['clientAuth','clientEmail','clientName'].forEach(k => localStorage.removeItem(k));
-  window.location.href = '/client-login';
-}
-
-// ── Fetch & render sessions ──────────────────────────────────
-const SESSIONS_URL = '/.netlify/functions/sessions';
-
-function formatDate(iso) {
-  const d = new Date(iso);
-  return { day: d.getDate(), month: d.toLocaleString('en',{month:'short'}).toUpperCase(), time: d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}), full: d.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric',year:'numeric'}) };
-}
-
-function sessionBadge(status) {
-  if (!status) return '';
-  const s = status.toLowerCase();
-  if (s === 'active') return '<span class="session-badge badge-confirmed">Confirmed</span>';
-  if (s === 'canceled' || s === 'cancelled') return '<span class="session-badge badge-pending">Cancelled</span>';
-  return '<span class="session-badge badge-completed">Completed</span>';
-}
-
-async function loadSessions() {
-  try {
-    const res  = await fetch(SESSIONS_URL);
-    const all  = await res.json();
-    const mine = all.filter(s => {
-      const inv = (s.invitee_email || '').toLowerCase();
-      return inv === clientEmail.toLowerCase();
-    });
-
-    renderDashboardSessions(mine);
-    renderSessionsPage(mine);
-    renderMetrics(mine);
-  } catch(e) {
-    document.getElementById('recent-sessions').innerHTML = '<div class="empty-state"><p>Could not load sessions. Please refresh.</p></div>';
-    document.getElementById('sessions-list').innerHTML = '<div class="empty-state"><p>Could not load sessions. Please refresh.</p></div>';
+/* ── SESSIONS ── */
+async function loadSessions(){
+  try{
+    const res=await fetch('/.netlify/functions/sessions');
+    const all=await res.json();
+    const mine=all.filter(s=>(s.email||'').toLowerCase()===clientEmail.toLowerCase()||
+      (s.invitee_email||'').toLowerCase()===clientEmail.toLowerCase());
+    renderMetrics(mine);renderRecentSessions(mine);renderSessionsList(mine);
+  }catch(e){
+    ['recent-sessions','sessions-list'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='<div class="loading-text">Could not load sessions.</div>';});
   }
 }
+function fmtDate(iso){const d=new Date(iso);return{day:d.getDate(),month:d.toLocaleString('en',{month:'short'}).toUpperCase(),time:d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'}),full:d.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric',year:'numeric'})};}
+function sessionBadge(s){if(!s)return'';const l=s.toLowerCase();if(l==='active')return'<span class="badge badge-confirmed">Confirmed</span>';if(l.includes('cancel'))return'<span class="badge badge-cancelled">Cancelled</span>';return'<span class="badge badge-completed">Completed</span>';}
+function renderMetrics(sessions){
+  const now=new Date();
+  const up=sessions.filter(s=>new Date(s.start_time||s.datetime)>now&&s.status==='active');
+  const done=sessions.filter(s=>new Date(s.start_time||s.datetime)<=now||s.status!=='active');
+  document.getElementById('m-completed').textContent=done.length;
+  document.getElementById('m-remaining').textContent=Math.max(0,(sessions.length>6?10:sessions.length>3?6:3)-done.length);
+  if(up.length){const n=up.sort((a,b)=>new Date(a.start_time||a.datetime)-new Date(b.start_time||b.datetime))[0];const d=fmtDate(n.start_time||n.datetime);document.getElementById('m-next').textContent=d.day+' '+d.month;document.getElementById('m-next-type').textContent=(n.event_type_name||n.session_type||'Session').replace(/Aligned Order/i,'').trim();renderNextBanner(n);}
+  else{document.getElementById('m-next').textContent='None';document.getElementById('m-next-type').textContent='Book a session';}
+  const phase=done.length<=1?'Orientation':done.length<=3?'Discovery':done.length<=6?'Integration':'Embodiment';
+  document.getElementById('m-phase').textContent=phase;
+}
+function renderNextBanner(s){
+  const d=fmtDate(s.start_time||s.datetime);
+  document.getElementById('next-session-banner').innerHTML=`<div class="next-card"><div class="next-eyebrow">Upcoming session</div><div class="next-title">${s.event_type_name||s.session_type||'Coaching Session'}</div><div class="next-meta">${d.full} at ${d.time}</div><div class="next-actions">${s.meeting_link||s.join_url?`<a href="${s.meeting_link||s.join_url}" target="_blank" class="btn-primary">Join session →</a>`:''}<a href="https://calendly.com/alignedorder" target="_blank" class="btn-outline">Reschedule</a></div></div>`;
+}
+function renderRecentSessions(sessions){
+  const el=document.getElementById('recent-sessions');
+  if(!sessions.length){el.innerHTML='<div class="empty-state"><p>No sessions yet. <a href="https://calendly.com/alignedorder/30min" target="_blank" style="color:var(--sage)">Book your first →</a></p></div>';return;}
+  el.innerHTML=sessions.sort((a,b)=>new Date(b.start_time||b.datetime)-new Date(a.start_time||a.datetime)).slice(0,4).map(s=>{const d=fmtDate(s.start_time||s.datetime);return`<div class="session-item"><div class="session-date-block"><div class="session-day">${d.day}</div><div class="session-month">${d.month}</div></div><div><div class="session-type">${s.event_type_name||s.session_type||'Session'}</div><div class="session-time">${d.time}</div>${sessionBadge(s.status)}</div></div>`;}).join('');
+}
+function renderSessionsList(sessions){
+  const el=document.getElementById('sessions-list');
+  if(!sessions.length){el.innerHTML='<div class="section-card"><div class="card-body"><div class="empty-state"><p>No sessions found yet.<br><a href="https://calendly.com/alignedorder/30min" target="_blank" style="color:var(--sage)">Book your first session →</a></p></div></div></div>';return;}
+  const sorted=sessions.sort((a,b)=>new Date(b.start_time||b.datetime)-new Date(a.start_time||a.datetime));
+  el.innerHTML=`<div class="section-card"><div class="card-header"><div class="card-title">${sorted.length} session${sorted.length!==1?'s':''} total</div><a href="https://calendly.com/alignedorder/30min" target="_blank" style="font-size:11px;color:var(--sage);text-decoration:none">Book new →</a></div><div class="card-body" style="padding:0">${sorted.map(s=>{const d=fmtDate(s.start_time||s.datetime);return`<div class="session-item" style="padding:14px 18px"><div class="session-date-block"><div class="session-day">${d.day}</div><div class="session-month">${d.month}</div></div><div style="flex:1"><div class="session-type">${s.event_type_name||s.session_type||'Session'}</div><div class="session-time">${d.full} · ${d.time}</div>${sessionBadge(s.status)}</div>${s.meeting_link&&s.status==='active'?`<a href="${s.meeting_link}" target="_blank" class="btn-primary" style="font-size:11px;padding:6px 12px;align-self:center">Join →</a>`:''}</div>`;}).join('')}</div></div>`;
+}
 
-function renderMetrics(sessions) {
-  const now = new Date();
-  const upcoming = sessions.filter(s => new Date(s.start_time) > now && s.status === 'active');
-  const completed = sessions.filter(s => new Date(s.start_time) <= now || s.status !== 'active');
+/* ── SHADOW JOURNAL ── */
+const PROMPTS=[
+  "Think of someone who irritates you. What quality in them might you be denying in yourself?",
+  "What emotion did you avoid feeling today? What might it be trying to tell you?",
+  "What would you do if you knew no one was watching or judging you?",
+  "Describe your inner critic. What does it sound like? Whose voice does it resemble?",
+  "What do you most want people to admire about you — and what does that reveal?",
+  "When was the last time you felt shame? What belief about yourself was underneath it?",
+  "What is a quality you dislike in others that you secretly fear exists in you?",
+  "Write a letter to the part of yourself you've been trying to hide.",
+  "What is the gold in your shadow — a strength you've buried because it felt unsafe?",
+  "What pattern keeps repeating in your relationships? What might you be contributing?",
+  "Describe a moment when you reacted more strongly than the situation warranted. What was really happening?",
+  "What did you need most as a child that you didn't receive? How does that need show up now?",
+  "What are you most afraid people would think if they really knew you?",
+  "When do you feel most like a fraud? What wound does that touch?",
+  "Write from the perspective of your anger. What is it protecting?",
+  "What story do you tell yourself about why you can't have what you want?",
+  "Describe a time your shadow sabotaged something good. What was it afraid of?",
+  "What does your most difficult relationship reveal about your inner world?",
+  "If your pain had a voice, what would it want you to know?",
+  "What part of yourself did you sacrifice to be accepted by others?",
+  "What does rest feel like? If it feels threatening, why might that be?",
+  "Write to your future self who has integrated their shadow. What advice do they offer?",
+  "What are you most defended about? What might that defence be keeping safe?",
+  "Describe the persona you show the world vs who you are when alone.",
+  "What does vulnerability feel like in your body? When did you learn it wasn't safe?",
+  "What would it mean to fully forgive yourself for something you've done?",
+  "What is the version of you that you're most afraid to become?",
+  "Write about a dream or recurring image that stays with you. What might it symbolise?",
+  "What boundary are you afraid to set? What does crossing it cost you?",
+  "What would you tell your younger self about the pain they're about to carry?"
+];
+function initJournal(){
+  const today=new Date();
+  const dayIdx=Math.floor((today-new Date(today.getFullYear(),0,0))/(1000*60*60*24))%PROMPTS.length;
+  document.getElementById('journal-prompt-text').textContent=PROMPTS[dayIdx];
+  document.getElementById('journal-prompt-day').textContent=today.toLocaleDateString('en',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const ta=document.getElementById('journal-response');
+  ta.oninput=()=>{const words=ta.value.trim().split(/\s+/).filter(w=>w).length;document.getElementById('journal-char-count').textContent=words+' word'+(words!==1?'s':'');};
+  renderJournalHistory();
+}
+function saveJournalEntry(){
+  const response=document.getElementById('journal-response').value.trim();
+  if(!response){alert('Please write your reflection before saving.');return;}
+  const today=new Date();
+  const dayIdx=Math.floor((today-new Date(today.getFullYear(),0,0))/(1000*60*60*24))%PROMPTS.length;
+  const entry={date:today.toISOString(),prompt:PROMPTS[dayIdx],response,timestamp:Date.now()};
+  const key='journal_'+clientEmail;
+  const entries=JSON.parse(localStorage.getItem(key)||'[]');
+  entries.unshift(entry);
+  localStorage.setItem(key,JSON.stringify(entries.slice(0,50)));
+  document.getElementById('journal-response').value='';
+  document.getElementById('journal-char-count').textContent='0 words';
+  renderJournalHistory();
+}
+function renderJournalHistory(){
+  const entries=JSON.parse(localStorage.getItem('journal_'+clientEmail)||'[]');
+  const el=document.getElementById('journal-history');
+  document.getElementById('journal-count').textContent=entries.length+' entr'+(entries.length!==1?'ies':'y');
+  if(!entries.length){el.innerHTML='<div class="empty-state"><p>Your entries will appear here after you save your first reflection.</p></div>';return;}
+  el.innerHTML=entries.map(e=>`<div class="journal-entry"><div class="entry-date">${new Date(e.date).toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})}</div><div class="entry-prompt">"${e.prompt}"</div><div class="entry-response">${e.response}</div></div>`).join('');
+}
 
-  document.getElementById('metric-completed').textContent = completed.length;
-  document.getElementById('metric-remaining').textContent = Math.max(0, (sessions.length > 6 ? 10 : sessions.length > 3 ? 6 : 3) - completed.length);
+/* ── EMOTIONAL CHECK-IN ── */
+const EMOTIONS=[
+  {name:'Joy',color:'#f5c842',bg:'#fefbe6',pills:['Serenity','Contentment','Joy','Happiness','Ecstasy']},
+  {name:'Trust',color:'#6b9e6b',bg:'#eef4ee',pills:['Acceptance','Trust','Admiration','Confidence']},
+  {name:'Fear',color:'#7aab8a',bg:'#eef5f0',pills:['Apprehension','Worry','Fear','Dread','Terror']},
+  {name:'Surprise',color:'#5b9ec9',bg:'#ebf4fa',pills:['Distraction','Surprise','Amazement','Awe']},
+  {name:'Sadness',color:'#5b7ec9',bg:'#ebf0fa',pills:['Pensiveness','Melancholy','Sadness','Grief']},
+  {name:'Disgust',color:'#9b6bc9',bg:'#f4eefa',pills:['Boredom','Discomfort','Disgust','Loathing']},
+  {name:'Anger',color:'#c96b6b',bg:'#faeaea',pills:['Annoyance','Frustration','Anger','Rage']},
+  {name:'Anticipation',color:'#c9892f',bg:'#fdf3e7',pills:['Interest','Curiosity','Anticipation','Vigilance']}
+];
+let selectedEmotion=null;
+function initCheckin(){
+  const el=document.getElementById('emotion-wheel');
+  el.innerHTML=EMOTIONS.map((e,i)=>`<div class="emotion-cat" id="ecat-${i}" style="background:${e.bg};border-color:${e.color}20" onclick="selectEmoCat(${i})"><div class="emotion-cat-name" style="color:${e.color}">${e.name}</div><div class="emotion-pills">${e.pills.map((p,j)=>`<button class="emotion-pill" id="epill-${i}-${j}" onclick="event.stopPropagation();selectEmoPill(${i},${j},'${p}',this)" style="color:${e.color}">${p}</button>`).join('')}</div></div>`).join('');
+  renderCheckinHistory();
+}
+function selectEmoCat(i){selectEmoPill(i,1,EMOTIONS[i].pills[1],null);}
+function selectEmoPill(catIdx,pillIdx,name,btn){
+  document.querySelectorAll('.emotion-cat').forEach(c=>{c.style.opacity='0.5';c.style.borderColor=EMOTIONS[parseInt(c.id.split('-')[1])].color+'20';});
+  document.querySelectorAll('.emotion-pill').forEach(p=>p.classList.remove('selected'));
+  const cat=document.getElementById('ecat-'+catIdx);
+  cat.style.opacity='1';cat.style.borderColor=EMOTIONS[catIdx].color;
+  if(btn)btn.classList.add('selected');
+  selectedEmotion={name,color:EMOTIONS[catIdx].color,category:EMOTIONS[catIdx].name};
+  document.getElementById('selected-emotion-label').textContent=name;
+}
+function saveCheckin(){
+  if(!selectedEmotion){alert('Please select an emotion first.');return;}
+  const note=document.getElementById('checkin-note-input').value.trim();
+  const entry={emotion:selectedEmotion.name,category:selectedEmotion.category,color:selectedEmotion.color,note,timestamp:Date.now(),date:new Date().toISOString()};
+  const key='checkins_'+clientEmail;
+  const items=JSON.parse(localStorage.getItem(key)||'[]');
+  items.unshift(entry);
+  localStorage.setItem(key,JSON.stringify(items.slice(0,100)));
+  document.getElementById('checkin-note-input').value='';
+  selectedEmotion=null;
+  document.getElementById('selected-emotion-label').textContent='None';
+  document.querySelectorAll('.emotion-cat').forEach(c=>{c.style.opacity='1';c.style.borderColor='transparent';});
+  document.querySelectorAll('.emotion-pill').forEach(p=>p.classList.remove('selected'));
+  renderCheckinHistory();
+}
+function renderCheckinHistory(){
+  const items=JSON.parse(localStorage.getItem('checkins_'+clientEmail)||'[]');
+  const el=document.getElementById('checkin-history');
+  if(!items.length){el.innerHTML='<div class="empty-state"><p>Your check-ins will appear here.</p></div>';return;}
+  el.innerHTML=items.slice(0,20).map(i=>`<div class="checkin-item"><div class="emotion-dot" style="background:${i.color}"></div><div class="checkin-item-info"><div class="checkin-emotion">${i.emotion}</div>${i.note?`<div class="checkin-note-text">${i.note}</div>`:''}</div><div class="checkin-time">${new Date(i.date).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
+}
 
-  if (upcoming.length > 0) {
-    const next = upcoming.sort((a,b) => new Date(a.start_time) - new Date(b.start_time))[0];
-    const d = formatDate(next.start_time);
-    document.getElementById('metric-next').textContent = d.day + ' ' + d.month;
-    document.getElementById('metric-next-type').textContent = (next.event_type_name || 'Session').replace(/Aligned Order/i,'').trim();
-    renderNextSessionBanner(next);
-  } else {
-    document.getElementById('metric-next').textContent = 'None';
-    document.getElementById('metric-next-type').textContent = 'Book a new session';
+/* ── TRIGGER LOG ── */
+function initTriggers(){renderTriggerHeatmap();renderTriggerList();}
+function saveTrigger(){
+  const desc=document.getElementById('t-desc').value.trim();
+  if(!desc){alert('Please describe what triggered you.');return;}
+  const entry={description:desc,intensity:parseInt(document.getElementById('t-intensity').value),emotion:document.getElementById('t-emotion').value,context:document.getElementById('t-context').value.trim(),timestamp:Date.now(),date:new Date().toISOString()};
+  const key='triggers_'+clientEmail;
+  const items=JSON.parse(localStorage.getItem(key)||'[]');
+  items.unshift(entry);
+  localStorage.setItem(key,JSON.stringify(items));
+  document.getElementById('t-desc').value='';document.getElementById('t-emotion').value='';document.getElementById('t-context').value='';document.getElementById('t-intensity').value=5;document.getElementById('t-intensity-val').textContent='5';
+  renderTriggerHeatmap();renderTriggerList();
+}
+function renderTriggerHeatmap(){
+  const items=JSON.parse(localStorage.getItem('triggers_'+clientEmail)||'[]');
+  const el=document.getElementById('trigger-heatmap');
+  const days=84;
+  const counts={};
+  items.forEach(i=>{const d=new Date(i.date).toDateString();counts[d]=(counts[d]||0)+i.intensity;});
+  const cells=[];
+  for(let i=days-1;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const key=d.toDateString();const v=counts[key]||0;
+    let cls='heatmap-day';if(v>0&&v<=4)cls+=' l1';else if(v<=8)cls+=' l2';else if(v<=15)cls+=' l3';else if(v>15)cls+=' l4';
+    cells.push(`<div class="${cls}" title="${d.toLocaleDateString()} · ${v?'intensity '+v:'no entries'}"></div>`);
   }
-
-  const total = sessions.length;
-  const phase = total <= 1 ? 'Orientation' : total <= 3 ? 'Discovery' : total <= 6 ? 'Integration' : 'Embodiment';
-  document.getElementById('metric-phase').textContent = phase;
+  el.innerHTML=cells.join('');
+}
+function renderTriggerList(){
+  const items=JSON.parse(localStorage.getItem('triggers_'+clientEmail)||'[]');
+  const el=document.getElementById('trigger-list');
+  if(!items.length){el.innerHTML='<div class="empty-state"><p>Your logged triggers will appear here.</p></div>';return;}
+  el.innerHTML=items.slice(0,20).map(i=>`<div class="trigger-item"><div class="trigger-intensity-badge">${i.intensity}</div><div><div class="trigger-desc">${i.description}</div><div class="trigger-meta">${i.emotion?i.emotion+' · ':''} ${new Date(i.date).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
 }
 
-function renderNextSessionBanner(s) {
-  const d = formatDate(s.start_time);
-  const banner = document.getElementById('next-session-banner');
-  banner.innerHTML = `
-    <div class="next-card">
-      <div class="next-eyebrow">Upcoming session</div>
-      <div class="next-title">${s.event_type_name || 'Coaching Session'}</div>
-      <div class="next-meta">${d.full} at ${d.time}</div>
-      <div class="next-actions">
-        ${s.join_url ? `<a href="${s.join_url}" target="_blank" class="btn-primary">Join session →</a>` : ''}
-        <a href="https://calendly.com/alignedorder" target="_blank" class="btn-outline">Reschedule</a>
-      </div>
-    </div>`;
-}
-
-function renderDashboardSessions(sessions) {
-  const el = document.getElementById('recent-sessions');
-  if (!sessions.length) {
-    el.innerHTML = '<div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><p>No sessions found.<br>Book your first session below.</p><a href="https://calendly.com/alignedorder/30min" target="_blank" class="btn-primary" style="display:inline-block;margin-top:16px">Book a session →</a></div>';
+/* ── VALUES COMPASS ── */
+const ALL_VALUES=['Freedom','Security','Growth','Connection','Creativity','Achievement','Service','Authenticity','Love','Wisdom','Power','Independence','Belonging','Adventure','Harmony','Justice','Compassion','Excellence','Integrity','Balance','Purpose','Courage','Gratitude','Mindfulness','Leadership','Family','Health','Spirituality','Abundance','Joy'];
+let selectedValues=[];
+function initValues(){
+  const saved=JSON.parse(localStorage.getItem('values_'+clientEmail)||'null');
+  if(saved){
+    document.getElementById('saved-values-section').innerHTML=`<div class="saved-values-card"><div class="saved-values-title">Your current compass — saved ${new Date(saved.savedAt).toLocaleDateString('en',{month:'long',day:'numeric',year:'numeric'})}</div>${saved.ranked.map((v,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="rank-num">${i+1}</div><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">${v}</div>${saved.why[v]?`<div style="font-size:11px;color:var(--muted)">${saved.why[v]}</div>`:''}</div></div>`).join('')}<button class="btn-ghost" style="margin-top:10px" onclick="resetValues()">Update my compass</button></div>`;
+    document.getElementById('values-grid').style.display='none';
+    document.getElementById('values-counter').style.display='none';
+    document.getElementById('values-ranking-section').style.display='none';
     return;
   }
-  const sorted = [...sessions].sort((a,b) => new Date(b.start_time) - new Date(a.start_time)).slice(0,4);
-  el.innerHTML = sorted.map(s => {
-    const d = formatDate(s.start_time);
-    return `<div class="session-item">
-      <div class="session-date-block"><div class="session-day">${d.day}</div><div class="session-month">${d.month}</div></div>
-      <div class="session-info">
-        <div class="session-type">${s.event_type_name || 'Coaching Session'}</div>
-        <div class="session-time">${d.time}</div>
-        ${sessionBadge(s.status)}
-      </div>
-    </div>`;
-  }).join('');
+  renderValuesGrid();
+}
+function resetValues(){selectedValues=[];localStorage.removeItem('values_'+clientEmail);document.getElementById('saved-values-section').innerHTML='';document.getElementById('values-grid').style.display='';document.getElementById('values-counter').style.display='';document.getElementById('values-ranking-section').style.display='none';renderValuesGrid();}
+function renderValuesGrid(){
+  document.getElementById('values-grid').innerHTML=ALL_VALUES.map(v=>`<div class="value-chip ${selectedValues.includes(v)?'selected':''}" onclick="toggleValue('${v}')">${v}</div>`).join('');
+  document.getElementById('values-counter').textContent=`${selectedValues.length}/5 values selected${selectedValues.length===5?' — now rank them below':''}`;
+  document.getElementById('values-ranking-section').style.display=selectedValues.length>0?'block':'none';
+  renderValuesRanking();
+}
+function toggleValue(v){
+  if(selectedValues.includes(v)){selectedValues=selectedValues.filter(x=>x!==v);}
+  else if(selectedValues.length<5){selectedValues.push(v);}
+  renderValuesGrid();
+}
+function renderValuesRanking(){
+  document.getElementById('values-ranked').innerHTML=selectedValues.map((v,i)=>`<div class="rank-item"><div class="rank-num">${i+1}</div><div class="rank-name">${v}</div><div class="rank-why"><input type="text" placeholder="Why does ${v} matter to you?" id="why-${v.replace(/\s/g,'_')}" style="width:100%;border:1px solid var(--border);border-radius:7px;padding:6px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);background:var(--cream);outline:none"></div></div>`).join('');
+}
+function saveValues(){
+  if(!selectedValues.length){alert('Please select at least one value.');return;}
+  const why={};
+  selectedValues.forEach(v=>{const el=document.getElementById('why-'+v.replace(/\s/g,'_'));if(el)why[v]=el.value.trim();});
+  const data={ranked:selectedValues,why,savedAt:new Date().toISOString()};
+  localStorage.setItem('values_'+clientEmail,JSON.stringify(data));
+  initValues();
 }
 
-function renderSessionsPage(sessions) {
-  const el = document.getElementById('sessions-list');
-  if (!sessions.length) {
-    el.innerHTML = '<div class="section-card"><div class="card-body"><div class="empty-state"><p>No sessions found yet.<br><a href="https://calendly.com/alignedorder/30min" target="_blank" style="color:var(--sage)">Book your first session →</a></p></div></div></div>';
-    return;
+/* ── CLAUDE API ── */
+async function callClaude(messages,system,maxTokens=400){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01','anthropic-dangerous-request-origin':'https://thealignedorder.netlify.app'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system,messages})
+  });
+  const data=await res.json();
+  return(data.content&&data.content[0]&&data.content[0].text)||'';
+}
+
+/* ── SHADOW DIALOGUE ── */
+let shadowTurns=0;
+async function startShadowDialogue(){
+  const situation=document.getElementById('shadow-situation').value.trim();
+  if(!situation){alert('Please describe your triggering situation first.');return;}
+  document.getElementById('shadow-input-area').style.display='none';
+  document.getElementById('shadow-dialogue-area').style.display='block';
+  const chat=document.getElementById('shadow-chat');
+  chat.innerHTML=`<div class="shadow-msg user"><div class="shadow-avatar user">${initial}</div><div class="shadow-bubble">${situation}</div></div>`;
+  const typingEl=document.createElement('div');
+  typingEl.className='shadow-msg shadow';
+  typingEl.innerHTML=`<div class="shadow-avatar shadow">🌑</div><div class="shadow-bubble"><div class="shadow-typing"><div class="shadow-dot"></div><div class="shadow-dot"></div><div class="shadow-dot"></div></div></div>`;
+  chat.appendChild(typingEl);
+  const system=`You are the shadow self speaking to ${clientName||'the client'}. You are a Jungian guide — the part of them they've disowned, not evil but unloved. Speak in first person as their shadow. Be deeply honest, compassionate, and specific to what they've shared. Reveal the hidden wound, the disowned feeling, the pattern. Do NOT moralize. Keep it to 3-4 sentences. End with one question that invites deeper self-inquiry.`;
+  try{
+    const reply=await callClaude([{role:'user',content:situation}],system,250);
+    typingEl.remove();
+    chat.innerHTML+=`<div class="shadow-msg shadow"><div class="shadow-avatar shadow">🌑</div><div class="shadow-bubble">${reply}</div></div>`;
+    shadowTurns++;
+    if(shadowTurns>=1){showReflectionQuestions();}
+  }catch(e){typingEl.remove();chat.innerHTML+=`<div class="shadow-msg shadow"><div class="shadow-avatar shadow">🌑</div><div class="shadow-bubble">The shadow is present but quiet right now. Sit with what arose for you in this moment.</div></div>`;}
+}
+function showReflectionQuestions(){
+  document.getElementById('shadow-reflection').innerHTML=`<div class="reflection-card"><div class="reflection-title">Integration prompts</div><div class="reflection-q">What feeling did the shadow name that you've been avoiding?</div><div class="reflection-q" style="margin-top:8px">What would it mean to accept this part of yourself without judgment?</div><div class="reflection-q" style="margin-top:8px">What small action would honour what the shadow revealed?</div></div>`;
+}
+function resetShadow(){shadowTurns=0;document.getElementById('shadow-situation').value='';document.getElementById('shadow-input-area').style.display='block';document.getElementById('shadow-dialogue-area').style.display='none';document.getElementById('shadow-chat').innerHTML='';document.getElementById('shadow-reflection').innerHTML='';}
+
+/* ── DAILY REFLECTION ── */
+async function initReflection(){
+  const today=new Date().toDateString();
+  const cacheKey='reflection_'+clientEmail+'_'+today;
+  let cached=JSON.parse(localStorage.getItem(cacheKey)||'null');
+  if(cached){
+    document.getElementById('reflection-prompt-content').innerHTML=`<div class="prompt-text">${cached.prompt}</div>`;
+    document.getElementById('reflection-answer').value=cached.answer||'';
+  }else{
+    const phase=getPhase();
+    const system='You are a Jungian coaching guide. Generate ONE deep, personalised reflection question for a client in their '+phase+' phase of emotional intelligence coaching. The question should invite shadow exploration, self-compassion, or pattern recognition. Make it specific, powerful, and inviting — not generic. One sentence only. No preamble.';
+    try{
+      const prompt=await callClaude([{role:'user',content:'Generate my daily reflection question.'}],system,80);
+      localStorage.setItem(cacheKey,JSON.stringify({prompt,answer:'',date:today}));
+      document.getElementById('reflection-prompt-content').innerHTML=`<div class="prompt-text">${prompt}</div>`;
+    }catch(e){
+      const fallback='What would it mean to give yourself the same compassion today that you so freely offer to others?';
+      localStorage.setItem(cacheKey,JSON.stringify({prompt:fallback,answer:'',date:today}));
+      document.getElementById('reflection-prompt-content').innerHTML=`<div class="prompt-text">${fallback}</div>`;
+    }
   }
-  const sorted = [...sessions].sort((a,b) => new Date(b.start_time) - new Date(a.start_time));
-  el.innerHTML = `<div class="section-card">
-    <div class="card-header"><div class="card-title">${sorted.length} session${sorted.length !== 1 ? 's' : ''} total</div>
-    <a href="https://calendly.com/alignedorder/30min" target="_blank" style="font-size:12px;color:var(--sage);text-decoration:none">Book new session →</a></div>
-    <div class="card-body" style="padding:0">
-      ${sorted.map(s => {
-        const d = formatDate(s.start_time);
-        return `<div class="session-item" style="padding:16px 22px">
-          <div class="session-date-block"><div class="session-day">${d.day}</div><div class="session-month">${d.month}</div></div>
-          <div class="session-info" style="flex:1">
-            <div class="session-type">${s.event_type_name || 'Coaching Session'}</div>
-            <div class="session-time">${d.full} · ${d.time}</div>
-            ${sessionBadge(s.status)}
-          </div>
-          ${s.join_url && s.status === 'active' ? `<a href="${s.join_url}" target="_blank" class="btn-primary" style="align-self:center;font-size:12px;padding:8px 14px">Join →</a>` : ''}
-        </div>`;
-      }).join('')}
-    </div>
-  </div>`;
+  renderPastReflections();
+}
+function getPhase(){
+  const done=JSON.parse(localStorage.getItem('session_count_'+clientEmail)||'0');
+  if(done<=1)return'Orientation';if(done<=3)return'Discovery';if(done<=6)return'Integration';return'Embodiment';
+}
+function saveReflection(){
+  const answer=document.getElementById('reflection-answer').value.trim();
+  if(!answer){alert('Please write your answer first.');return;}
+  const today=new Date().toDateString();
+  const cacheKey='reflection_'+clientEmail+'_'+today;
+  let cached=JSON.parse(localStorage.getItem(cacheKey)||'null');
+  if(cached){cached.answer=answer;localStorage.setItem(cacheKey,JSON.stringify(cached));}
+  const histKey='reflections_history_'+clientEmail;
+  const hist=JSON.parse(localStorage.getItem(histKey)||'[]');
+  const existing=hist.findIndex(r=>r.date===today);
+  if(existing>=0)hist[existing].answer=answer;
+  else hist.unshift({date:today,prompt:cached?cached.prompt:'',answer});
+  localStorage.setItem(histKey,JSON.stringify(hist.slice(0,60)));
+  renderPastReflections();
+}
+function renderPastReflections(){
+  const hist=JSON.parse(localStorage.getItem('reflections_history_'+clientEmail)||'[]');
+  const el=document.getElementById('past-reflections');
+  if(!hist.length){el.innerHTML='<div class="empty-state"><p>Your past reflections will appear here after you save your first answer.</p></div>';return;}
+  const saved=hist.filter(r=>r.answer);
+  el.innerHTML=saved.map(r=>`<div class="past-ref-item"><div class="past-ref-date">${new Date(r.date).toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})}</div><div class="past-ref-q">${r.prompt}</div><div class="past-ref-a">${r.answer}</div></div>`).join('');
 }
 
-// ── Boot ─────────────────────────────────────────────────────
+/* ── REGULATION ── */
+let boxRunning=false,boxTimer=null,boxPhaseIdx=0,boxCount=4;
+const BOX_PHASES=[{label:'Inhale',count:4,scale:'scale(1.15)'},{label:'Hold',count:4,scale:'scale(1.15)'},{label:'Exhale',count:4,scale:'scale(1)'},{label:'Hold',count:4,scale:'scale(1)'}];
+let run478=false,timer478=null,idx478=0,cnt478=4;
+const PHASES478=[{label:'Inhale',count:4},{label:'Hold',count:7},{label:'Exhale',count:8}];
+const GROUNDING=[{sense:'👁️',title:'5 things you can see',instruction:'Look around and name 5 things you can see right now. Take your time.'},
+{sense:'✋',title:'4 things you can touch',instruction:'Notice 4 things you can physically feel — the chair beneath you, your clothes, the temperature of the air.'},
+{sense:'👂',title:'3 things you can hear',instruction:'Listen carefully and identify 3 distinct sounds in your environment.'},
+{sense:'👃',title:'2 things you can smell',instruction:'Notice 2 smells around you. If you can\'t smell anything, take a slow breath and notice what\'s there.'},
+{sense:'👅',title:'1 thing you can taste',instruction:'Notice 1 thing you can taste right now. Take a sip of water if you have it.'}];
+let groundingIdx=-1;
+
+function initRegulation(){
+  buildGroundingSteps();
+}
+function switchReg(id,btn){
+  document.querySelectorAll('.reg-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.reg-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('reg-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(boxRunning){stopBox();}
+  if(run478){stop478();}
+}
+function toggleBoxBreath(){if(boxRunning)stopBox();else startBox();}
+function startBox(){boxRunning=true;boxPhaseIdx=0;boxCount=BOX_PHASES[0].count;document.getElementById('box-btn').textContent='Stop';runBoxTick();}
+function stopBox(){boxRunning=false;clearTimeout(boxTimer);document.getElementById('box-phase').textContent='Done';document.getElementById('box-count').textContent='';document.getElementById('box-label').textContent='Press start to begin again';document.getElementById('box-btn').textContent='Start';document.getElementById('box-square').style.transform='';}
+function runBoxTick(){
+  if(!boxRunning)return;
+  const ph=BOX_PHASES[boxPhaseIdx];
+  document.getElementById('box-phase').textContent=ph.label;
+  document.getElementById('box-count').textContent=boxCount;
+  document.getElementById('box-label').textContent=ph.label==='Inhale'?'Breathe in slowly…':ph.label==='Exhale'?'Breathe out slowly…':'Hold gently…';
+  document.getElementById('box-square').style.transform=boxCount>0&&(ph.label==='Inhale'||ph.label==='Hold')?ph.scale:'scale(1)';
+  if(boxCount>1){boxCount--;boxTimer=setTimeout(runBoxTick,1000);}
+  else{boxPhaseIdx=(boxPhaseIdx+1)%4;boxCount=BOX_PHASES[boxPhaseIdx].count;boxTimer=setTimeout(runBoxTick,1000);}
+}
+function toggle478(){if(run478)stop478();else start478();}
+function start478(){run478=true;idx478=0;cnt478=PHASES478[0].count;document.getElementById('btn478').textContent='Stop';run478Tick();}
+function stop478(){run478=false;clearTimeout(timer478);document.getElementById('phase478').textContent='Done';document.getElementById('count478').textContent='';document.getElementById('label478').textContent='Press start to begin again';document.getElementById('btn478').textContent='Start';document.getElementById('sq478').style.transform='';}
+function run478Tick(){
+  if(!run478)return;
+  const ph=PHASES478[idx478];
+  document.getElementById('phase478').textContent=ph.label;
+  document.getElementById('count478').textContent=cnt478;
+  document.getElementById('label478').textContent=ph.label==='Inhale'?'Breathe in through your nose…':ph.label==='Hold'?'Hold your breath…':'Exhale fully through your mouth…';
+  document.getElementById('sq478').style.transform=idx478===0?'scale(1.15)':idx478===2?'scale(0.9)':'scale(1.15)';
+  if(cnt478>1){cnt478--;timer478=setTimeout(run478Tick,1000);}
+  else{idx478=(idx478+1)%3;cnt478=PHASES478[idx478].count;timer478=setTimeout(run478Tick,1000);}
+}
+function buildGroundingSteps(){
+  const el=document.getElementById('grounding-steps');
+  el.innerHTML=GROUNDING.map((g,i)=>`<div class="grounding-step ${i===0&&groundingIdx===0?'current':''}" id="gs-${i}"><div class="step-sense">${g.sense}</div><div><div class="step-title">${g.title}</div><div class="step-instruction">${g.instruction}</div></div></div>`).join('');
+}
+function nextGrounding(){
+  groundingIdx++;
+  const btn=document.getElementById('grounding-btn');
+  document.querySelectorAll('.grounding-step').forEach((el,i)=>el.classList.toggle('current',i===groundingIdx));
+  if(groundingIdx>=GROUNDING.length-1){btn.textContent='Start again';if(groundingIdx>=GROUNDING.length){groundingIdx=-1;document.querySelectorAll('.grounding-step').forEach(el=>el.classList.remove('current'));btn.textContent='Begin →';}}
+  else{btn.textContent='Next →';}
+}
+
+/* ── BOOT ── */
 loadSessions();
 </script>
 </body>
