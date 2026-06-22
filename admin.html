@@ -222,6 +222,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   <div class="nav-tab" onclick="showPage('sessions',this)">◷ Sessions</div>
   <div class="nav-tab" onclick="showPage('revenue',this)">💰 Revenue</div>
   <div class="nav-tab" onclick="showPage('growth',this)">📈 Growth</div>
+  <div class="nav-tab" onclick="showPage('blog',this)">✦ Blog</div>
 </div>
 
 <!-- ═══════════════ OVERVIEW ═══════════════ -->
@@ -458,6 +459,22 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     </div>
   </div>
 
+  <!-- CHURN + ATTRITION HEADLINE METRICS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+    <div class="metric" style="background:rgba(224,90,90,0.08);border-color:rgba(224,90,90,0.2);">
+      <div class="metric-icon">📉</div>
+      <div class="metric-label">Churn Rate</div>
+      <div class="metric-value" id="g-churn" style="color:#e05a5a;">—</div>
+      <div class="metric-sub" id="g-churnSub">clients lost after first session</div>
+    </div>
+    <div class="metric" style="background:rgba(230,120,40,0.08);border-color:rgba(230,120,40,0.2);">
+      <div class="metric-icon">🚪</div>
+      <div class="metric-label">Attrition Rate</div>
+      <div class="metric-value" id="g-attr" style="color:#e07a28;">—</div>
+      <div class="metric-sub" id="g-attrSub">avg month-on-month drop-off</div>
+    </div>
+  </div>
+
   <!-- ACQUISITION -->
   <div class="table-card" style="margin-bottom:16px;">
     <div class="table-head">
@@ -536,6 +553,22 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     </div>
   </div>
 
+  <!-- CHURN & ATTRITION CHARTS -->
+  <div class="charts-2" style="margin-bottom:16px;">
+    <div class="chart-card">
+      <div class="chart-title" style="color:#e05a5a;">📉 Churn Rate — Monthly Trend</div>
+      <div class="chart-sub">% of that month's active clients who did not return within 60 days</div>
+      <div style="position:relative;height:200px;"><canvas id="churnChart"></canvas></div>
+      <div id="churnInsight" style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 14px;background:rgba(224,90,90,0.06);border-radius:8px;border-left:2px solid rgba(224,90,90,0.4)"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title" style="color:#e07a28;">🚪 Attrition Rate — Month-on-Month</div>
+      <div class="chart-sub">% of clients active one month who were absent the next</div>
+      <div style="position:relative;height:200px;"><canvas id="attritionChart"></canvas></div>
+      <div id="attritionInsight" style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 14px;background:rgba(230,120,40,0.06);border-radius:8px;border-left:2px solid rgba(230,120,40,0.4)"></div>
+    </div>
+  </div>
+
   <div class="table-card">
     <div class="table-head"><div class="table-title">Recent Feedback</div></div>
     <table>
@@ -546,6 +579,76 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   </div>
 
 </div>
+
+<!-- BLOG MANAGER PAGE -->
+<div class="page" id="page-blog">
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:24px;align-items:start">
+
+    <!-- COMPOSE -->
+    <div>
+      <div style="background:var(--s1);border:1px solid var(--b1);border-radius:16px;overflow:hidden;margin-bottom:16px">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px;font-weight:700;color:var(--text)" id="blog-form-heading">New post</div>
+          <button onclick="resetBlogForm()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:Raleway,sans-serif">Clear</button>
+        </div>
+        <div style="padding:18px 20px">
+          <input type="hidden" id="blog-edit-id">
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Title</label>
+            <input id="blog-title" type="text" placeholder="Post title…" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:14px;outline:none">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Category</label>
+            <select id="blog-category" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:13px;outline:none">
+              <option value="">Select category…</option>
+              <option>Shadow Work</option>
+              <option>Emotional Intelligence</option>
+              <option>Nervous System</option>
+              <option>Growth Mindset</option>
+              <option>Jungian Psychology</option>
+              <option>Mindfulness</option>
+              <option>Relationships</option>
+            </select>
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Short excerpt <span style="text-transform:none;font-weight:400">(shown on card)</span></label>
+            <textarea id="blog-excerpt" placeholder="A compelling 1–2 sentence summary…" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:13px;outline:none;resize:none;height:68px;line-height:1.6"></textarea>
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Full content</label>
+            <textarea id="blog-content" placeholder="Write your full blog post here. Use double line breaks to separate paragraphs…" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:13px;outline:none;resize:vertical;height:220px;line-height:1.75"></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Read time</label>
+              <input id="blog-read-time" type="text" placeholder="3 min read" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:13px;outline:none">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px">Status</label>
+              <select id="blog-published" style="width:100%;background:rgba(255,255,255,0.04);border:1.5px solid var(--b1);border-radius:10px;padding:11px 14px;color:var(--text);font-family:Raleway,sans-serif;font-size:13px;outline:none">
+                <option value="yes">Published</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="saveBlogPost()" style="width:100%;padding:13px;background:linear-gradient(135deg,#6a4fb5,#4a3490);color:white;border:none;border-radius:99px;font-family:Raleway,sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.02em" id="blog-save-btn">Publish post →</button>
+          <div id="blog-save-msg" style="text-align:center;font-size:12px;color:#4caf7d;margin-top:10px;display:none">✓ Post published successfully</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST LIST -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--text)">Published posts <span id="blog-count" style="color:var(--muted);font-weight:400"></span></div>
+        <button onclick="loadBlogPosts()" style="font-size:11px;color:var(--gold);background:none;border:none;cursor:pointer;font-family:Raleway,sans-serif">↺ Refresh</button>
+      </div>
+      <div id="blog-list"><div style="font-size:13px;color:var(--muted);padding:20px 0;font-style:italic">Loading posts…</div></div>
+    </div>
+
+  </div>
+</div>
+
 </div>
 
 <script>
@@ -1107,6 +1210,192 @@ function renderGrowthPage() {
               y:{ticks:{color:'#666',font:{size:10},stepSize:1},grid:{color:'rgba(255,255,255,0.04)'},beginAtZero:true}}}
   });
 
+  // ── CHURN & ATTRITION ──
+  // Only count valid (non-cancelled) sessions with an email and date
+  const validSessions = allSessions.filter(s =>
+    s.email && s.status !== 'cancelled' && s.status !== 'canceled'
+  );
+
+  // Group sessions by client email with sorted dates
+  const clientDates = {};
+  validSessions.forEach(s => {
+    const email = (s.email || '').toLowerCase();
+    const d = new Date(s.start_time || s.datetime);
+    if (!email || isNaN(d)) return;
+    if (!clientDates[email]) clientDates[email] = [];
+    clientDates[email].push(d);
+  });
+  Object.values(clientDates).forEach(arr => arr.sort((a,b) => a - b));
+
+  const clientEmails    = Object.keys(clientDates);
+  const totalClientsC   = clientEmails.length;
+  const now             = new Date();
+  const ms30            = 30*24*60*60*1000;
+  const ms60            = 60*24*60*60*1000;
+
+  // CHURN: client had sessions but hasn't returned in 30d (1-session) or 60d (multi-session)
+  const churnedCount = clientEmails.filter(email => {
+    const dates = clientDates[email];
+    const last  = dates[dates.length - 1];
+    return dates.length === 1 ? (now - last) > ms30 : (now - last) > ms60;
+  }).length;
+
+  const overallChurnRate = totalClientsC ? Math.round((churnedCount / totalClientsC) * 100) : 0;
+  document.getElementById('g-churn').textContent = overallChurnRate + '%';
+  document.getElementById('g-churnSub').textContent =
+    `${churnedCount} of ${totalClientsC} client${totalClientsC !== 1 ? 's' : ''} did not return`;
+
+  // Build last 6 months array
+  const last6 = Array.from({length:6}, (_,i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+    return { label: d.toLocaleString('en',{month:'short',year:'2-digit'}), y: d.getFullYear(), m: d.getMonth() };
+  });
+
+  // MONTHLY CHURN: clients active in month M who never came back within 60 days of their last session in M
+  const monthlyChurnRates = last6.map(mo => {
+    const moStart = new Date(mo.y, mo.m, 1);
+    const moEnd   = new Date(mo.y, mo.m + 1, 0, 23, 59, 59);
+    const cutoff  = new Date(moEnd.getTime() + ms60); // need 60d to have elapsed
+    if (cutoff > now) return null; // too recent to measure
+
+    const activeInMo = clientEmails.filter(email =>
+      clientDates[email].some(d => d >= moStart && d <= moEnd)
+    );
+    if (!activeInMo.length) return null;
+
+    const churnedInMo = activeInMo.filter(email => {
+      // Did they book anything after this month?
+      return !clientDates[email].some(d => d > moEnd);
+    });
+    return Math.round((churnedInMo.length / activeInMo.length) * 100);
+  });
+
+  // ATTRITION: % of clients active in month M who were absent in month M+1
+  const monthlyAttritionRates = last6.map((mo, i) => {
+    if (i === last6.length - 1) return null; // no "next month" for the last slot
+    const nextMo  = last6[i + 1];
+    const moStart = new Date(mo.y, mo.m, 1);
+    const moEnd   = new Date(mo.y, mo.m + 1, 0, 23, 59, 59);
+    const nxStart = new Date(nextMo.y, nextMo.m, 1);
+    const nxEnd   = new Date(nextMo.y, nextMo.m + 1, 0, 23, 59, 59);
+
+    const activeInMo = clientEmails.filter(email =>
+      clientDates[email].some(d => d >= moStart && d <= moEnd)
+    );
+    if (!activeInMo.length) return null;
+
+    const absentNextMo = activeInMo.filter(email =>
+      !clientDates[email].some(d => d >= nxStart && d <= nxEnd)
+    );
+    return Math.round((absentNextMo.length / activeInMo.length) * 100);
+  });
+
+  // Average attrition (excluding nulls)
+  const validAttr = monthlyAttritionRates.filter(v => v !== null);
+  const avgAttr   = validAttr.length ? Math.round(validAttr.reduce((a,b)=>a+b,0)/validAttr.length) : 0;
+  document.getElementById('g-attr').textContent  = avgAttr + '%';
+  document.getElementById('g-attrSub').textContent = 'avg month-on-month drop-off';
+
+  // Insight copy for churn
+  const churnTrend = monthlyChurnRates.filter(v=>v!==null);
+  let churnInsightText = 'Not enough session history yet to show monthly churn trends.';
+  if (churnTrend.length >= 2) {
+    const latest = churnTrend[churnTrend.length-1];
+    const prev   = churnTrend[churnTrend.length-2];
+    const diff   = latest - prev;
+    churnInsightText = diff > 0
+      ? `⚠ Churn rose ${diff}pp last measured month. Consider follow-up outreach to one-session clients within 2 weeks.`
+      : diff < 0
+      ? `✓ Churn dropped ${Math.abs(diff)}pp — retention efforts are working. Keep nurturing first-session clients.`
+      : `Churn held steady at ${latest}%. Focus on converting first-session clients to packages.`;
+  } else if (overallChurnRate > 0) {
+    churnInsightText = overallChurnRate > 50
+      ? `⚠ ${overallChurnRate}% overall churn is high. Most clients aren't returning. Consider a post-session follow-up sequence.`
+      : `${overallChurnRate}% of clients haven't returned. Reaching out within 2 weeks of their first session can significantly reduce this.`;
+  }
+  document.getElementById('churnInsight').textContent = churnInsightText;
+
+  // Insight copy for attrition
+  let attrInsightText = 'Not enough monthly data yet to calculate attrition trends.';
+  if (validAttr.length >= 2) {
+    const latestAttr = validAttr[validAttr.length-1];
+    attrInsightText = latestAttr > 40
+      ? `⚠ ${latestAttr}% of clients didn't book the following month. A proactive scheduling nudge mid-package can help.`
+      : latestAttr > 20
+      ? `${latestAttr}% attrition last month. Offering flexible rescheduling and package reminders keeps momentum.`
+      : `✓ ${latestAttr}% attrition — most active clients are continuing. Solid momentum.`;
+  }
+  document.getElementById('attritionInsight').textContent = attrInsightText;
+
+  // CHURN CHART
+  destroyChart('churn');
+  charts['churn'] = new Chart(document.getElementById('churnChart'), {
+    type: 'line',
+    data: {
+      labels: last6.map(m => m.label),
+      datasets: [{
+        label: 'Churn %',
+        data: monthlyChurnRates,
+        borderColor: '#e05a5a',
+        backgroundColor: 'rgba(224,90,90,0.12)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointBackgroundColor: monthlyChurnRates.map(v => v===null ? 'transparent' : '#e05a5a'),
+        pointRadius: 4,
+        spanGaps: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y !== null ? ctx.parsed.y + '%' : 'Insufficient data' } }
+      },
+      scales: {
+        x: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { beginAtZero: true, max: 100,
+          ticks: { color: '#666', font: { size: 10 }, callback: v => v + '%' },
+          grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+
+  // ATTRITION CHART
+  destroyChart('attrition');
+  charts['attrition'] = new Chart(document.getElementById('attritionChart'), {
+    type: 'bar',
+    data: {
+      labels: last6.map(m => m.label),
+      datasets: [{
+        label: 'Attrition %',
+        data: monthlyAttritionRates,
+        backgroundColor: monthlyAttritionRates.map(v =>
+          v === null ? 'rgba(255,255,255,0.04)' :
+          v > 50 ? 'rgba(224,90,90,0.6)' :
+          v > 25 ? 'rgba(230,120,40,0.6)' : 'rgba(76,175,125,0.6)'
+        ),
+        borderColor: monthlyAttritionRates.map(v =>
+          v === null ? 'rgba(255,255,255,0.06)' :
+          v > 50 ? '#e05a5a' : v > 25 ? '#e07a28' : '#4caf7d'
+        ),
+        borderWidth: 1.5,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.parsed.y !== null ? ctx.parsed.y + '%' : 'Insufficient data' } }
+      },
+      scales: {
+        x: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { beginAtZero: true, max: 100,
+          ticks: { color: '#666', font: { size: 10 }, callback: v => v + '%' },
+          grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+
   // Feedback table
   const fbBody = document.getElementById('feedbackTableBody');
   const fbEmpty = document.getElementById('feedbackTableEmpty');
@@ -1137,6 +1426,90 @@ function showPage(page, tab) {
   document.getElementById('pageTitle').textContent = titles[page]||'';
   if(page==='revenue') updateRevenue();
   if(page==='growth') renderGrowthPage();
+  if(page==='blog') loadBlogPosts();
+  const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager'};
+  document.getElementById('pageTitle').textContent = allTitles[page]||'';
+}
+
+// ── BLOG MANAGER ──────────────────────────────────
+async function loadBlogPosts() {
+  try {
+    const res = await fetch(LEADS_API + '?sheet=blogs');
+    const raw = await res.json();
+    const posts = Array.isArray(raw) ? raw : [];
+    const el = document.getElementById('blog-list');
+    document.getElementById('blog-count').textContent = '(' + posts.length + ')';
+    if (!posts.length) {
+      el.innerHTML = '<div style="font-size:13px;color:var(--muted);padding:20px 0;font-style:italic">No posts yet. Write your first one →</div>';
+      return;
+    }
+    const sorted = posts.sort((a,b) => new Date(b.created_at||b.date) - new Date(a.created_at||a.date));
+    el.innerHTML = sorted.map((p,i) => `
+      <div style="background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;margin-bottom:10px">
+        <div style="display:flex;align-items:flex-start;gap:10px">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+              <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(106,79,181,0.15);color:#9b7fd4;letter-spacing:.05em">${p.category||'General'}</span>
+              <span style="font-size:10px;color:var(--muted)">${p.published==='yes'?'● Published':'○ Draft'}</span>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;font-family:Cinzel,serif">${p.title||'Untitled'}</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">${(p.excerpt||'').slice(0,90)}${(p.excerpt||'').length>90?'…':''}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:6px">${p.read_time||''} · ${p.date?new Date(p.date).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}):''}</div>
+          </div>
+          <button onclick="deleteBlogPost('${p.created_at||i}')" style="background:rgba(224,90,90,0.1);border:1px solid rgba(224,90,90,0.2);color:#e05a5a;border-radius:7px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:Raleway,sans-serif;flex-shrink:0">Delete</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('blog-list').innerHTML = '<div style="font-size:13px;color:var(--muted)">Could not load posts. Check your connection.</div>';
+  }
+}
+
+async function saveBlogPost() {
+  const title   = document.getElementById('blog-title').value.trim();
+  const content = document.getElementById('blog-content').value.trim();
+  const excerpt = document.getElementById('blog-excerpt').value.trim();
+  if (!title || !content) { alert('Please add a title and content.'); return; }
+  const btn = document.getElementById('blog-save-btn');
+  btn.textContent = 'Publishing…'; btn.disabled = true;
+  const wordCount = content.trim().split(/\s+/).length;
+  const readTime  = Math.max(1, Math.round(wordCount/200)) + ' min read';
+  const post = {
+    sheet: 'blogs',
+    title,
+    excerpt: excerpt || content.slice(0,120) + '…',
+    content,
+    category: document.getElementById('blog-category').value || 'General',
+    author: 'Matyyx Zander Tahero',
+    date: new Date().toISOString().split('T')[0],
+    read_time: document.getElementById('blog-read-time').value.trim() || readTime,
+    published: document.getElementById('blog-published').value,
+    created_at: new Date().toISOString()
+  };
+  try {
+    await fetch(LEADS_API, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(post) });
+    document.getElementById('blog-save-msg').style.display = 'block';
+    setTimeout(() => { document.getElementById('blog-save-msg').style.display = 'none'; }, 3000);
+    resetBlogForm();
+    loadBlogPosts();
+  } catch(e) { alert('Error saving post. Try again.'); }
+  btn.textContent = 'Publish post →'; btn.disabled = false;
+}
+
+async function deleteBlogPost(id) {
+  if (!confirm('Delete this post?')) return;
+  try {
+    await fetch(LEADS_API, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify({ sheet:'blogs', _action:'delete', created_at:id }) });
+    loadBlogPosts();
+  } catch(e) { alert('Could not delete. Remove it directly from Google Sheets.'); }
+}
+
+function resetBlogForm() {
+  ['blog-title','blog-excerpt','blog-content','blog-read-time'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('blog-category').value = '';
+  document.getElementById('blog-published').value = 'yes';
+  document.getElementById('blog-edit-id').value = '';
+  document.getElementById('blog-form-heading').textContent = 'New post';
+  document.getElementById('blog-save-btn').textContent = 'Publish post →';
 }
 
 // ── INIT ──────────────────────────────────────────
