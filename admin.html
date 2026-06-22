@@ -459,8 +459,8 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     </div>
   </div>
 
-  <!-- CHURN + ATTRITION HEADLINE METRICS -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+  <!-- CHURN + ATTRITION + NET GROWTH HEADLINE METRICS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
     <div class="metric" style="background:rgba(224,90,90,0.08);border-color:rgba(224,90,90,0.2);">
       <div class="metric-icon">📉</div>
       <div class="metric-label">Churn Rate</div>
@@ -472,6 +472,12 @@ tr:hover td{background:rgba(201,169,110,0.03);}
       <div class="metric-label">Attrition Rate</div>
       <div class="metric-value" id="g-attr" style="color:#e07a28;">—</div>
       <div class="metric-sub" id="g-attrSub">avg month-on-month drop-off</div>
+    </div>
+    <div class="metric" id="g-growth-card" style="background:rgba(76,175,125,0.08);border-color:rgba(76,175,125,0.2);">
+      <div class="metric-icon">📈</div>
+      <div class="metric-label">Net Growth Rate</div>
+      <div class="metric-value" id="g-netgrowth" style="color:#4caf7d;">—</div>
+      <div class="metric-sub" id="g-netgrowthSub">new minus churned this period</div>
     </div>
   </div>
 
@@ -567,6 +573,19 @@ tr:hover td{background:rgba(201,169,110,0.03);}
       <div style="position:relative;height:200px;"><canvas id="attritionChart"></canvas></div>
       <div id="attritionInsight" style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 14px;background:rgba(230,120,40,0.06);border-radius:8px;border-left:2px solid rgba(230,120,40,0.4)"></div>
     </div>
+  </div>
+
+  <!-- NET GROWTH RATE — FULL WIDTH -->
+  <div class="chart-card" style="margin-bottom:16px;">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <div class="chart-title" style="color:#4caf7d;">📈 Net Growth Rate — Monthly</div>
+        <div class="chart-sub">(New clients acquired − Clients churned) ÷ Active client base × 100</div>
+      </div>
+      <div id="g-growth-summary" style="text-align:right;font-size:12px;color:var(--muted);line-height:1.7;"></div>
+    </div>
+    <div style="position:relative;height:220px;margin-top:16px;"><canvas id="netGrowthChart"></canvas></div>
+    <div id="growthInsight" style="margin-top:12px;font-size:12px;color:var(--muted);line-height:1.6;padding:10px 14px;background:rgba(76,175,125,0.06);border-radius:8px;border-left:2px solid rgba(76,175,125,0.35)"></div>
   </div>
 
   <div class="table-card">
@@ -1326,6 +1345,168 @@ function renderGrowthPage() {
       : `✓ ${latestAttr}% attrition — most active clients are continuing. Solid momentum.`;
   }
   document.getElementById('attritionInsight').textContent = attrInsightText;
+
+  // ── NET GROWTH RATE ──
+  // For each month: (new clients − churned clients) / active base at start × 100
+  const monthlyNetGrowth = last6.map((mo, i) => {
+    const moStart = new Date(mo.y, mo.m, 1);
+    const moEnd   = new Date(mo.y, mo.m + 1, 0, 23, 59, 59);
+
+    // New = first session ever falls in this month
+    const newThisMo = clientEmails.filter(email => {
+      const first = clientDates[email][0];
+      return first >= moStart && first <= moEnd;
+    }).length;
+
+    // Churned = had sessions before this month, none in this month or later
+    // (only measure if 60 days have elapsed since end of month)
+    const cutoff = new Date(moEnd.getTime() + ms60);
+    let churnedThisMo = 0;
+    if (cutoff <= now) {
+      churnedThisMo = clientEmails.filter(email => {
+        const first = clientDates[email][0];
+        const last  = clientDates[email][clientDates[email].length - 1];
+        // Was active before this month
+        if (first >= moStart) return false;
+        // Last session was before this month and never returned
+        return last < moStart;
+      }).length;
+    }
+
+    // Active base = unique clients with at least one session before this month
+    const activeBase = clientEmails.filter(email =>
+      clientDates[email][0] < moStart
+    ).length;
+
+    const base = Math.max(activeBase + newThisMo, 1);
+    const net  = newThisMo - churnedThisMo;
+    const rate = Math.round((net / base) * 100);
+    return { rate, newThisMo, churnedThisMo, net };
+  });
+
+  // Current period net growth rate (most recent measurable month)
+  const measurableGrowth = monthlyNetGrowth.filter(m => m !== null);
+  const latestGrowth     = monthlyNetGrowth[monthlyNetGrowth.length - 1];
+  const latestRate       = latestGrowth ? latestGrowth.rate : 0;
+  const netGrowthEl      = document.getElementById('g-netgrowth');
+  netGrowthEl.textContent = (latestRate >= 0 ? '+' : '') + latestRate + '%';
+  netGrowthEl.style.color = latestRate > 0 ? '#4caf7d' : latestRate < 0 ? '#e05a5a' : '#a87a28';
+
+  // Update metric card border colour
+  const growthCard = document.getElementById('g-growth-card');
+  if (latestRate > 0) {
+    growthCard.style.background = 'rgba(76,175,125,0.08)';
+    growthCard.style.borderColor = 'rgba(76,175,125,0.25)';
+  } else if (latestRate < 0) {
+    growthCard.style.background = 'rgba(224,90,90,0.08)';
+    growthCard.style.borderColor = 'rgba(224,90,90,0.25)';
+  } else {
+    growthCard.style.background = 'rgba(168,122,40,0.08)';
+    growthCard.style.borderColor = 'rgba(168,122,40,0.25)';
+  }
+
+  const totalNewAll   = monthlyNetGrowth.reduce((s,m) => s + m.newThisMo, 0);
+  const totalChurnAll = monthlyNetGrowth.reduce((s,m) => s + m.churnedThisMo, 0);
+  document.getElementById('g-netgrowthSub').textContent =
+    `+${totalNewAll} acquired · −${totalChurnAll} churned (6 mo)`;
+
+  document.getElementById('g-growth-summary').innerHTML =
+    `<span style="color:#4caf7d;">+${totalNewAll} new</span> &nbsp;·&nbsp; ` +
+    `<span style="color:#e05a5a;">−${totalChurnAll} churned</span> &nbsp;·&nbsp; ` +
+    `<span style="color:var(--gold);font-weight:600;">Net: ${totalNewAll - totalChurnAll > 0 ? '+' : ''}${totalNewAll - totalChurnAll} clients</span> over 6 months`;
+
+  // Growth insight
+  const positiveMonths = monthlyNetGrowth.filter(m => m.rate > 0).length;
+  const negativeMonths = monthlyNetGrowth.filter(m => m.rate < 0).length;
+  let growthInsightText;
+  if (totalNewAll === 0 && totalChurnAll === 0) {
+    growthInsightText = 'No session data yet. Net Growth Rate will populate as clients book and return — or don\'t.';
+  } else if (latestRate > 10) {
+    growthInsightText = `✓ Strong growth at +${latestRate}% this period. You're acquiring clients faster than you're losing them. Keep the onboarding and follow-up tight to protect this momentum.`;
+  } else if (latestRate > 0) {
+    growthInsightText = `↗ Positive but modest growth at +${latestRate}%. You're growing — focus on converting one-session clients to packages to accelerate the compounding effect.`;
+  } else if (latestRate === 0) {
+    growthInsightText = `→ Flat growth this period. Acquisition and churn are cancelling each other out — a "leaky bucket" pattern. Plugging churn (follow-up within 2 weeks of first session) is usually faster than increasing acquisition.`;
+  } else {
+    growthInsightText = `⚠ Negative growth at ${latestRate}% — more clients are leaving than arriving. Priority: reduce churn by reaching out to inactive clients and checking in on those who've only had one session.`;
+  }
+  if (positiveMonths > negativeMonths && totalNewAll > 0) {
+    growthInsightText += ` ${positiveMonths} of 6 months were growth months.`;
+  }
+  document.getElementById('growthInsight').textContent = growthInsightText;
+
+  // NET GROWTH CHART
+  destroyChart('netGrowth');
+  const growthRates  = monthlyNetGrowth.map(m => m.rate);
+  const pointColors  = growthRates.map(r => r > 0 ? '#4caf7d' : r < 0 ? '#e05a5a' : '#a87a28');
+  charts['netGrowth'] = new Chart(document.getElementById('netGrowthChart'), {
+    type: 'line',
+    data: {
+      labels: last6.map(m => m.label),
+      datasets: [
+        {
+          label: 'Net Growth %',
+          data: growthRates,
+          borderColor: '#4caf7d',
+          backgroundColor: ctx => {
+            const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
+            g.addColorStop(0,  'rgba(76,175,125,0.18)');
+            g.addColorStop(0.5,'rgba(76,175,125,0.05)');
+            g.addColorStop(1,  'rgba(76,175,125,0)');
+            return g;
+          },
+          fill: true,
+          tension: 0.4,
+          borderWidth: 2.5,
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          spanGaps: false
+        },
+        {
+          // Zero reference line
+          label: 'Break-even',
+          data: last6.map(() => 0),
+          borderColor: 'rgba(255,255,255,0.12)',
+          borderWidth: 1,
+          borderDash: [4,4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              if (ctx.datasetIndex === 1) return 'Break-even: 0%';
+              const m = monthlyNetGrowth[ctx.dataIndex];
+              return [
+                `Net rate: ${ctx.parsed.y > 0 ? '+' : ''}${ctx.parsed.y}%`,
+                `New clients: +${m.newThisMo}`,
+                `Churned: −${m.churnedThisMo}`,
+                `Net: ${m.net >= 0 ? '+' : ''}${m.net}`
+              ];
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#666', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: {
+          ticks: { color: '#666', font: { size: 10 }, callback: v => (v > 0 ? '+' : '') + v + '%' },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          afterFit: axis => { axis.paddingTop = 10; }
+        }
+      }
+    }
+  });
 
   // CHURN CHART
   destroyChart('churn');
