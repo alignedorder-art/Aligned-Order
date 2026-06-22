@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client Portal — Aligned Order</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --cream:#fbf8f2;
+  --parchment:#f3ece1;
+  --sage:#6b7d5a;
+  --sage-dark:#4a5940;
+  --terracotta:#c9692f;
+  --ink:#231f18;
+  --muted:#6b6560;
+  --border:rgba(35,31,24,0.1);
+}
+body{font-family:'Inter',sans-serif;background:var(--cream);min-height:100vh;display:flex;flex-direction:column;color:var(--ink)}
+
+/* ── Header ── */
+.header{padding:20px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.logo-mark{width:34px;height:34px;background:var(--sage);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.logo-mark svg{width:18px;height:18px}
+.logo-name{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--ink)}
+.back-link{font-size:13px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .15s}
+.back-link:hover{color:var(--ink)}
+
+/* ── Layout ── */
+.main{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 73px)}
+
+/* ── Left panel ── */
+.panel-left{background:var(--sage-dark);padding:60px 56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.panel-left::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.04)}
+.panel-left::after{content:'';position:absolute;bottom:-60px;left:-40px;width:200px;height:200px;border-radius:50%;background:rgba(201,105,47,0.15)}
+.panel-eyebrow{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:16px}
+.panel-headline{font-family:'Fraunces',serif;font-size:36px;font-weight:600;color:#fff;line-height:1.2;margin-bottom:20px}
+.panel-headline em{color:#e8c4a0;font-style:italic}
+.panel-sub{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.65;max-width:340px}
+.panel-features{display:flex;flex-direction:column;gap:14px;margin-top:40px;position:relative;z-index:1}
+.feature-item{display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,0.8)}
+.feature-dot{width:8px;height:8px;border-radius:50%;background:var(--terracotta);flex-shrink:0}
+.panel-quote{border-left:2px solid rgba(201,105,47,0.6);padding-left:16px;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;position:relative;z-index:1}
+
+/* ── Right panel ── */
+.panel-right{background:white;display:flex;align-items:center;justify-content:center;padding:60px 56px}
+.login-box{width:100%;max-width:380px}
+.box-eyebrow{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--sage);margin-bottom:14px}
+.box-title{font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--ink);margin-bottom:6px;line-height:1.2}
+.box-sub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;font-weight:500;color:var(--ink);margin-bottom:7px}
+.form-group input{width:100%;padding:12px 15px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:var(--cream);transition:border-color .15s,background .15s;outline:none}
+.form-group input:focus{border-color:var(--sage);background:#fff}
+.form-group input::placeholder{color:#bbb}
+
+.error-msg{background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:18px;display:none}
+.lockout-msg{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:18px;display:none}
+
+.btn-login{width:100%;padding:13px;background:var(--sage);color:white;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px;transition:background .2s}
+.btn-login:hover{background:var(--sage-dark)}
+.btn-login:disabled{opacity:.6;cursor:not-allowed}
+
+.divider{border:none;border-top:1px solid var(--border);margin:26px 0}
+.footer-links{display:flex;flex-direction:column;gap:10px;text-align:center}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s}
+.footer-links a span{color:var(--terracotta);font-weight:500}
+.footer-links a:hover span{text-decoration:underline}
+
+@media(max-width:768px){
+  .main{grid-template-columns:1fr}
+  .panel-left{display:none}
+  .panel-right{padding:40px 24px}
+  .header{padding:16px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="https://alignedorder.com" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+      </svg>
+    </div>
+    <span class="logo-name">Aligned Order</span>
+  </a>
+  <a href="https://alignedorder.com" class="back-link">← Back to website</a>
+</div>
+
+<div class="main">
+  <div class="panel-left">
+    <div>
+      <div class="panel-eyebrow">Your coaching journey</div>
+      <h1 class="panel-headline">Track your <em>progress.</em><br>Own your growth.</h1>
+      <p class="panel-sub">Your private space to review sessions, log triggers, and use the tools that accelerate your transformation between calls.</p>
+      <div class="panel-features">
+        <div class="feature-item"><div class="feature-dot"></div>Session history & coaching notes</div>
+        <div class="feature-item"><div class="feature-dot"></div>Trigger log & pattern tracker</div>
+        <div class="feature-item"><div class="feature-dot"></div>Shadow Work Journal</div>
+        <div class="feature-item"><div class="feature-dot"></div>AI-powered reflection tools</div>
+        <div class="feature-item"><div class="feature-dot"></div>Your Hero's Journey map</div>
+      </div>
+    </div>
+    <div class="panel-quote">
+      "The unconscious mind has been running the show.<br>This is where you take it back."
+    </div>
+  </div>
+
+  <div class="panel-right">
+    <div class="login-box">
+      <div class="box-eyebrow">Client Portal</div>
+      <h2 class="box-title">Welcome back</h2>
+      <p class="box-sub">Sign in to access your coaching journey and personal tools.</p>
+
+      <div class="error-msg" id="error-msg">Incorrect email or password. Please try again.</div>
+      <div class="lockout-msg" id="lockout-msg"></div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="your@email.com" autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button class="btn-login" id="login-btn" onclick="handleLogin()">Sign in to my portal</button>
+
+      <hr class="divider">
+
+      <div class="footer-links">
+        <a href="https://thealignedorder.netlify.app">New client? <span>Take the free assessment →</span></a>
+        <a href="https://thealignedorder.netlify.app/login">Team member? <span>Team login →</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Client accounts ──────────────────────────────────────────
+// Add new clients here: 'email': { password: 'pass', name: 'First Name' }
+const CLIENTS = {
+  'client@example.com': { password: 'Welcome1234', name: 'Test Client' }
+};
+
+// ── Auth config ──────────────────────────────────────────────
+const MAX_ATTEMPTS    = 5;
+const LOCKOUT_MS      = 15 * 60 * 1000;
+const KEY_AUTH        = 'clientAuth';
+const KEY_EMAIL       = 'clientEmail';
+const KEY_NAME        = 'clientName';
+const KEY_LOCKOUT     = 'client_lockout';
+const KEY_ATTEMPTS    = 'client_attempts';
+
+// Redirect if already logged in
+if (localStorage.getItem(KEY_AUTH) === 'true') {
+  window.location.href = '/portal';
+}
+
+function handleLogin() {
+  const email    = document.getElementById('email').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const errorEl  = document.getElementById('error-msg');
+  const lockEl   = document.getElementById('lockout-msg');
+  const btn      = document.getElementById('login-btn');
+
+  errorEl.style.display = 'none';
+  lockEl.style.display  = 'none';
+
+  // Check lockout
+  const lockedUntil = localStorage.getItem(KEY_LOCKOUT);
+  if (lockedUntil && Date.now() < parseInt(lockedUntil)) {
+    const mins = Math.ceil((parseInt(lockedUntil) - Date.now()) / 60000);
+    lockEl.textContent = `Too many failed attempts. Try again in ${mins} minute${mins > 1 ? 's' : ''}.`;
+    lockEl.style.display = 'block';
+    return;
+  }
+
+  const client = CLIENTS[email];
+  if (client && client.password === password) {
+    localStorage.removeItem(KEY_LOCKOUT);
+    localStorage.removeItem(KEY_ATTEMPTS);
+    localStorage.setItem(KEY_AUTH,  'true');
+    localStorage.setItem(KEY_EMAIL, email);
+    localStorage.setItem(KEY_NAME,  client.name);
+    btn.textContent = 'Signing in…';
+    btn.disabled    = true;
+    window.location.href = '/portal';
+  } else {
+    let attempts = parseInt(localStorage.getItem(KEY_ATTEMPTS) || '0') + 1;
+    localStorage.setItem(KEY_ATTEMPTS, attempts);
+    if (attempts >= MAX_ATTEMPTS) {
+      localStorage.setItem(KEY_LOCKOUT, Date.now() + LOCKOUT_MS);
+      localStorage.removeItem(KEY_ATTEMPTS);
+      lockEl.textContent = 'Too many failed attempts. Locked out for 15 minutes.';
+      lockEl.style.display = 'block';
+    } else {
+      errorEl.style.display = 'block';
+    }
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+</script>
+</body>
+</html>
