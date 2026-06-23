@@ -298,6 +298,33 @@ h1,h2,h3{font-family:'Cinzel',serif}
 .blog-filter.active{background:linear-gradient(135deg,var(--violet),var(--violet-d));color:white;border-color:var(--violet)}
 .blog-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:1.7}
 
+/* ── COURSES PAGE ── */
+.course-hero{background:linear-gradient(135deg,#1a0f3d,#3d2075);border:1px solid rgba(106,79,181,0.4);border-radius:18px;padding:32px 36px;margin-bottom:20px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.course-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,75,0.14) 0%,transparent 65%)}
+.course-hero::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(155,127,212,0.12) 0%,transparent 65%)}
+.course-hero-text{position:relative;z-index:1;flex:1}
+.course-hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,236,255,0.45);margin-bottom:10px}
+.course-hero-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#f0ecff;margin-bottom:8px;line-height:1.3;letter-spacing:.02em}
+.course-hero-desc{font-size:13px;color:rgba(240,236,255,0.65);line-height:1.7;max-width:480px;margin-bottom:20px}
+.course-hero-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,var(--gold-l),var(--gold));color:var(--ink);border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;letter-spacing:.02em;box-shadow:0 6px 20px rgba(168,122,40,0.35);transition:transform .15s,box-shadow .15s;z-index:1;position:relative}
+.course-hero-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(168,122,40,0.45)}
+.course-hero-icon{width:90px;height:90px;border-radius:18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.course-hero-icon svg{width:42px;height:42px;opacity:.8}
+.course-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+.course-info-card{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:16px 18px}
+.course-info-label{font-size:10px;font-weight:700;color:var(--muted2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.course-info-value{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--ink)}
+.course-info-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.course-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.course-step{background:var(--card);border:1px solid var(--card-border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:border-color .2s}
+.course-step:hover{border-color:rgba(106,79,181,0.3)}
+.step-num-badge{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:white;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:13px;font-weight:700;flex-shrink:0}
+.step-content{flex:1}
+.step-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.step-action{font-size:11px;color:var(--violet-l);font-weight:600;flex-shrink:0}
+.kajabi-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(106,79,181,0.1);border:1px solid rgba(106,79,181,0.25);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--violet-l);margin-bottom:20px}
+
 /* ── PROGRESS PAGE ── */
 .progress-coming{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:48px;text-align:center;max-width:520px}
 
@@ -356,6 +383,10 @@ h1,h2,h3{font-family:'Cinzel',serif}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
     My Tools
   </a>
+  <a class="nav-item" data-page="courses" onclick="showPage('courses',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    My Courses
+  </a>
   <a class="nav-item" data-page="progress" onclick="showPage('progress',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     My Progress<span class="soon">soon</span>
@@ -403,6 +434,7 @@ h1,h2,h3{font-family:'Cinzel',serif}
         <div class="card-body">
           <div style="display:flex;flex-direction:column;gap:8px">
             <button class="btn-sage" style="width:100%;justify-content:flex-start" onclick="showPage('journal',document.querySelector('[data-page=journal]'))">✦ Shadow Work Journal</button>
+            <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('courses',document.querySelector('[data-page=courses]'))">✦ My Kajabi Course</button>
             <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('checkin',document.querySelector('[data-page=checkin]'))">✦ Emotional Check-in</button>
             <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('reflection',document.querySelector('[data-page=reflection]'))">✦ Daily Reflection</button>
             <button class="btn-outline" style="width:100%;justify-content:flex-start" onclick="showPage('shadow',document.querySelector('[data-page=shadow]'))">✦ Shadow Dialogue</button>
@@ -661,6 +693,97 @@ h1,h2,h3{font-family:'Cinzel',serif}
     </div>
   </div>
 
+  <!-- MY COURSES -->
+  <div class="page" id="page-courses">
+    <h2 class="tool-page-title">My Courses</h2>
+    <p class="tool-page-sub">Your enrolled courses on Kajabi — continue your learning between sessions.</p>
+    <div style="height:18px"></div>
+
+    <div class="kajabi-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Powered by Kajabi
+    </div>
+
+    <div class="course-hero">
+      <div class="course-hero-text">
+        <div class="course-hero-eyebrow">✦ Enrolled course</div>
+        <div class="course-hero-title">Aligned Order — Sessions</div>
+        <div class="course-hero-desc">Your dedicated learning space to deepen the work we do together in each coaching session. Access materials, exercises, and frameworks to accelerate your growth between calls.</div>
+        <a href="https://matyyx-t.mykajabi.com/products/test-sessions" target="_blank" class="course-hero-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Access Course →
+        </a>
+      </div>
+      <div class="course-hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(240,236,255,0.7)" stroke-width="1.5" stroke-linecap="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="course-info-grid">
+      <div class="course-info-card">
+        <div class="course-info-label">Platform</div>
+        <div class="course-info-value" style="font-size:15px;font-family:'Raleway',sans-serif;font-weight:700">Kajabi</div>
+        <div class="course-info-sub">Hosted learning platform</div>
+      </div>
+      <div class="course-info-card">
+        <div class="course-info-label">Format</div>
+        <div class="course-info-value" style="font-size:15px;font-family:'Raleway',sans-serif;font-weight:700">Self-paced</div>
+        <div class="course-info-sub">Go at your own speed</div>
+      </div>
+      <div class="course-info-card">
+        <div class="course-info-label">Access</div>
+        <div class="course-info-value" style="font-size:15px;font-family:'Raleway',sans-serif;font-weight:700">Lifetime</div>
+        <div class="course-info-sub">Always available to you</div>
+      </div>
+      <div class="course-info-card">
+        <div class="course-info-label">Support</div>
+        <div class="course-info-value" style="font-size:15px;font-family:'Raleway',sans-serif;font-weight:700">1-on-1</div>
+        <div class="course-info-sub">Plus your coaching sessions</div>
+      </div>
+    </div>
+
+    <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--ink);letter-spacing:.03em;margin-bottom:12px">How sessions and your course work together</div>
+    <div class="course-steps">
+      <div class="course-step">
+        <div class="step-num-badge">1</div>
+        <div class="step-content">
+          <div class="step-title">Complete your coaching session</div>
+          <div class="step-desc">Each live session covers a core area — triggers, nervous system, shadow work, or pattern breaking.</div>
+        </div>
+        <div class="step-action">↓ Then</div>
+      </div>
+      <div class="course-step">
+        <div class="step-num-badge">2</div>
+        <div class="step-content">
+          <div class="step-title">Go deeper in the course</div>
+          <div class="step-desc">Your Kajabi course contains exercises, frameworks, and content that reinforce what we worked on together.</div>
+        </div>
+        <div class="step-action">↓ Then</div>
+      </div>
+      <div class="course-step">
+        <div class="step-num-badge">3</div>
+        <div class="step-content">
+          <div class="step-title">Return with your insights</div>
+          <div class="step-desc">Bring what came up in the course to your next session. The combination creates accelerated, lasting change.</div>
+        </div>
+        <div class="step-action">🎯 Done</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px">Ready to continue your work?</div>
+        <div style="font-size:13px;color:var(--muted)">Your course is waiting. Pick up where you left off.</div>
+      </div>
+      <a href="https://matyyx-t.mykajabi.com/products/test-sessions" target="_blank" class="btn-primary" style="white-space:nowrap">
+        Open Kajabi course →
+      </a>
+    </div>
+  </div>
+
   <!-- PROGRESS -->
   <div class="page" id="page-progress">
     <h2 style="font-family:'Cinzel',serif;font-size:22px;margin-bottom:6px">My Progress</h2>
@@ -687,7 +810,7 @@ document.getElementById('topbar-greeting').textContent = 'Hi, '+(clientName||'th
 document.getElementById('welcome-name').textContent = 'Welcome back, '+(clientName||'there')+' 👋';
 
 /* ── NAV ── */
-const pageTitles = {dashboard:'Dashboard',sessions:'My Sessions',journal:'Shadow Journal',reading:'Reading Space',tools:'My Tools',checkin:'Emotional Check-in',triggers:'Trigger Log',values:'Values Compass',shadow:'Shadow Dialogue',reflection:'Daily Reflection',regulation:'Regulation Exercises',progress:'My Progress'};
+const pageTitles = {dashboard:'Dashboard',sessions:'My Sessions',journal:'Shadow Journal',reading:'Reading Space',tools:'My Tools',courses:'My Courses',checkin:'Emotional Check-in',triggers:'Trigger Log',values:'Values Compass',shadow:'Shadow Dialogue',reflection:'Daily Reflection',regulation:'Regulation Exercises',progress:'My Progress'};
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
