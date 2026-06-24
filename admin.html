@@ -240,6 +240,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   <div class="nav-tab" onclick="showPage('revenue',this)">💰 Revenue</div>
   <div class="nav-tab" onclick="showPage('growth',this)">📈 Growth</div>
   <div class="nav-tab" onclick="showPage('blog',this)">✦ Blog</div>
+  <div class="nav-tab" onclick="showPage('courses',this)">🎓 Courses</div>
 </div>
 
 <!-- ═══════════════ OVERVIEW ═══════════════ -->
@@ -685,6 +686,27 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     <div id="feedbackTableEmpty" class="empty-state" style="display:none;">No feedback submitted yet. Share the feedback link after completed sessions.</div>
   </div>
 
+</div>
+
+<!-- COURSES MANAGER -->
+<!-- COURSES MANAGER -->
+<div class="page" id="page-courses">
+  <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:24px;align-items:start;">
+
+    <!-- COURSE LIST + STATS -->
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;font-family:'Cinzel',serif;letter-spacing:.04em;">Course Library</div>
+      <div id="admin-course-list"></div>
+    </div>
+
+    <!-- COURSE DETAIL / EDITOR -->
+    <div>
+      <div id="admin-course-detail" style="background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:20px;">
+        <div style="font-size:13px;color:var(--muted);text-align:center;padding:20px 0;">Select a course to view details and manage lessons</div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <!-- BLOG MANAGER PAGE -->
@@ -1720,11 +1742,106 @@ function showPage(page, tab) {
   if(page==='revenue') updateRevenue();
   if(page==='growth') renderGrowthPage();
   if(page==='blog') loadBlogPosts();
-  const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager'};
+  if(page==='courses') loadAdminCourses();
+  const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager',courses:'Course Manager'};
   document.getElementById('pageTitle').textContent = allTitles[page]||'';
 }
 
 // ── BLOG MANAGER ──────────────────────────────────
+
+// ── COURSE MANAGER ─────────────────────────────────────────────────────────
+const ADMIN_COURSES = [
+  { id:'triggers', title:'Understanding Your Triggers', category:'Foundations', modules:3, lessons:9, color:'#6a4fb5' },
+  { id:'shadow',   title:'Shadow Work Fundamentals',   category:'Jungian Psychology', modules:3, lessons:9, color:'#3d2075' },
+  { id:'nervous',  title:'Nervous System Regulation',  category:'Nervous System',    modules:3, lessons:9, color:'#0f6e56' }
+];
+
+function loadAdminCourses() {
+  const list = document.getElementById('admin-course-list');
+  if (!list) return;
+  list.innerHTML = ADMIN_COURSES.map(c => `
+    <div onclick="selectAdminCourse('${c.id}')" style="background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s;display:flex;align-items:flex-start;gap:12px;" onmouseover="this.style.borderColor='rgba(212,168,75,.4)'" onmouseout="this.style.borderColor='var(--b1)'">
+      <div style="width:4px;border-radius:2px;background:${c.color};align-self:stretch;flex-shrink:0;min-height:50px;"></div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--text);font-family:'Cinzel',serif;margin-bottom:3px;">${c.title}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">${c.category} · ${c.modules} modules · ${c.lessons} lessons</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:600;">View &amp; edit →</div>
+      </div>
+    </div>`).join('');
+}
+
+function selectAdminCourse(courseId) {
+  const c = ADMIN_COURSES.find(x=>x.id===courseId);
+  if (!c) return;
+  const detail = document.getElementById('admin-course-detail');
+  if (!detail) return;
+
+  // Estimate client progress from session data
+  const enrolledEmails = [...new Set(allSessions.filter(s=>s.email).map(s=>s.email.toLowerCase()))];
+  const enrolled = enrolledEmails.length;
+
+  detail.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="width:6px;height:40px;border-radius:3px;background:${c.color};flex-shrink:0;"></div>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--text);">${c.title}</div>
+        <div style="font-size:11px;color:var(--muted);">${c.category}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text);">${enrolled}</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;">Enrolled</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text);">${c.modules}</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;">Modules</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:9px;padding:12px;text-align:center;">
+        <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--text);">${c.lessons}</div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;">Lessons</div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Course Access</div>
+    <div style="background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.25);border-radius:9px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#4caf7d;font-weight:600;">
+      ✓ Active — all enrolled clients can access this course from their portal
+    </div>
+
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Add Custom Lesson</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input id="new-lesson-title" placeholder="Lesson title…" style="background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;">
+      <select id="new-lesson-module" style="background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;">
+        <option value="">Select module…</option>
+        <option value="m1">Module 1</option>
+        <option value="m2">Module 2</option>
+        <option value="m3">Module 3</option>
+      </select>
+      <textarea id="new-lesson-content" placeholder="Lesson content…" style="background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:10px 13px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;resize:none;height:100px;line-height:1.6;"></textarea>
+      <button onclick="publishCustomLesson('${courseId}')" style="padding:11px;background:linear-gradient(135deg,#6a4fb5,#4a3490);color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;">Add to course →</button>
+      <div id="lesson-publish-msg" style="font-size:12px;color:#4caf7d;text-align:center;display:none;">✓ Lesson added — clients can view it in their portal</div>
+    </div>`;
+}
+
+async function publishCustomLesson(courseId) {
+  const title   = (document.getElementById('new-lesson-title')||{}).value||'';
+  const module  = (document.getElementById('new-lesson-module')||{}).value||'';
+  const content = (document.getElementById('new-lesson-content')||{}).value||'';
+  if (!title || !module || !content) { alert('Please fill in all fields.'); return; }
+  const lesson = {
+    sheet:'lms_lessons', courseId, module, title, content,
+    created_at: new Date().toISOString()
+  };
+  try {
+    await fetch(LEADS_API, {method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(lesson)});
+  } catch(e) { console.warn('Save error:', e); }
+  const msg = document.getElementById('lesson-publish-msg');
+  if (msg) { msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000); }
+  ['new-lesson-title','new-lesson-content'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const sel = document.getElementById('new-lesson-module'); if(sel) sel.value='';
+}
+
 async function loadBlogPosts() {
   try {
     const res = await fetch(LEADS_API + '?sheet=blogs');

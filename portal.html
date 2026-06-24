@@ -264,6 +264,77 @@ h1,h2,h3{font-family:'Cinzel',serif}
 .empty-state svg{margin-bottom:12px;opacity:.4}
 .empty-state p{font-size:13px;line-height:1.6}
 
+
+/* ── LMS ── */
+.lms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:24px}
+.lms-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
+.lms-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(106,79,181,0.12);border-color:rgba(106,79,181,0.35)}
+.lms-card-banner{height:8px}
+.lms-card-body{padding:18px 20px}
+.lms-card-category{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.lms-card-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:6px}
+.lms-card-sub{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.lms-card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--card-border);padding-top:12px}
+.lms-card-meta{font-size:11px;color:var(--muted)}
+.lms-progress-wrap{background:var(--parchment);border-radius:99px;height:5px;margin-bottom:4px;overflow:hidden}
+.lms-progress-fill{height:100%;border-radius:99px;transition:width .4s}
+.lms-progress-label{font-size:10px;font-weight:600;color:var(--muted)}
+
+/* Course detail */
+.lms-back{background:none;border:none;color:var(--violet-l);font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;padding:0;margin-bottom:16px;display:flex;align-items:center;gap:5px}
+.lms-back:hover{opacity:.7}
+.lms-course-header{background:linear-gradient(135deg,#1a0f3d,#3d2075);border:1px solid rgba(106,79,181,0.4);border-radius:16px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+.lms-course-header::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,75,0.12),transparent 65%)}
+.lms-course-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#f0ecff;margin-bottom:6px}
+.lms-course-sub{font-size:13px;color:rgba(240,236,255,0.65);margin-bottom:16px}
+.lms-course-stats{display:flex;gap:20px;font-size:12px;color:rgba(240,236,255,0.5)}
+.lms-course-progress{background:rgba(255,255,255,0.1);border-radius:99px;height:6px;margin-top:16px;overflow:hidden}
+.lms-course-progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--violet-l),var(--gold-l));transition:width .5s}
+
+/* Module accordion */
+.lms-module{background:var(--card);border:1px solid var(--card-border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.lms-module-header{padding:14px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+.lms-module-header:hover{background:var(--parchment)}
+.lms-module-num{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:white;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:12px;font-weight:700;flex-shrink:0}
+.lms-module-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--ink);flex:1}
+.lms-module-meta{font-size:11px;color:var(--muted)}
+.lms-module-chevron{font-size:12px;color:var(--muted);transition:transform .25s}
+.lms-module.open .lms-module-chevron{transform:rotate(180deg)}
+.lms-lessons{display:none;border-top:1px solid var(--card-border)}
+.lms-module.open .lms-lessons{display:block}
+.lms-lesson-row{display:flex;align-items:center;gap:12px;padding:12px 18px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--card-border)}
+.lms-lesson-row:last-child{border-bottom:none}
+.lms-lesson-row:hover{background:var(--parchment)}
+.lms-lesson-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--card-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .2s}
+.lms-lesson-check.done{background:var(--violet);border-color:var(--violet);color:white}
+.lms-lesson-title{font-size:13px;font-weight:500;color:var(--ink);flex:1}
+.lms-lesson-duration{font-size:11px;color:var(--muted)}
+
+/* Lesson viewer */
+.lms-lesson-header{margin-bottom:24px}
+.lms-lesson-breadcrumb{font-size:12px;color:var(--muted);margin-bottom:8px}
+.lms-lesson-title-big{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.lms-lesson-meta{font-size:12px;color:var(--muted)}
+.lms-divider{border:none;border-top:1px solid var(--card-border);margin:20px 0}
+.lms-intro{font-size:15px;color:var(--ink);line-height:1.85;margin-bottom:24px}
+.lms-insights{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+.lms-insight{background:var(--card);border:1px solid var(--card-border);border-left:3px solid var(--violet-l);border-radius:0 12px 12px 0;padding:16px 18px}
+.lms-insight h4{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--violet);margin-bottom:6px}
+.lms-insight p{font-size:13px;color:var(--muted);line-height:1.7;margin:0}
+.lms-exercise{background:linear-gradient(135deg,rgba(212,168,75,0.08),rgba(168,122,40,0.04));border:1px solid rgba(212,168,75,0.25);border-radius:12px;padding:20px 22px;margin-bottom:24px}
+.lms-exercise h4{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px}
+.lms-exercise p{font-size:13px;color:var(--ink);line-height:1.75;margin:0}
+.lms-takeaway{background:linear-gradient(135deg,rgba(106,79,181,0.08),rgba(74,52,144,0.05));border:1px solid rgba(106,79,181,0.2);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-style:italic;font-size:14px;color:var(--ink);line-height:1.7}
+.lms-lesson-nav{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--card-border);padding-top:20px;margin-top:8px}
+.lms-complete-btn{padding:12px 24px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:white;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(106,79,181,0.3);transition:transform .15s}
+.lms-complete-btn:hover{transform:translateY(-1px)}
+.lms-complete-btn.done{background:linear-gradient(135deg,#4caf7d,#2e7d52);box-shadow:0 4px 16px rgba(76,175,125,0.3)}
+.lms-cert{background:linear-gradient(135deg,#1a0f3d,#3d2075);border:1px solid rgba(212,168,75,0.4);border-radius:18px;padding:40px;text-align:center;max-width:500px;margin:0 auto}
+.lms-cert-badge{font-size:48px;margin-bottom:20px}
+.lms-cert-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#f0ecff;margin-bottom:10px}
+.lms-cert-name{font-family:'Cinzel',serif;font-size:18px;color:var(--gold-l);margin-bottom:16px}
+.lms-cert-desc{font-size:13px;color:rgba(240,236,255,0.65);line-height:1.7}
+
 /* ── READING SPACE ── */
 .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
 .blog-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
@@ -386,6 +457,10 @@ h1,h2,h3{font-family:'Cinzel',serif}
   <a class="nav-item" data-page="courses" onclick="showPage('courses',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
     My Courses
+  </a>
+  <a class="nav-item" data-page="lms" onclick="showPage('lms',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><path d="M6 8h2M6 12h2M16 8h2M16 12h2"/></svg>
+    My Learning
   </a>
   <a class="nav-item" data-page="progress" onclick="showPage('progress',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -659,6 +734,20 @@ h1,h2,h3{font-family:'Cinzel',serif}
     </div>
   </div>
 
+
+  <!-- MY LEARNING LMS -->
+  <div class="page" id="page-lms">
+    <div id="lms-catalog-view">
+      <h2 class="tool-page-title">My Learning</h2>
+      <p class="tool-page-sub">Structured courses to deepen your work between coaching sessions.</p>
+      <div style="height:16px"></div>
+      <div class="lms-grid" id="lms-catalog-grid"></div>
+    </div>
+    <div id="lms-course-view" style="display:none"></div>
+    <div id="lms-lesson-view" style="display:none"></div>
+    <div id="lms-cert-view" style="display:none"></div>
+  </div>
+
   <!-- READING SPACE -->
   <div class="page" id="page-reading">
     <div id="blog-list-view">
@@ -810,7 +899,7 @@ document.getElementById('topbar-greeting').textContent = 'Hi, '+(clientName||'th
 document.getElementById('welcome-name').textContent = 'Welcome back, '+(clientName||'there')+' 👋';
 
 /* ── NAV ── */
-const pageTitles = {dashboard:'Dashboard',sessions:'My Sessions',journal:'Shadow Journal',reading:'Reading Space',tools:'My Tools',courses:'My Courses',checkin:'Emotional Check-in',triggers:'Trigger Log',values:'Values Compass',shadow:'Shadow Dialogue',reflection:'Daily Reflection',regulation:'Regulation Exercises',progress:'My Progress'};
+const pageTitles = {dashboard:'Dashboard',sessions:'My Sessions',journal:'Shadow Journal',reading:'Reading Space',tools:'My Tools',courses:'My Courses',lms:'My Learning',checkin:'Emotional Check-in',triggers:'Trigger Log',values:'Values Compass',shadow:'Shadow Dialogue',reflection:'Daily Reflection',regulation:'Regulation Exercises',progress:'My Progress'};
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -821,6 +910,7 @@ function showPage(id,el){
   if(window.innerWidth<=768)closeMobile();
   if(id==='journal')initJournal();
   if(id==='reading')initReading();
+  if(id==='lms')initLMS();
   if(id==='checkin')initCheckin();
   if(id==='triggers')initTriggers();
   if(id==='values')initValues();
@@ -1413,6 +1503,532 @@ function openBlog(idx){
 function closeBlogReader(){
   document.getElementById('blog-reader-view').classList.remove('open');
   document.getElementById('blog-list-view').style.display='block';
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   LMS — COURSE DATA + ENGINE
+══════════════════════════════════════════════════════════ */
+const COURSES = [
+  {
+    id:'triggers', title:'Understanding Your Triggers',
+    subtitle:'The foundation of emotional intelligence work',
+    color:'#6a4fb5', catColor:'rgba(106,79,181,0.15)', catText:'#9b7fd4',
+    category:'Foundations', duration:'3 hrs', lessonCount:9,
+    description:'Understand what triggers you, why, and how to change your response patterns at the root level.',
+    modules:[
+      { id:'m1', title:'The Anatomy of a Trigger', lessons:[
+        { id:'l1', title:'What Is a Trigger?', duration:'8 min',
+          intro:'A trigger is any stimulus — a word, a tone of voice, a situation — that produces an emotional response disproportionate to what is actually happening. The word "disproportionate" is the key. The reaction feels justified in the moment, but something older than this situation is driving it.',
+          insights:[
+            { h:'The reaction belongs to the past', t:'When you are triggered, you are not responding to now. You are responding to a pattern stored in your nervous system from a previous experience — often one from childhood, where you had to adapt to stay safe or loved.' },
+            { h:'Triggers are not character flaws', t:'Society treats emotional reactivity as weakness. It is not. It is stored intelligence — your system learned something from a difficult experience and encoded a rule: watch for this, it is dangerous. The rule is now outdated, but the system is still running it.' },
+            { h:'The body leads the mind', t:'Your nervous system registers the trigger before your conscious mind does. The heart rate rises, the jaw tightens, the chest constricts — and then the story follows. Learning to notice the body first changes everything.' }
+          ],
+          exercise:{ title:'Exercise: Trace the response', prompt:'Think of a recent moment where you reacted more strongly than the situation warranted. Write down: what happened, what you felt in your body first, what the story in your head was, and what older memory or feeling this might connect to.' },
+          takeaway:'Triggers are not about weakness — they are about stored experience that needs updating.'
+        },
+        { id:'l2', title:'The Trigger Cycle', duration:'9 min',
+          intro:'Every triggered response follows the same loop: stimulus → interpretation → emotional charge → behaviour → consequence → self-judgment. Understanding the cycle is the first step to interrupting it. Most people try to change the behaviour without understanding what drives it.',
+          insights:[
+            { h:'Interpretation is the pivot point', t:'Between the stimulus and the charge, there is a split-second interpretation: "This means I am unsafe / unloved / disrespected / not enough." That interpretation is the actual trigger — not the external event. Two people can face the same event and one is triggered, the other is not.' },
+            { h:'The behaviour is a coping mechanism', t:'Snapping, withdrawing, people-pleasing, overexplaining — these are not personality traits. They are survival strategies that worked at some point and became automatic. They served you. They may no longer be serving you.' },
+            { h:'Self-judgment closes the loop badly', t:'The cycle typically ends in shame or self-criticism, which lowers the threshold for the next trigger. Breaking the cycle at the self-judgment stage — replacing criticism with curiosity — is one of the most powerful interventions available.' }
+          ],
+          exercise:{ title:'Exercise: Map your cycle', prompt:'Choose one recurring trigger pattern and trace the full cycle: What is the stimulus? What does it mean to you? What emotion follows? What do you do? What is the consequence? How do you judge yourself afterward?' },
+          takeaway:'You cannot change what you cannot see. Mapping the cycle makes it visible.'
+        },
+        { id:'l3', title:'Your Five Trigger Components', duration:'10 min',
+          intro:'Aligned Order measures emotional reactivity across five distinct components. Each represents a different way the unconscious mind generates a triggered response. Understanding which components are highest for you points directly to the patterns most worth working on.',
+          insights:[
+            { h:'Reactivity Under Load', t:'How quickly you reach your emotional threshold when under external pressure — deadlines, demands, noise, overstimulation. High scorers find themselves snapping not at the big things, but at the accumulation of small ones.' },
+            { h:'Fight or Flight Response', t:'The intensity of your nervous system\'s threat-detection system. High scorers experience rapid escalation — from calm to flooded in seconds — often in interpersonal situations that feel controlling, dismissive, or unsafe.' },
+            { h:'Insecurity and Self-Doubt', t:'The degree to which perceived criticism, comparison, or failure activates an internal spiral. High scorers conflate external feedback with their fundamental worth, making even minor setbacks feel threatening.' },
+            { h:'Defensiveness', t:'The speed with which perceived challenge to your ideas or behaviour triggers a protective response. High scorers experience disagreement as attack, often going rigid before consciously processing what was actually said.' },
+            { h:'Baseline Tension', t:'The resting level of emotional charge you carry through the day. High scorers are already close to their threshold before any specific trigger occurs — like a system running hot, where small sparks cause large fires.' }
+          ],
+          exercise:{ title:'Exercise: Score yourself', prompt:'Rate yourself 1-10 on each component right now: Reactivity Under Load, Fight/Flight, Insecurity, Defensiveness, Baseline Tension. Which is highest? What situations reliably activate that component?' },
+          takeaway:'Knowing your highest component gives you a specific target — not a vague instruction to "be less reactive".'
+        }
+      ]},
+      { id:'m2', title:'Mapping Your Patterns', lessons:[
+        { id:'l4', title:'Identifying Your Primary Triggers', duration:'9 min',
+          intro:'Most people have two or three core trigger patterns that account for the majority of their reactive moments. These patterns are not random — they are consistent, predictable, and rooted in specific core beliefs about the self, others, or the world.',
+          insights:[
+            { h:'Triggers cluster around core wounds', t:'Your patterns will typically cluster around one of a few core wounds: abandonment ("I will be left"), unworthiness ("I am not enough"), helplessness ("I have no control"), or injustice ("I will not be treated fairly"). Identifying your wound illuminates your whole pattern map.' },
+            { h:'Context reveals pattern', t:'Your triggers are more context-specific than you think. You may be rock-solid at work but undone in intimate relationships. You may handle conflict with strangers but freeze with authority figures. Context is not coincidental — it maps directly to where your formative experiences happened.' },
+            { h:'The people who trigger you most are your best teachers', t:'The individuals who consistently activate your strongest responses are holding a mirror up to something unresolved. This is not an excuse for their behaviour — it is an opportunity to understand something important about your own history.' }
+          ],
+          exercise:{ title:'Exercise: The pattern map', prompt:'List the 3 people or situations that most reliably trigger you. For each, write: what specifically happens, what feeling arises, what you believe it means about you or them, and the earliest memory you have of feeling something similar.' },
+          takeaway:'Your recurring patterns are not random — they point to a small number of core wounds worth addressing.'
+        },
+        { id:'l5', title:'The Root Cause Framework', duration:'10 min',
+          intro:'Every trigger has a surface layer and a root layer. The surface is what seems to cause the reaction. The root is the original experience that wired the pattern in. Working only at the surface produces temporary relief. Working at the root changes the wiring.',
+          insights:[
+            { h:'The root is always about unmet needs', t:'At the root of every trigger is an unmet need — for safety, love, belonging, autonomy, or significance. The behaviour that emerges when you are triggered is an attempt, however clumsy, to meet that need. Understanding the need transforms your relationship to the behaviour.' },
+            { h:'The 5 Whys method', t:'When you notice a reaction, ask "why does this bother me?" then ask again, and again, for five iterations. Surface: "My partner interrupted me." Why? "I felt dismissed." Why does that bother you? "Because I feel like my voice doesn\'t matter." Why? "Because growing up, it didn\'t." That is the root.' },
+            { h:'Root causes live in the body', t:'The root cause is not just a story or a memory — it is a body state. A felt sense of small, invisible, threatened. Healing happens not just through insight but through giving the body a different experience. This is why coaching that includes body-based practices produces deeper change.' }
+          ],
+          exercise:{ title:'Exercise: The 5 Whys', prompt:'Take one trigger you identified in the previous lesson and apply the 5 Whys. Write your answers. Keep going deeper until you reach a statement that feels uncomfortably true — that is usually the root.' },
+          takeaway:'Insight into the root does not instantly resolve the pattern, but it changes your relationship to it profoundly.'
+        },
+        { id:'l6', title:'Trigger Journaling', duration:'8 min',
+          intro:'Writing about triggered experiences — in a specific, structured way — accelerates the integration process. The act of translating felt experience into language activates the prefrontal cortex, building new neural pathways between the emotional brain and the reasoning brain.',
+          insights:[
+            { h:'Expressive writing has documented neurological effects', t:'Research by James Pennebaker and others shows that structured writing about emotionally charged experiences reduces physiological stress markers, improves immune function, and decreases psychological distress — even when the writing is never shared with anyone.' },
+            { h:'Structure matters more than length', t:'Five minutes of structured journaling is more useful than thirty minutes of unconstrained venting. The structure — what happened, what I felt, what I told myself, what it connects to, what I want instead — creates movement rather than just rehearsal of the story.' },
+            { h:'Write from the observer, not the reactor', t:'The goal is to observe the experience from a slight distance — "I noticed that I..." rather than being fully inside it. This observer stance is the beginning of the gap between stimulus and response that Viktor Frankl described as the home of our freedom.' }
+          ],
+          exercise:{ title:'Exercise: The structured entry', prompt:'Write a trigger journal entry using this structure:\n1. What happened (facts only, no interpretation)\n2. What I felt in my body\n3. What I told myself it meant\n4. What older feeling this connects to\n5. What I needed in that moment\n6. What I want to do differently next time' },
+          takeaway:'Regular trigger journaling builds the neural capacity for self-reflection — the foundation of emotional intelligence.'
+        }
+      ]},
+      { id:'m3', title:'Changing the Pattern', lessons:[
+        { id:'l7', title:'The Pause Practice', duration:'9 min',
+          intro:'Between stimulus and response, there is a gap. For most people, that gap is imperceptibly small — the reaction appears to happen automatically, without choice. The Pause Practice is a systematic method for widening that gap until it becomes a genuine space of choice.',
+          insights:[
+            { h:'The pause is a skill, not a personality trait', t:'Some people appear to naturally pause before reacting. They were not born that way — they developed the capacity, often through difficult experience. The pause can be trained. Like a muscle, it grows with consistent use and atrophies with neglect.' },
+            { h:'The body is the entry point', t:'You cannot think your way into the pause when you are already flooded. But you can use the body. A slow exhale activates the parasympathetic system within seconds. Feeling your feet on the floor activates the sensing brain, competing with the reactive brain. These are not metaphors — they are mechanisms.' },
+            { h:'Name it to tame it', t:'Research by Matthew Lieberman at UCLA shows that labelling an emotion — "I notice I am feeling angry" — reduces amygdala activation measurably. The act of naming creates a tiny bit of distance from the experience. That distance is the pause.' }
+          ],
+          exercise:{ title:'Exercise: Install the pause', prompt:'For the next 7 days, practice this in low-stakes moments: when you notice any emotional activation — even minor irritation — pause, take one slow exhale, label the emotion ("I notice frustration"), and ask "what do I actually want to do here?" Build the habit in small moments before you need it in big ones.' },
+          takeaway:'The pause is not passivity — it is the space where genuine choice lives.'
+        },
+        { id:'l8', title:'Reframing Under Pressure', duration:'10 min',
+          intro:'A reframe is not a forced positive spin. It is a genuinely alternative interpretation of events — one that is equally true, and more useful. Reframing under pressure is a learnable skill, not a personality trait of naturally optimistic people.',
+          insights:[
+            { h:'The brain defaults to threat interpretation', t:'Your brain is wired to err on the side of danger. This served your ancestors well. It does not serve you as well in a meeting room or a difficult conversation. The default interpretation of ambiguous situations will lean negative. Reframing overrides the default with a deliberate choice.' },
+            { h:'Reframes must be believable', t:'A reframe that feels false will not work — the body will reject it. "My partner is not attacking me, they are scared" only works if there is some truth to it. The skill is finding a reframe that is genuinely plausible given what you know, not one that erases the difficulty.' },
+            { h:'Ask better questions', t:'The most powerful reframes come not from statements but from questions. "What else could this mean?" "What would I think about this in six months?" "What would I say to a close friend going through this?" Questions activate the reasoning brain and generate alternatives the reactive mind would never find.' }
+          ],
+          exercise:{ title:'Exercise: The reframe practice', prompt:'Take a current triggering situation. Write down your default interpretation of it. Then write three alternative interpretations — each genuinely possible, each more useful than the default. Notice which feels most resonant, and write one sentence about what you would do differently holding that interpretation.' },
+          takeaway:'Reframing is not denial — it is choosing the most useful truth from the many available.'
+        },
+        { id:'l9', title:'Building New Neural Pathways', duration:'11 min',
+          intro:'Insight changes understanding. Behaviour change requires repetition. The brain rewires through new experiences repeated enough times that the new pathway becomes the default. This is what neuroscience calls neuroplasticity, and it is the biological basis of lasting change.',
+          insights:[
+            { h:'Neurons that fire together wire together', t:'Every time you respond to a familiar trigger in a new way, you strengthen a new neural pathway. Every time you respond in the old way, you reinforce the old one. Change is not about willpower — it is about consistent practice until the new pathway becomes easier than the old one.' },
+            { h:'Emotion is required for encoding', t:'New neural pathways form most strongly when the experience is emotionally engaged. Going through the motions without genuine presence does not wire in change. This is why homework that asks you to feel something — not just think about it — is not optional. It is the mechanism.' },
+            { h:'Expect regression and plan for it', t:'Stress narrows the brain back to old pathways. In difficult moments, you will revert. This is not failure — it is neuroscience. The skill is recovering faster, not never regressing. Each recovery builds the circuit for the next one.' }
+          ],
+          exercise:{ title:'Exercise: Your 30-day practice', prompt:'Choose one trigger pattern you want to change. Design a specific daily practice for the next 30 days: one action you will take differently when that pattern arises. Write it as a commitment: "When [trigger], instead of [old response], I will [new response]." Review this weekly and note what you are learning.' },
+          takeaway:'Change happens in the repetition, not the insight. The insight shows you where to practice.'
+        }
+      ]}
+    ]
+  },
+  {
+    id:'shadow', title:'Shadow Work Fundamentals',
+    subtitle:'Meeting the parts of yourself you have been avoiding',
+    color:'#3d2075', catColor:'rgba(61,32,117,0.15)', catText:'#8b5fd4',
+    category:'Jungian Psychology', duration:'3 hrs', lessonCount:9,
+    description:'Carl Jung\'s foundational psychology applied to your everyday life — discovering, understanding, and integrating your shadow.',
+    modules:[
+      { id:'m1', title:'Meeting the Shadow', lessons:[
+        { id:'l1', title:'What Jung Meant by Shadow', duration:'9 min',
+          intro:'Carl Jung used the term "shadow" to describe the parts of the personality that have been repressed, denied, or pushed out of conscious awareness. The shadow is not inherently evil or dark — it is simply unloved. And what is unloved does not disappear; it goes underground and drives behaviour from below.',
+          insights:[
+            { h:'The shadow forms in childhood', t:'We do not choose our shadows consciously. They form as we learn which parts of ourselves are acceptable to the people around us. The child who was punished for anger learns to suppress it. The child who was shamed for neediness learns to pretend self-sufficiency. These buried parts become the shadow.' },
+            { h:'What we repress, we project', t:'The shadow does not stay buried quietly. It appears in our reactions to others — particularly in the people we find most irritating, most threatening, or most fascinating. Jung observed that we see in others what we cannot see in ourselves. This is projection, and it is the shadow\'s loudest voice.' },
+            { h:'The shadow is not the enemy', t:'This is the hardest thing to understand: the shadow is not something to be eliminated. It is something to be integrated. The anger you buried contains vitality and boundary-setting. The neediness you suppressed contains the capacity for genuine intimacy. Your shadow holds as much gold as darkness.' }
+          ],
+          exercise:{ title:'Exercise: Your first shadow encounter', prompt:'Write down three qualities you genuinely dislike in other people — qualities that provoke a strong negative reaction. For each, ask honestly: is there any version of this quality, however small, that exists in you? Where might you have buried it, and why?' },
+          takeaway:'The shadow is not what is wrong with you — it is what you decided was wrong with you, and buried.'
+        },
+        { id:'l2', title:'How Your Shadow Formed', duration:'8 min',
+          intro:'Understanding how your shadow formed is not about blaming your parents or your past. It is about gaining compassion for the adaptive choices a young person made in order to survive, belong, and be loved — and then recognising that you are no longer in that situation, even when your nervous system acts as if you are.',
+          insights:[
+            { h:'Adaptation is intelligence', t:'When a child suppresses anger to avoid punishment, or suppresses vulnerability to avoid being taken advantage of, they are being intelligent. The adaptation served a real purpose. Honouring that intelligence — rather than shaming yourself for the pattern — is the beginning of real change.' },
+            { h:'Conditional love creates shadow', t:'Shadow formation accelerates when love or safety feels conditional. "You are loved when you are good / quiet / successful / helpful / strong." The parts of you that threaten the conditions get suppressed. The more conditional the love, the larger the shadow.' },
+            { h:'Collective shadow', t:'Beyond personal shadow, Jung identified a collective shadow — qualities that entire cultures suppress and project onto other groups. Understanding that some of your shadow is not yours alone, but absorbed from your family system, culture, and era, brings a different kind of compassion.' }
+          ],
+          exercise:{ title:'Exercise: The original suppression', prompt:'Choose one quality you identified in the previous lesson as part of your shadow. Write about the earliest memory you have of being told — explicitly or through consequences — that this quality was unacceptable. What happened? Who was there? What did you decide to do with that part of yourself?' },
+          takeaway:'The shadow is not a sign of damage — it is the record of intelligent adaptation to difficult conditions.'
+        },
+        { id:'l3', title:'Projection — Seeing Yourself in Others', duration:'9 min',
+          intro:'Projection is the psychological mechanism by which we attribute to others what we cannot acknowledge in ourselves. It is not a character flaw — it is one of the primary ways the unconscious communicates. Learning to read your projections is one of the most useful skills available in shadow work.',
+          insights:[
+            { h:'Hot projection and cold projection', t:'We project two kinds of shadow content onto others. Hot projection: we see the negative aspects of our shadow in others and react with irritation, judgment, or disgust. Cold projection: we see the positive aspects — the gold in our shadow — in others and react with admiration, envy, or idealization.' },
+            { h:'The clue is the charge', t:'Not every critical judgment is a projection. The signal of projection is the disproportionate charge — the unusually strong reaction. When someone\'s behaviour produces an emotional response significantly larger than the situation warrants, the shadow is likely involved. The question is always: what am I seeing that I am not acknowledging in myself?' },
+            { h:'Reclaiming a projection', t:'To reclaim a projection, you do not simply acknowledge the quality exists in you. You work to understand why it was suppressed, what legitimate need it served, and how you might express it in a conscious, constructive form. The person you projected onto was doing you a service.' }
+          ],
+          exercise:{ title:'Exercise: Reading your projections', prompt:'Think of someone you have a strongly negative reaction to — a colleague, public figure, or person from your past. List five qualities you find most objectionable about them. Then, for each quality, ask: in what circumstances, or in what form, might this quality exist in me? Sit with discomfort. The discomfort is the point.' },
+          takeaway:'What irritates you in others is a map of what you have buried in yourself.'
+        }
+      ]},
+      { id:'m2', title:'Working with Your Inner Critic', lessons:[
+        { id:'l4', title:'The Voice That Limits You', duration:'8 min',
+          intro:'The inner critic is one of the most common and powerful shadow figures. It is the internal voice that judges, compares, ridicules, and predicts failure — often using language from significant people in our past. Understanding the inner critic is not about silencing it; it is about understanding what it is protecting.',
+          insights:[
+            { h:'The critic was protective first', t:'The inner critic typically formed as a pre-emptive strike — if I judge myself harshly enough first, I will not be devastated when others do it. In some family systems, self-criticism was safer than external criticism. The voice that now limits you once tried to protect you.' },
+            { h:'The critic speaks the language of the wound', t:'Notice the specific words your inner critic uses — the comparisons it makes, the standards it holds you to, the predictions it generates. They are rarely random. They reflect the exact messages you absorbed from key people or experiences. You did not invent this voice. You inherited it.' },
+            { h:'The critic wants something you want', t:'Behind every inner critic is a legitimate desire — for excellence, for safety, for belonging, for love. The critic uses destructive means to pursue good ends. This is why simply telling it to be quiet does not work. The desire behind it needs to be addressed.' }
+          ],
+          exercise:{ title:'Exercise: Introducing yourself to your critic', prompt:'Write a letter from your inner critic to yourself — let it say everything it usually says, unfiltered. Then write a response to the critic: thank it for what it was trying to protect, acknowledge the desire behind it, and tell it what you need from it now instead.' },
+          takeaway:'The inner critic is not your enemy — it is an outdated protector that needs updating, not silencing.'
+        },
+        { id:'l5', title:'Where the Critic Came From', duration:'9 min',
+          intro:'Tracing the inner critic back to its origin does not neutralise it immediately, but it changes your relationship to it. When you hear the critic\'s voice and recognise it as something absorbed rather than something true, a small but significant shift happens — from identification to observation.',
+          insights:[
+            { h:'Voice identification', t:'Most inner critics sound like someone specific. Sometimes it takes time to identify who — the voice may be a composite, or it may have been so deeply absorbed that it feels purely internal. Questions like "whose standard is this?" and "who first said something like this to me?" often illuminate the origin.' },
+            { h:'The critic mirrors the original relationship', t:'If your inner critic is relentless and impossible to satisfy, the relationship that shaped it probably was too. If your critic compares you constantly to others, comparison was likely a primary dynamic in your formative environment. Understanding the mirror helps you see that the critic\'s standards were never objectively true.' },
+            { h:'Differentiation is the goal', t:'The goal is not to agree with the critic or to destroy it — it is to differentiate from it. To know that this voice is not you, does not define you, and does not have the final word. That differentiation does not happen once and then stay; it is a practice, returned to again and again.' }
+          ],
+          exercise:{ title:'Exercise: Trace the voice', prompt:'Sit quietly and let your inner critic speak. Then ask: whose voice is this? When did I first hear something like this? What was happening? Write about the relationship between that voice and its origin — as compassionately as you can, for both yourself and the person it came from.' },
+          takeaway:'When you know where a voice came from, it loses some of its authority over you.'
+        },
+        { id:'l6', title:'Befriending the Critic', duration:'10 min',
+          intro:'Befriending the inner critic sounds paradoxical — why would you befriend the voice that limits you? But attempts to suppress, argue with, or destroy the critic typically intensify it. The approach that actually works is to understand it, address what it needs, and redirect it toward more useful ends.',
+          insights:[
+            { h:'Curiosity over combat', t:'When the critic speaks, try responding with curiosity rather than resistance. "What are you afraid of right now? What is this trying to protect me from?" This approach disarms the critic because it addresses the underlying anxiety rather than fighting the surface expression.' },
+            { h:'Redirect, don\'t silence', t:'The energy behind the critic — perfectionism, striving, vigilance — is not bad energy. It is misdirected energy. The invitation is to ask: how could this drive serve me rather than limit me? What would a constructive use of this energy look like?' },
+            { h:'Compassion as the antidote', t:'Research by Kristin Neff on self-compassion shows that it is not self-indulgence but a more effective motivator than self-criticism. Self-compassion produces more resilience, higher willingness to try again after failure, and lower anxiety. The critic believes criticism makes you better. The evidence says otherwise.' }
+          ],
+          exercise:{ title:'Exercise: The compassionate reframe', prompt:'Choose one area where your inner critic is loudest. Write out what the critic says. Then write what a genuinely compassionate mentor — someone who wants the best for you and believes in your capacity — would say about the same situation. Notice the difference in what each opens up.' },
+          takeaway:'You do not grow by destroying your critic. You grow by redirecting what it contains.'
+        }
+      ]},
+      { id:'m3', title:'Integration Practices', lessons:[
+        { id:'l7', title:'The Golden Shadow', duration:'9 min',
+          intro:'Jung identified that the shadow contains not only what we have disowned because it felt dangerous — anger, neediness, sexuality, grief — but also what we have disowned because we were told it was too much. The capacities that were shamed or suppressed. This is the golden shadow, and reclaiming it is as important as facing the dark.',
+          insights:[
+            { h:'What you most admire in others is often yours to claim', t:'When someone\'s quality fills you with admiration or longing — their boldness, their creativity, their ease, their warmth — Jung would ask whether this is your own potential that you see in them. The charge of admiration is the shadow calling its capacity home.' },
+            { h:'The golden shadow was suppressed for a reason', t:'Why would someone suppress a positive quality? Because it attracted negative consequences. The child who was shamed for confidence learned to hide it. The person who was mocked for creativity learned to call it frivolous. Reclaiming the gold means understanding why it was buried and grieving what was lost.' },
+            { h:'The integration changes your relationship to others', t:'As you reclaim your golden shadow, you find that you feel less urgently drawn to particular people, less likely to put them on pedestals, and more able to engage with them as equals. The idealisation diminishes because you are no longer unconsciously seeking your own wholeness through them.' }
+          ],
+          exercise:{ title:'Exercise: Claim your gold', prompt:'List three qualities in other people that you most admire, that produce the most longing or recognition in you. For each, write: when did I have this quality? When was it suppressed or shamed? What would it look like for me to express this quality consciously and constructively, in my life now?' },
+          takeaway:'Your shadow holds not just your wounds — it holds the parts of you that were too bright for the rooms you were in.'
+        },
+        { id:'l8', title:'The Dialogue Method', duration:'11 min',
+          intro:'The Dialogue Method — developed by Robert Johnson, building on Jung\'s active imagination — is a technique for engaging directly with shadow figures through written or internal dialogue. It sounds strange. It works. Many people describe it as the most useful single practice in their shadow work.',
+          insights:[
+            { h:'The method is simple', t:'You identify a shadow quality or figure — the inner critic, the angry self, the needy self, the fearful self. You deliberately invite it to speak. You listen without judgment. You respond. The dialogue moves back and forth until something shifts — an understanding, a reconciliation, or a new perspective.' },
+            { h:'The ground rule', t:'The dialogue requires one non-negotiable: you do not allow the shadow figure to direct action in the outer world. Its role is inner, not outer. You listen to what it needs to say, you take it seriously, you let it change your understanding — but you retain authority over behaviour. This distinction is crucial.' },
+            { h:'What typically happens', t:'In most genuine shadow dialogues, the figure eventually reveals something unexpected. The anger contains grief. The critic contains a frightened child. The needy part reveals a wisdom about genuine connection that the polished persona has been avoiding. The dialogue humanises what was projected.' }
+          ],
+          exercise:{ title:'Exercise: Your first dialogue', prompt:'Choose a shadow quality that causes you the most trouble — something you judge harshly in yourself or that keeps emerging unwanted. Write a dialogue: greet it, ask what it wants you to know, listen, respond. Let it go where it goes. Write for at least 10 minutes without stopping to judge what emerges.' },
+          takeaway:'Shadow figures, when engaged rather than suppressed, almost always reveal something you needed to hear.'
+        },
+        { id:'l9', title:'Living as the Whole Self', duration:'10 min',
+          intro:'Integration does not mean the shadow disappears. It means the shadow becomes less autonomous — less likely to run the show without your awareness. You become more whole, not perfect. The reactive patterns show up less often, recover faster, and carry less shame when they do. This is what psychological maturity looks like.',
+          insights:[
+            { h:'Wholeness is not balance', t:'Jung\'s goal was not a bland equilibrium where every quality is equally present. It was wholeness — the capacity to access the full range of human experience without being driven by unconscious compulsion. You can be angry when anger is appropriate. Vulnerable when vulnerability is called for. Still when stillness serves.' },
+            { h:'The work is never finished', t:'This is both sobering and liberating. There is always more shadow, because life always presents new conditions that reveal new unloved parts. The person doing shadow work at 60 is not doing the same work they did at 30 — the territory deepens. Integration is a direction, not a destination.' },
+            { h:'Integration benefits your relationships', t:'The most immediate practical consequence of ongoing shadow work is in relationships. You become less reactive, less likely to project, more able to hold complexity in others, and more genuinely present. You stop needing people to play roles for you and start being able to meet them as they actually are.' }
+          ],
+          exercise:{ title:'Exercise: The integration inventory', prompt:'Review your shadow work so far. Write about: one quality you have begun to reclaim, one projection you have pulled back, one thing your inner critic has been saying that you now understand differently, and one way you have changed in how you respond to others. Note what remains as an ongoing invitation.' },
+          takeaway:'You do not do shadow work to become someone else. You do it to become more fully yourself.'
+        }
+      ]}
+    ]
+  },
+  {
+    id:'nervous', title:'Nervous System Regulation',
+    subtitle:'Understanding and working with your biology',
+    color:'#0f6e56', catColor:'rgba(15,110,86,0.15)', catText:'#1d9e75',
+    category:'Nervous System', duration:'2.5 hrs', lessonCount:9,
+    description:'The practical neuroscience of emotional regulation — understanding why your body responds the way it does and how to work with it.',
+    modules:[
+      { id:'m1', title:'Understanding Your Biology', lessons:[
+        { id:'l1', title:'The Autonomic Nervous System', duration:'9 min',
+          intro:'Your emotional reactions are not weaknesses of character. They are outputs of a biological system that evolved over millions of years. Understanding that system — how it works, why it responds the way it does — is the first step to working with it rather than against it.',
+          insights:[
+            { h:'Two branches, one system', t:'The autonomic nervous system operates through two main branches: the sympathetic (activation, mobilisation, fight-or-flight) and the parasympathetic (rest, digest, recover, connect). They are not opponents — they are designed to work in dynamic balance. Modern life has tilted that balance heavily toward the sympathetic.' },
+            { h:'The vagus nerve is the key', t:'The vagus nerve is the primary pathway of the parasympathetic system. It connects your brain to your heart, lungs, digestive system, and facial muscles. A well-toned vagus nerve means you can shift between activation and rest efficiently. Most people with emotional regulation difficulties have low vagal tone — and it is improvable.' },
+            { h:'The body is not an obstacle', t:'Most self-development approaches treat the body as something to be controlled by the mind. Neuroscience increasingly suggests the opposite relationship: the body\'s state shapes the mind\'s options. Trying to think clearly while your nervous system is in threat mode is like trying to run software on a failing operating system.' }
+          ],
+          exercise:{ title:'Exercise: Notice your baseline', prompt:'For one full day, check in with your body three times — morning, afternoon, evening. Rate your nervous system state 1-10 (1=completely calm, 10=maximum activation). Note what is happening in your life at each check-in. At the end of the day, look at the pattern: when are you highest? What brings you down?' },
+          takeaway:'Working with your nervous system begins with understanding it — not fighting it.'
+        },
+        { id:'l2', title:'Fight, Flight, Freeze and Fawn', duration:'8 min',
+          intro:'The stress response is more varied than the simple "fight or flight" model suggests. Stephen Porges\' Polyvagal Theory identifies three distinct states of the nervous system, each with its own characteristic behaviours, emotional tones, and recovery pathways.',
+          insights:[
+            { h:'Sympathetic activation: fight and flight', t:'When the nervous system perceives threat, it mobilises energy for action — increased heart rate, diverted blood flow, cortisol release. Fight looks like anger, aggression, pushing back. Flight looks like withdrawal, avoidance, running from difficulty. Both are mobilisation responses.' },
+            { h:'Dorsal vagal shutdown: freeze and collapse', t:'When mobilisation is not possible or does not work, the nervous system can drop into a more ancient defence: shutdown. This looks like emotional numbing, dissociation, a sense of hopelessness or helplessness, difficulty speaking or thinking clearly. It is not depression — it is the nervous system\'s last-resort protection.' },
+            { h:'Fawning: the overlooked response', t:'Pete Walker identified a fourth response pattern: fawn — appeasing, people-pleasing, making oneself small to avoid threat. This is particularly common in people who grew up in environments where expressing needs or asserting boundaries was unsafe. Fawning is not kindness — it is a survival strategy that can look like kindness.' }
+          ],
+          exercise:{ title:'Exercise: Identify your default', prompt:'Which stress response do you default to most? Think of the last three difficult situations you faced and write what your nervous system did in each: did you fight (anger, argument), flee (avoidance, withdrawal), freeze (shutdown, numbness), or fawn (appeasing, shrinking)? What pattern do you see?' },
+          takeaway:'Knowing your default stress response is not a label — it is information about where your system learned to go for safety.'
+        },
+        { id:'l3', title:'The Window of Tolerance', duration:'9 min',
+          intro:'The window of tolerance, developed by psychiatrist Daniel Siegel, describes the optimal zone of nervous system activation where we function best — engaged enough to respond to life\'s demands, calm enough to think clearly and connect with others. Both hyperarousal and hypoarousal take us outside this window.',
+          insights:[
+            { h:'Hyperarousal: above the window', t:'Above the window: anxiety, panic, anger, overwhelm, racing thoughts, inability to focus. The system is running too hot. Fight-or-flight responses predominate. Access to nuanced thinking and empathy decreases. Decisions made in this state are typically reactive rather than responsive.' },
+            { h:'Hypoarousal: below the window', t:'Below the window: numbness, disconnection, fatigue, depression, collapse, dissociation. The system has shut down. There is not enough activation to engage fully with life. Many people misidentify hypoarousal as laziness or depression when it is a nervous system state with specific physiological causes and treatments.' },
+            { h:'The window can be widened', t:'This is the most important and hopeful insight: the window of tolerance is not fixed. Through consistent regulation practices, trauma processing, and relational healing, the window widens. What used to take you above or below your window becomes something you can hold. The goal is not to never leave the window but to return to it faster.' }
+          ],
+          exercise:{ title:'Exercise: Map your window', prompt:'Draw a simple diagram of your window of tolerance. Above the line: list five situations that take you into hyperarousal. Below the line: list five situations that take you into hypoarousal. In the window: list what helps you stay here. This becomes your personal regulation map.' },
+          takeaway:'You cannot regulate from outside the window. The first task is always to return to the window before trying to solve anything.'
+        }
+      ]},
+      { id:'m2', title:'Regulation Tools', lessons:[
+        { id:'l4', title:'Breathwork for Rapid Calm', duration:'8 min',
+          intro:'Breath is the only autonomic function you can control voluntarily, which makes it the most direct available lever on the nervous system. The relationship is bidirectional: your emotional state changes your breathing, and deliberately changing your breathing changes your emotional state.',
+          insights:[
+            { h:'The exhale is the key', t:'Inhalation activates the sympathetic nervous system; exhalation activates the parasympathetic. A longer exhale than inhale reliably shifts the balance toward calm. This is why sighing when you\'re stressed is adaptive — the body is self-regulating. A conscious extended exhale amplifies this effect.' },
+            { h:'Box breathing: the simplest protocol', t:'Inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat four times. This equalises the two branches and creates coherence in heart rate variability — a measurable indicator of nervous system health. Used by military and emergency services precisely because it works under pressure.' },
+            { h:'Physiological sigh: the fastest intervention', t:'Stanford researcher Andrew Huberman identifies the physiological sigh — a double inhale through the nose followed by a long exhale through the mouth — as the single fastest technique for reducing stress. One cycle produces measurable calming effects within seconds. It requires no training to use.' }
+          ],
+          exercise:{ title:'Exercise: Build the breath habit', prompt:'For 7 days, practice one deliberate breathing intervention daily: your choice of box breathing (4 counts each), 4-7-8 (inhale 4, hold 7, exhale 8), or physiological sigh (double inhale, long exhale). Practice it at the same time each day. Then use it once in a naturally stressful moment and note the effect.' },
+          takeaway:'You have a regulation tool available every moment, at no cost, requiring no equipment. Use it.'
+        },
+        { id:'l5', title:'Body-Based Grounding', duration:'9 min',
+          intro:'Grounding practices work by activating the body\'s sensory system — bringing conscious awareness into physical sensation in the present moment. This competes with the nervous system\'s threat-detection mode, which operates primarily through mental prediction rather than present-moment sensing.',
+          insights:[
+            { h:'Sensation and threat-prediction compete', t:'When the nervous system is running a threat scenario, it is primarily operating through mental imagery and prediction. When you bring attention fully into physical sensation — the pressure of feet on floor, the texture of an object, the temperature of air — you activate a different circuit. The two cannot fully occupy the system simultaneously.' },
+            { h:'The 5-4-3-2-1 method', t:'Five things you can see. Four you can touch and feel. Three you can hear. Two you can smell. One you can taste. This systematic sensory inventory forces the brain into the present moment. It is deceptively simple and reliably effective, particularly for anxiety and dissociation.' },
+            { h:'Cold water and orientation', t:'Splashing cold water on the face or wrists activates the dive reflex — a mammalian response that slows the heart rate and shifts the nervous system toward parasympathetic activity. Similarly, slowly orienting your head to scan the environment sends a safety signal to the threat-detection system: no predator, we are safe.' }
+          ],
+          exercise:{ title:'Exercise: Grounding in the moment', prompt:'The next time you notice yourself above your window of tolerance, practice a full body-based grounding sequence before doing anything else: feel your feet on the floor, take three slow breaths, do the 5-4-3-2-1 inventory, then slowly scan the room. Note how your state shifts before and after.' },
+          takeaway:'The present moment is almost always safe. Grounding brings you back to it when your system is living in the imagined past or future.'
+        },
+        { id:'l6', title:'Cognitive Reappraisal', duration:'10 min',
+          intro:'Cognitive reappraisal is the practice of consciously reinterpreting a situation in a way that changes its emotional impact. It is not the same as positive thinking or denial — it is an evidence-based technique that changes neural activity in the amygdala and prefrontal cortex, measurable in real time on brain scans.',
+          insights:[
+            { h:'Reappraisal works upstream', t:'Unlike suppression (which tries to manage the emotion after it arises), reappraisal works upstream — changing the interpretation before the full emotional cascade occurs. This is why it is more effective and less costly than suppression. You are not fighting the flood; you are changing the conditions that created it.' },
+            { h:'The reappraisal question set', t:'Four questions that reliably generate reappraisals: What else could this mean? Is this definitely true, or is it one interpretation? What would I tell a close friend if they were in this situation? How will I see this in five years? Each question activates the prefrontal cortex and generates alternative narratives.' },
+            { h:'Practice in calm first', t:'Reappraisal is a cognitive skill that must be practised when calm before it becomes available when flooded. People who regularly rehearse reappraisal in low-stakes situations find it accessible in high-stakes ones. Those who only try it when already dysregulated find it does not work — not because it is wrong, but because the skill was not built.' }
+          ],
+          exercise:{ title:'Exercise: The reappraisal practice', prompt:'For the next two weeks, once daily, take a mildly stressful situation from your day and run it through the four reappraisal questions. Write your answers. Notice what new interpretations emerge and how your emotional response shifts. The goal is not to find the perfect reframe but to build the habit of looking for alternatives.' },
+          takeaway:'Your interpretation of events is not a fixed fact — it is a choice that shapes everything that follows.'
+        }
+      ]},
+      { id:'m3', title:'Building Long-term Resilience', lessons:[
+        { id:'l7', title:'The Daily Regulation Practice', duration:'9 min',
+          intro:'Nervous system regulation is not only a crisis skill — it is a daily maintenance practice. Just as physical fitness requires consistent exercise, not just emergency intervention, emotional regulation requires daily inputs that maintain vagal tone, reduce baseline activation, and build the biological capacity for resilience.',
+          insights:[
+            { h:'Morning regulation sets the tone', t:'The first thirty minutes of the day establish the nervous system\'s baseline for what follows. High-activation inputs in the morning (news, social media, stressful conversations) prime the system for reactivity. Gentle regulation inputs — slow movement, natural light, deliberate breathing, no screen — prime it for responsiveness.' },
+            { h:'Sleep is not optional', t:'The nervous system recovers during sleep. Chronic sleep deprivation halves the window of tolerance, increases amygdala reactivity by up to 60%, and significantly impairs the prefrontal cortex\'s ability to regulate emotion. No regulation practice compensates for consistent sleep deprivation. Sleep is the most powerful regulation tool available.' },
+            { h:'Movement processes stress hormones', t:'Exercise is not just physical fitness — it metabolises the cortisol and adrenaline that accumulate from unresolved stress responses. Sustained aerobic movement is particularly effective at completing the stress cycle. Even a 20-minute walk shifts the nervous system measurably. Movement is medicine.' }
+          ],
+          exercise:{ title:'Exercise: Design your practice', prompt:'Design a 7-day regulation protocol. For each day, specify: one morning practice (5-10 minutes), one midday check-in (2-3 minutes), one movement input, and one evening wind-down practice. Make it realistic — small and consistent beats large and occasional. Run it for one week and review.' },
+          takeaway:'Regulation is not something you do when you are in trouble. It is something you do daily to reduce how often you get in trouble.'
+        },
+        { id:'l8', title:'Relationship as Regulation', duration:'10 min',
+          intro:'Stephen Porges\' Polyvagal Theory introduced one of the most important insights in the science of stress: the human nervous system co-regulates — it uses social cues to assess safety and calibrate its own activation level. Safe human connection is not just emotionally important; it is physiologically regulating.',
+          insights:[
+            { h:'The social engagement system', t:'Polyvagal Theory identifies a third branch of nervous system functioning — the ventral vagal, associated with the social engagement system. When activated, it produces feelings of safety, connection, and curiosity. It is activated primarily by safe social contact: eye contact, warm tone of voice, facial expression, physical proximity with trusted others.' },
+            { h:'Co-regulation is built into biology', t:'Infants cannot self-regulate — they borrow regulation from their caregivers\' nervous systems. This co-regulatory capacity does not disappear in adulthood; it continues. Being with a regulated person can bring a dysregulated nervous system toward calm. This is not weakness — it is how the system was designed to work.' },
+            { h:'Relationships can both regulate and dysregulate', t:'The same mechanism that makes safe relationships regulating makes unsafe relationships dysregulating. A chronically stressful relationship maintains the nervous system in a state of activation. Building a social environment with at least a few reliably safe connections is not a luxury — it is a biological need.' }
+          ],
+          exercise:{ title:'Exercise: Map your relational regulation', prompt:'List the people in your life and categorise them: Who reliably helps you feel calmer and safer? Who reliably activates your threat system? Who is neutral? Notice the ratio. Consider: are you spending enough time with the regulating relationships? Are you over-exposed to dysregulating ones? What is one concrete change you could make?' },
+          takeaway:'You cannot regulate your way to wholeness in isolation. Safe relationships are part of the biological prescription.'
+        },
+        { id:'l9', title:'Your Resilience Stack', duration:'11 min',
+          intro:'Resilience is not a personality trait — it is a set of practices and conditions that together create the capacity to bend without breaking, to be affected by difficulty without being defined by it, and to recover without requiring the difficulty to not have happened.',
+          insights:[
+            { h:'Resilience is multidimensional', t:'Research identifies several distinct components of resilience: physiological (nervous system tone, sleep, movement), cognitive (meaning-making, reappraisal capacity), relational (social support, co-regulation), and what Viktor Frankl called existential — a sense of meaning that transcends the current difficulty. Developing all four creates a stack that holds under pressure.' },
+            { h:'Adversity history is not destiny', t:'Early adverse experiences raise the baseline threat sensitivity of the nervous system and can narrow the window of tolerance significantly. But this is not permanent. Post-traumatic growth — genuine expansion of capacity following difficulty — is not only possible but well-documented. The work is harder, not impossible.' },
+            { h:'Resilience includes the right to struggle', t:'One of the most destructive resilience myths is that resilient people do not feel the full weight of what they face. They do. The difference is not in the depth of the feeling but in the relationship to it. Resilience includes the right to be genuinely affected — and the knowledge that you will eventually find your way back.' }
+          ],
+          exercise:{ title:'Exercise: Build your stack', prompt:'Assess your current resilience across four dimensions: physiological (sleep, movement, breathwork), cognitive (reappraisal, meaning-making), relational (safe connections, co-regulation), and existential (sense of purpose, values alignment). Rate each 1-10. Choose the lowest dimension and identify one specific action you will take this week to strengthen it.' },
+          takeaway:'Resilience is not about being unbreakable. It is about being bendable — and knowing how to return.'
+        }
+      ]}
+    ]
+  }
+];
+
+let lmsState = { view:'catalog', courseId:null, moduleId:null, lessonId:null };
+
+function getLMSProgress() {
+  return JSON.parse(localStorage.getItem('lms_'+clientEmail) || '{}');
+}
+
+function saveLMSProgress(data) {
+  localStorage.setItem('lms_'+clientEmail, JSON.stringify(data));
+}
+
+function getCourseProgress(courseId) {
+  const prog = getLMSProgress();
+  const cp = prog[courseId] || {};
+  const course = COURSES.find(c=>c.id===courseId);
+  if (!course) return 0;
+  let total=0, done=0;
+  course.modules.forEach(m => m.lessons.forEach(l => {
+    total++;
+    if (cp[m.id+'_'+l.id]) done++;
+  }));
+  return total ? Math.round((done/total)*100) : 0;
+}
+
+function isLessonDone(courseId, moduleId, lessonId) {
+  const prog = getLMSProgress();
+  return !!(prog[courseId] && prog[courseId][moduleId+'_'+lessonId]);
+}
+
+function markDone(courseId, moduleId, lessonId) {
+  const prog = getLMSProgress();
+  if (!prog[courseId]) prog[courseId] = {};
+  prog[courseId][moduleId+'_'+lessonId] = new Date().toISOString();
+  saveLMSProgress(prog);
+}
+
+function initLMS() {
+  lmsState = { view:'catalog', courseId:null, moduleId:null, lessonId:null };
+  showLMSView('catalog');
+  renderLMSCatalog();
+}
+
+function showLMSView(view) {
+  lmsState.view = view;
+  ['catalog','course','lesson','cert'].forEach(v => {
+    const el = document.getElementById('lms-'+v+'-view');
+    if (el) el.style.display = v===view ? '' : 'none';
+  });
+}
+
+function renderLMSCatalog() {
+  const grid = document.getElementById('lms-catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = COURSES.map(c => {
+    const pct = getCourseProgress(c.id);
+    const done = pct === 100;
+    return `<div class="lms-card" onclick="openCourse('${c.id}')">
+      <div class="lms-card-banner" style="background:${c.color}"></div>
+      <div class="lms-card-body">
+        <div class="lms-card-category" style="background:${c.catColor};color:${c.catText};padding:2px 8px;border-radius:10px;display:inline-block;">${c.category}</div>
+        <div class="lms-card-title" style="margin-top:8px">${c.title}</div>
+        <div class="lms-card-sub">${c.description}</div>
+        <div style="margin-bottom:10px">
+          <div class="lms-progress-wrap"><div class="lms-progress-fill" style="width:${pct}%;background:${c.color}"></div></div>
+          <div class="lms-progress-label">${done?'✓ Complete':pct>0?pct+'% complete':'Not started'}</div>
+        </div>
+        <div class="lms-card-footer">
+          <div class="lms-card-meta">${c.lessonCount} lessons · ${c.duration}</div>
+          <div style="font-size:12px;font-weight:600;color:${c.color}">${done?'Review →':pct>0?'Continue →':'Start →'}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openCourse(courseId) {
+  lmsState.courseId = courseId;
+  showLMSView('course');
+  const course = COURSES.find(c=>c.id===courseId);
+  if (!course) return;
+  const pct = getCourseProgress(courseId);
+  const el = document.getElementById('lms-course-view');
+  el.innerHTML = `
+    <button class="lms-back" onclick="initLMS()">← All courses</button>
+    <div class="lms-course-header">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,236,255,0.45);margin-bottom:10px">${course.category}</div>
+      <div class="lms-course-title">${course.title}</div>
+      <div class="lms-course-sub">${course.subtitle}</div>
+      <div class="lms-course-stats">
+        <span>${course.modules.length} modules</span>
+        <span>·</span>
+        <span>${course.lessonCount} lessons</span>
+        <span>·</span>
+        <span>${course.duration}</span>
+        <span>·</span>
+        <span>${pct}% complete</span>
+      </div>
+      <div class="lms-course-progress"><div class="lms-course-progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    ${pct===100?`<div style="text-align:center;margin-bottom:20px"><button class="btn-primary" onclick="showCert('${courseId}')">🎓 View Certificate →</button></div>`:''}
+    <div id="lms-modules-list">
+      ${course.modules.map((m,mi) => {
+        const mDone = m.lessons.every(l=>isLessonDone(courseId,m.id,l.id));
+        const mPct = Math.round((m.lessons.filter(l=>isLessonDone(courseId,m.id,l.id)).length/m.lessons.length)*100);
+        return `<div class="lms-module ${mi===0?'open':''}" id="mod-${m.id}">
+          <div class="lms-module-header" onclick="toggleModule('${m.id}')">
+            <div class="lms-module-num">${mi+1}</div>
+            <div class="lms-module-title">${m.title}</div>
+            <div class="lms-module-meta">${mDone?'✓ Done':mPct>0?mPct+'%':m.lessons.length+' lessons'}</div>
+            <div class="lms-module-chevron">▾</div>
+          </div>
+          <div class="lms-lessons">
+            ${m.lessons.map((l,li) => {
+              const done = isLessonDone(courseId,m.id,l.id);
+              return `<div class="lms-lesson-row" onclick="openLesson('${courseId}','${m.id}','${l.id}')">
+                <div class="lms-lesson-check ${done?'done':''}">${done?'✓':li+1}</div>
+                <div class="lms-lesson-title">${l.title}</div>
+                <div class="lms-lesson-duration">${l.duration}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function toggleModule(moduleId) {
+  const el = document.getElementById('mod-'+moduleId);
+  if (el) el.classList.toggle('open');
+}
+
+function openLesson(courseId, moduleId, lessonId) {
+  lmsState = { view:'lesson', courseId, moduleId, lessonId };
+  showLMSView('lesson');
+  const course = COURSES.find(c=>c.id===courseId);
+  const mod    = course && course.modules.find(m=>m.id===moduleId);
+  const lesson = mod   && mod.lessons.find(l=>l.id===lessonId);
+  if (!lesson) return;
+  const done = isLessonDone(courseId, moduleId, lessonId);
+  const lessonIdx = mod.lessons.indexOf(lesson);
+  const modIdx    = course.modules.indexOf(mod);
+  const hasNext   = lessonIdx < mod.lessons.length-1 || modIdx < course.modules.length-1;
+  const hasPrev   = lessonIdx > 0 || modIdx > 0;
+  let nextCourse=courseId, nextMod=moduleId, nextLesson=null;
+  if (lessonIdx < mod.lessons.length-1) nextLesson = mod.lessons[lessonIdx+1].id;
+  else if (modIdx < course.modules.length-1) { nextMod=course.modules[modIdx+1].id; nextLesson=course.modules[modIdx+1].lessons[0].id; }
+  let prevLesson=null, prevMod=moduleId;
+  if (lessonIdx > 0) prevLesson = mod.lessons[lessonIdx-1].id;
+  else if (modIdx > 0) { prevMod=course.modules[modIdx-1].id; prevLesson=course.modules[modIdx-1].lessons[course.modules[modIdx-1].lessons.length-1].id; }
+  const el = document.getElementById('lms-lesson-view');
+  el.innerHTML = `
+    <button class="lms-back" onclick="openCourse('${courseId}')">← ${course.title}</button>
+    <div class="lms-lesson-header">
+      <div class="lms-lesson-breadcrumb">${mod.title} · Lesson ${lessonIdx+1} of ${mod.lessons.length}</div>
+      <div class="lms-lesson-title-big">${lesson.title}</div>
+      <div class="lms-lesson-meta">${lesson.duration} · ${done?'<span style="color:#4caf7d;font-weight:600;">✓ Completed</span>':'Not yet completed'}</div>
+    </div>
+    <hr class="lms-divider">
+    <div class="lms-intro">${lesson.intro}</div>
+    <div class="lms-insights">
+      ${lesson.insights.map(i=>`<div class="lms-insight"><h4>${i.h}</h4><p>${i.t}</p></div>`).join('')}
+    </div>
+    <div class="lms-exercise">
+      <h4>✦ ${lesson.exercise.title}</h4>
+      <p>${lesson.exercise.prompt.replace(/\n/g,'<br>')}</p>
+    </div>
+    <div class="lms-takeaway">
+      ❝ ${lesson.takeaway}
+    </div>
+    <div class="lms-lesson-nav">
+      <button class="btn-ghost" ${!hasPrev?'style="visibility:hidden"':''} onclick="openLesson('${courseId}','${prevMod}','${prevLesson||''}')">← Previous</button>
+      <button class="lms-complete-btn ${done?'done':''}" onclick="completeLesson('${courseId}','${moduleId}','${lessonId}','${nextMod||''}','${nextLesson||''}')">
+        ${done?'✓ Completed':'Mark complete →'}
+      </button>
+      ${hasNext&&nextLesson?`<button class="btn-ghost" onclick="openLesson('${courseId}','${nextMod}','${nextLesson}')">Next →</button>`:'<span style="visibility:hidden">Next</span>'}
+    </div>`;
+}
+
+function completeLesson(courseId, moduleId, lessonId, nextMod, nextLesson) {
+  markDone(courseId, moduleId, lessonId);
+  const btn = document.querySelector('.lms-complete-btn');
+  if (btn) { btn.textContent='✓ Completed'; btn.classList.add('done'); }
+  const pct = getCourseProgress(courseId);
+  if (pct === 100) { setTimeout(()=>showCert(courseId), 800); return; }
+  if (nextLesson) setTimeout(()=>openLesson(courseId, nextMod, nextLesson), 600);
+  if (lmsState.view==='catalog') renderLMSCatalog();
+}
+
+function showCert(courseId) {
+  showLMSView('cert');
+  const course = COURSES.find(c=>c.id===courseId);
+  const today = new Date().toLocaleDateString('en',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('lms-cert-view').innerHTML = `
+    <button class="lms-back" onclick="initLMS()">← All courses</button>
+    <div class="lms-cert">
+      <div class="lms-cert-badge">🎓</div>
+      <div class="lms-cert-title">Certificate of Completion</div>
+      <div class="lms-cert-name">${clientName||'Client'}</div>
+      <div class="lms-cert-desc">has successfully completed<br><strong style="color:#f0ecff;font-family:'Cinzel',serif;font-size:15px;">${course.title}</strong><br><br>
+      Issued ${today} · Aligned Order Coaching<br><span style="font-size:11px;opacity:.5">✦ ${course.lessonCount} lessons · ${course.duration}</span></div>
+    </div>`;
 }
 
 /* ── BOOT ── */
