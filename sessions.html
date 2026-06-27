@@ -459,59 +459,17 @@ function normaliseSession(row, defaultSource) {
 
 async function fetchSessions() {
   try {
-    // Run both fetches in parallel
-    const [calRes, gasRes] = await Promise.allSettled([
-      fetch(SESSIONS_API, { cache: 'no-store' }),
-      fetch(LEADS_API + '?sheet=sessions', { cache: 'no-store' })
-    ]);
-
-    // 1. Calendly sessions
-    const calendlySessions = [];
-    if (calRes.status === 'fulfilled' && calRes.value.ok) {
-      const rows = await calRes.value.json();
-      if (Array.isArray(rows)) rows.forEach(r => calendlySessions.push(normaliseSession(r, 'calendly')));
-    }
-
-    // 2. Admin-assigned sessions from GAS sessions sheet
-    const adminAssigned = [];
-    if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
-      const text = await gasRes.value.text();
-      try {
-        const parsed = JSON.parse(text);
-        const rows = Array.isArray(parsed) ? parsed : [];
-        console.log('[Sessions] GAS sessions sheet returned', rows.length, 'rows');
-
-        rows.forEach(r => {
-          // Exclude Calendly webhook entries (they have a calendly_id AND source='calendly' set by webhook)
-          // Include everything without calendly_id (admin-assigned), or explicitly marked manual
-          const hasCalendlyId   = !!(r.calendly_id && r.calendly_id.trim && r.calendly_id.trim());
-          const isCalendlySource = (r.source || '').toLowerCase() === 'calendly';
-          const isWebhookEntry  = hasCalendlyId && isCalendlySource;
-
-          if (!isWebhookEntry && (r.first_name || r.email) && r.datetime) {
-            console.log('[Sessions] Including admin-assigned:', r.first_name, r.email, r.status);
-            adminAssigned.push(normaliseSession(r, 'manual'));
-          }
-        });
-      } catch(err) {
-        console.warn('[Sessions] GAS parse error:', err, 'raw text:', text?.slice(0, 200));
-      }
-    } else {
-      console.warn('[Sessions] GAS fetch failed:', gasRes.status, gasRes.reason);
-    }
-
-    console.log('[Sessions] Calendly:', calendlySessions.length, '| Admin-assigned:', adminAssigned.length);
-
-    // Deduplicate by email + date (prefer Calendly if same day booking exists)
-    const calKeys = new Set(calendlySessions.map(s => s.email + '|' + (s.datetime||'').slice(0,10)));
-    const uniqueAssigned = adminAssigned.filter(s =>
-      !calKeys.has(s.email + '|' + (s.datetime||'').slice(0,10))
-    );
-
-    return [...calendlySessions, ...uniqueAssigned]
-      .filter(s => s.first_name || s.email)
-      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
+    // sessions.js now returns BOTH Calendly sessions AND admin-assigned from GAS
+    const res = await fetch(SESSIONS_API, { cache: 'no-store' });
+    if (!res.ok) { console.error('Sessions fetch failed:', res.status); return null; }
+    const rows = await res.json();
+    if (!Array.isArray(rows)) return [];
+    console.log('[Sessions] Received', rows.length, 'sessions from server');
+    const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+    return rows.map(row => {
+      const key = row.calendly_id || row.email;
+      return normaliseSession({ ...row, status: overrides[key] || row.status }, row.source || 'calendly');
+    }).filter(s => s.first_name || s.email);
   } catch(e) {
     console.error('fetchSessions error:', e);
     return null;
