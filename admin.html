@@ -860,28 +860,81 @@ async function fetchLeads() {
 
 async function fetchSessions() {
   try {
-    const r = await fetch(SESSIONS_API, { cache: 'no-store' });
-    if(!r.ok) return [];
-    const rows = await r.json();
-    if(!Array.isArray(rows)) return [];
-    const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
-    return rows.map(row => {
-      const key = row.calendly_id || row.email;
-      return {
-        id:           String(row.calendly_id || row.created_at || Math.random()),
-        firstName:    String(row.first_name  || ''),
-        lastName:     String(row.last_name   || ''),
-        email:        String(row.email       || ''),
-        sessionType:  String(row.session_type|| ''),
-        datetime:     String(row.datetime    || ''),
-        meetingLink:  String(row.meeting_link|| ''),
-        status:       overrides[key] || String(row.status || 'confirmed'),
-        notes:        String(row.notes       || ''),
-        outcome:      String(row.outcome     || ''),
-        source:       String(row.source      || 'calendly'),
-        createdAt:    String(row.created_at  || '')
-      };
-    }).filter(s => s.firstName || s.email);
+    // Fetch Calendly sessions + GAS sessions sheet in parallel
+    // GAS sheet contains physician's status updates, notes, and outcomes
+    const [calRes, gasRes] = await Promise.allSettled([
+      fetch(SESSIONS_API, { cache: 'no-store' }),
+      fetch(LEADS_API + '?sheet=sessions', { cache: 'no-store' })
+    ]);
+
+    // Build a GAS override map: keyed by calendly_id or email
+    // Contains physician's live updates (status, notes, outcome)
+    const gasMap = {};
+    if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
+      try {
+        const gasText = await gasRes.value.text();
+        const gasRows = JSON.parse(gasText);
+        if (Array.isArray(gasRows)) {
+          gasRows.forEach(r => {
+            const key = r.calendly_id || r.email;
+            if (key) gasMap[key] = r;
+          });
+        }
+      } catch(_) {}
+    }
+
+    // Process Calendly sessions, merging any physician updates from GAS
+    const localOverrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+    let sessions = [];
+    if (calRes.status === 'fulfilled' && calRes.value.ok) {
+      const rows = await calRes.value.json();
+      if (Array.isArray(rows)) {
+        sessions = rows.map(row => {
+          const key  = row.calendly_id || row.email;
+          const gas  = gasMap[key] || {};   // physician's updates for this session
+          return {
+            id:          String(row.calendly_id || row.created_at || Math.random()),
+            firstName:   String(row.first_name  || ''),
+            lastName:    String(row.last_name   || ''),
+            email:       String(row.email       || ''),
+            sessionType: String(row.session_type|| ''),
+            datetime:    String(row.datetime    || ''),
+            meetingLink: String(row.meeting_link|| ''),
+            // Status: GAS physician update > local override > Calendly
+            status:      gas.status || localOverrides[key] || String(row.status || 'confirmed'),
+            // Notes & outcome: only physician fills these in
+            notes:       String(gas.notes   || row.notes   || ''),
+            outcome:     String(gas.outcome || row.outcome || ''),
+            source:      'calendly',
+            createdAt:   String(row.created_at || '')
+          };
+        }).filter(s => s.firstName || s.email);
+        // Remove from gasMap any that were matched to Calendly sessions
+        sessions.forEach(s => { if (gasMap[s.id]) delete gasMap[s.id]; });
+      }
+    }
+
+    // Also add manually admin-assigned sessions from GAS (not in Calendly)
+    Object.values(gasMap).forEach(r => {
+      if (!r.calendly_id && (r.first_name || r.email) && r.datetime) {
+        sessions.push({
+          id:          String(r.created_at || r.email + r.datetime),
+          firstName:   String(r.first_name  || ''),
+          lastName:    String(r.last_name   || ''),
+          email:       String(r.email       || ''),
+          sessionType: String(r.session_type|| ''),
+          datetime:    String(r.datetime    || ''),
+          meetingLink: String(r.meeting_link|| ''),
+          status:      String(r.status      || 'confirmed'),
+          notes:       String(r.notes       || ''),
+          outcome:     String(r.outcome     || ''),
+          source:      'manual',
+          createdAt:   String(r.created_at  || '')
+        });
+      }
+    });
+
+    return sessions.sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
   } catch(e) { return []; }
 }
 
@@ -932,22 +985,76 @@ async function fetchFeedback() {
 
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
+// ── DATA CACHE ────────────────────────────────────
+const CACHE_KEY = 'ao_dash_cache_v1';
+
+function saveCache(leads, sessions, bookings, feedback) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      leads, sessions, bookings, feedback, ts: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function loadCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (!c || !c.leads) return null;
+    return c;
+  } catch(e) { return null; }
+}
+
 // ── RENDER ALL ────────────────────────────────────
 async function refreshAll() {
   const btn = document.getElementById('refreshBtn');
-  btn.innerHTML = '<span class="spinning">↺</span>';
-  btn.disabled = true;
+  if (btn) { btn.innerHTML = '<span class="spinning">↺</span>'; btn.disabled = true; }
 
-  [allLeads, allSessions, allBookings, allFeedback] = await Promise.all([fetchLeads(), fetchSessions(), fetchBookings(), fetchFeedback()]);
+  // ── Step 1: Show cached data IMMEDIATELY (instant render) ──
+  const cached = loadCache();
+  if (cached) {
+    allLeads    = cached.leads    || [];
+    allSessions = cached.sessions || [];
+    allBookings = cached.bookings || [];
+    allFeedback = cached.feedback || [];
+    renderAll();
+    renderAlerts();
+    const lastUpdated = document.getElementById('lastUpdated');
+    if (lastUpdated) {
+      const age = Math.round((Date.now() - cached.ts) / 60000);
+      lastUpdated.textContent = 'Cached · ' + (age < 1 ? 'just now' : age + 'm ago');
+    }
+  }
 
-  renderAll();
-  renderAlerts();
+  // ── Step 2: Fetch leads first (GAS is faster than Calendly) ──
+  try {
+    const freshLeads = await fetchLeads();
+    if (freshLeads.length || !cached) {
+      allLeads = freshLeads;
+      renderOverview();
+      renderLeadsPage();
+      renderAlerts();
+    }
+  } catch(e) {}
+
+  // ── Step 3: Fetch the rest in parallel in the background ──
+  try {
+    const [freshSessions, freshBookings, freshFeedback] = await Promise.all([
+      fetchSessions(), fetchBookings(), fetchFeedback()
+    ]);
+    allSessions = freshSessions;
+    allBookings = freshBookings;
+    allFeedback = freshFeedback;
+    saveCache(allLeads, allSessions, allBookings, allFeedback);
+    renderAll();
+    renderAlerts();
+    updateGoalTracker();
+  } catch(e) {}
+
   startRefreshTimer();
-
-  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('lastUpdated').textContent = 'Updated ' + t;
-  btn.innerHTML = '↺ Refresh';
-  btn.disabled = false;
+  const t = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const lastUpdated = document.getElementById('lastUpdated');
+  if (lastUpdated) lastUpdated.textContent = 'Updated ' + t;
+  if (btn) { btn.innerHTML = '↺ Refresh'; btn.disabled = false; }
 }
 
 // ── OVERVIEW ──────────────────────────────────────
@@ -1136,8 +1243,12 @@ function renderSessionsPage() {
   else {
     empty.style.display='none';
     body.innerHTML = allSessions.map(s => {
-      const nid = s.calendly_id || s.email + '_' + (s.datetime||'').replace(/[^0-9]/g,'');
-      const savedNote = localStorage.getItem('session_note_' + nid) || '';
+      const nid = s.id || s.email + '_' + (s.datetime||'').replace(/[^0-9]/g,'');
+      // Show physician's notes from GAS (s.notes), fallback to admin's localStorage notes
+      const physNote = s.notes || '';
+      const adminNote = localStorage.getItem('session_note_' + nid) || '';
+      const hasNote = physNote || adminNote;
+      const noteText = physNote || adminNote;
       return `<tr>
         <td><div style="display:flex;align-items:center;gap:9px;">
           <div class="avatar">${(s.firstName||'?')[0].toUpperCase()}</div>
@@ -1148,10 +1259,22 @@ function renderSessionsPage() {
         <td style="font-size:12px;color:var(--muted)">${fmtDateTime(s.datetime)}</td>
         <td><span class="badge ${s.status==='confirmed'?'green':s.status==='completed'?'blue':s.status==='cancelled'?'red':'amber'}">${s.status}</span></td>
         <td style="font-size:11.5px;color:var(--muted)">${s.outcome||'—'}</td>
-        <td><span class="badge ${s.source==='calendly'?'green':'grey'}">${s.source==='calendly'?'📅 Calendly':'✋ Manual'}</span></td>
-        <td><button onclick="toggleSessionNote('${nid}')" style="font-size:10px;padding:3px 8px;border:1px solid var(--b1);border-radius:5px;background:${savedNote?'rgba(106,79,181,0.15)':'transparent'};color:${savedNote?'var(--violet-l)':'var(--muted)'};cursor:pointer;font-family:'Raleway',sans-serif;">${savedNote?'📝 View note':'📝 Add note'}</button></td>
+        <td><span class="badge ${s.source==='calendly'?'green':s.source==='manual'?'blue':'grey'}">${s.source==='calendly'?'📅 Calendly':s.source==='manual'?'👤 Assigned':'—'}</span></td>
+        <td>
+          ${hasNote
+            ? `<button onclick="toggleSessionNote('${nid}')" style="font-size:10px;padding:3px 8px;border:1px solid rgba(106,79,181,0.3);border-radius:5px;background:rgba(106,79,181,0.12);color:var(--violet-l);cursor:pointer;font-family:'Raleway',sans-serif;">📝 View</button>`
+            : `<span style="font-size:11px;color:var(--muted)">—</span>`}
+        </td>
       </tr>
-      <tr id="note-row-${nid}" style="display:none;"><td colspan="7" style="padding:0"><div class="notes-panel" id="note-panel-${nid}"><textarea id="note-ta-${nid}" placeholder="Session notes, key insights, follow-up items…">${savedNote}</textarea><button class="save-note" onclick="saveSessionNote('${nid}')">Save note</button></div></td></tr>`;
+      <tr id="note-row-${nid}" style="display:none;"><td colspan="7" style="padding:0">
+        <div class="notes-panel" id="note-panel-${nid}">
+          <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">
+            ${physNote ? '📋 Physician notes (from sessions)' : '📝 Admin notes'}
+          </div>
+          <textarea id="note-ta-${nid}" placeholder="No notes yet…" style="background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:7px;padding:8px 10px;color:var(--text);font-family:'Raleway',sans-serif;font-size:12px;resize:none;height:70px;line-height:1.6;width:100%;outline:none;" ${physNote?'readonly':''}>${noteText}</textarea>
+          ${!physNote ? `<button class="save-note" onclick="saveSessionNote('${nid}')">Save note</button>` : ''}
+        </div>
+      </td></tr>`;
     }).join('');
   }
 

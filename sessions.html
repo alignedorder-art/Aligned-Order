@@ -170,13 +170,12 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
       <div><div class="logo-name">Aligned Order</div><div class="logo-sub">Sessions</div></div>
     </div>
     <div class="nav">
-      <a class="nav-item" href="dashboard.html">◈ Overview</a>
-      <a class="nav-item" href="dashboard.html">★ Leads</a>
       <a class="nav-item active" href="sessions.html">◷ Sessions</a>
       <a class="nav-item" href="booking.html" target="_blank">↗ Booking Page</a>
     </div>
-    <div style="padding:10px 18px;border-top:1px solid #d0d0e8;">
-      <a href="https://alignedorder.com/members" style="font-size:11px;color:#8888b0;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='#4a3ab5'" onmouseout="this.style.color='#8888b0'">
+    <div style="flex:1;"></div>
+    <div style="padding:14px 18px;border-top:1px solid #d0d0e8;">
+      <a href="https://alignedorder.com/members" style="font-size:11px;color:#9090c0;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color 0.2s;" onmouseover="this.style.color='#4a3ab5'" onmouseout="this.style.color='#9090c0'">
         &#8592; Back to Website
       </a>
     </div>
@@ -473,8 +472,9 @@ async function fetchSessions() {
       if (Array.isArray(rows)) rows.forEach(r => calendlySessions.push(normaliseSession(r, 'calendly')));
     }
 
-    // 2. Admin-assigned sessions ONLY — GAS sessions sheet, gated by assigned_by_admin flag
-    //    This prevents raw assessment leads and Calendly webhook entries from bleeding through
+    // 2. Admin-assigned sessions from GAS sessions sheet
+    //    Reliable gate: Calendly always sets calendly_id; admin-assigned sessions never have it.
+    //    Also accepts source==='manual' and any truthy form of assigned_by_admin as fallbacks.
     const adminAssigned = [];
     if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
       const text = await gasRes.value.text();
@@ -482,8 +482,14 @@ async function fetchSessions() {
         const rows = JSON.parse(text);
         if (Array.isArray(rows)) {
           rows.forEach(r => {
-            // ONLY include if explicitly assigned by admin — never auto-populated leads
-            if (r.assigned_by_admin === true || r.assigned_by_admin === 'true') {
+            const isManual =
+              !r.calendly_id ||                             // no Calendly ID = not from webhook
+              r.source === 'manual' ||                      // explicitly tagged manual
+              r.assigned_by_admin === true  ||              // boolean true
+              r.assigned_by_admin === 'true' ||             // string 'true'
+              r.assigned_by_admin === 'TRUE';               // Google Sheets boolean string
+            // Must have a name or email and a datetime to be a real session
+            if (isManual && (r.first_name || r.email) && r.datetime) {
               adminAssigned.push(normaliseSession(r, 'manual'));
             }
           });
