@@ -909,7 +909,6 @@ setInterval(async()=>{
 
 // ── INIT ──────────────────────────────────────────
 load();
-</script>
 
 function setMobileNav(page) {
   document.querySelectorAll('.mobile-nav-item').forEach(b => b.classList.remove('active'));
@@ -919,8 +918,11 @@ function setMobileNav(page) {
 
 function logout() {
   localStorage.removeItem('ao_auth_session');
-  window.location.href = 'login.html';
+  localStorage.removeItem('ao_login_attempts');
+  localStorage.removeItem('ao_lock_until');
+  window.location.replace('login.html');
 }
+</script>
 
 <div class="mobile-nav">
   <div class="mobile-nav-items">

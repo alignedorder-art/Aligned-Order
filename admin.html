@@ -2307,12 +2307,17 @@ setInterval(refreshAll, 30000);
     if (inp) inp.value = goal;
   }
 })();
-</script>
 
 function logout() {
   localStorage.removeItem('ao_auth_session');
+  localStorage.removeItem('ao_login_attempts');
+  localStorage.removeItem('ao_lock_until');
+  window.location.replace('login.html');
+}
+  localStorage.removeItem('ao_auth_session');
   window.location.href = 'login.html';
 }
+</script>
 
 </body>
 </html>

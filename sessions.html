@@ -985,12 +985,14 @@ setInterval(async () => {
 }, 15000);
 
 load();
-</script>
 
 function logout() {
   localStorage.removeItem('ao_auth_session');
-  window.location.href = 'login.html';
+  localStorage.removeItem('ao_login_attempts');
+  localStorage.removeItem('ao_lock_until');
+  window.location.replace('login.html');
 }
+</script>
 
 <div class="mobile-sess-actions">
   <button class="btn green" onclick="openCalendly('discovery')" style="flex:1;justify-content:center;">📞 Discovery</button>
