@@ -459,13 +459,13 @@ function normaliseSession(row, defaultSource) {
 
 async function fetchSessions() {
   try {
-    // Run both fetches in parallel — Calendly API + admin-assigned from GAS
+    // Run both fetches in parallel
     const [calRes, gasRes] = await Promise.allSettled([
       fetch(SESSIONS_API, { cache: 'no-store' }),
       fetch(LEADS_API + '?sheet=sessions', { cache: 'no-store' })
     ]);
 
-    // 1. Calendly sessions — all bookings made via Calendly
+    // 1. Calendly sessions
     const calendlySessions = [];
     if (calRes.status === 'fulfilled' && calRes.value.ok) {
       const rows = await calRes.value.json();
@@ -473,37 +473,41 @@ async function fetchSessions() {
     }
 
     // 2. Admin-assigned sessions from GAS sessions sheet
-    //    Reliable gate: Calendly always sets calendly_id; admin-assigned sessions never have it.
-    //    Also accepts source==='manual' and any truthy form of assigned_by_admin as fallbacks.
     const adminAssigned = [];
     if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
       const text = await gasRes.value.text();
       try {
-        const rows = JSON.parse(text);
-        if (Array.isArray(rows)) {
-          rows.forEach(r => {
-            const isManual =
-              !r.calendly_id ||                             // no Calendly ID = not from webhook
-              r.source === 'manual' ||                      // explicitly tagged manual
-              r.assigned_by_admin === true  ||              // boolean true
-              r.assigned_by_admin === 'true' ||             // string 'true'
-              r.assigned_by_admin === 'TRUE';               // Google Sheets boolean string
-            // Must have a name or email and a datetime to be a real session
-            if (isManual && (r.first_name || r.email) && r.datetime) {
-              adminAssigned.push(normaliseSession(r, 'manual'));
-            }
-          });
-        }
-      } catch(_) {}
+        const parsed = JSON.parse(text);
+        const rows = Array.isArray(parsed) ? parsed : [];
+        console.log('[Sessions] GAS sessions sheet returned', rows.length, 'rows');
+
+        rows.forEach(r => {
+          // Exclude Calendly webhook entries (they have a calendly_id AND source='calendly' set by webhook)
+          // Include everything without calendly_id (admin-assigned), or explicitly marked manual
+          const hasCalendlyId   = !!(r.calendly_id && r.calendly_id.trim && r.calendly_id.trim());
+          const isCalendlySource = (r.source || '').toLowerCase() === 'calendly';
+          const isWebhookEntry  = hasCalendlyId && isCalendlySource;
+
+          if (!isWebhookEntry && (r.first_name || r.email) && r.datetime) {
+            console.log('[Sessions] Including admin-assigned:', r.first_name, r.email, r.status);
+            adminAssigned.push(normaliseSession(r, 'manual'));
+          }
+        });
+      } catch(err) {
+        console.warn('[Sessions] GAS parse error:', err, 'raw text:', text?.slice(0, 200));
+      }
+    } else {
+      console.warn('[Sessions] GAS fetch failed:', gasRes.status, gasRes.reason);
     }
 
-    // Deduplicate: if same person already booked via Calendly, skip the admin entry
-    const calKeys = new Set(calendlySessions.map(s => s.email + '|' + s.datetime.slice(0,10)));
-    const uniqueAssigned = adminAssigned.filter(s => {
-      return !calKeys.has(s.email + '|' + (s.datetime||'').slice(0,10));
-    });
+    console.log('[Sessions] Calendly:', calendlySessions.length, '| Admin-assigned:', adminAssigned.length);
 
-    // Merge and sort newest first
+    // Deduplicate by email + date (prefer Calendly if same day booking exists)
+    const calKeys = new Set(calendlySessions.map(s => s.email + '|' + (s.datetime||'').slice(0,10)));
+    const uniqueAssigned = adminAssigned.filter(s =>
+      !calKeys.has(s.email + '|' + (s.datetime||'').slice(0,10))
+    );
+
     return [...calendlySessions, ...uniqueAssigned]
       .filter(s => s.first_name || s.email)
       .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
