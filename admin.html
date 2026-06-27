@@ -2384,12 +2384,12 @@ async function submitAssignSession() {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
+    const savedName = assigningLead.firstName;  // save before closeAssignModal nulls it
     closeAssignModal();
-    // Show toast
-    showAssignToast(assigningLead.firstName);
-    // Refresh data
+    showAssignToast(savedName);
     await refreshAll();
   } catch(e) {
+    console.error('Assign error:', e);
     alert('Error saving session. Please try again.');
   }
   btn.disabled = false;
