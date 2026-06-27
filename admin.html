@@ -198,6 +198,27 @@ tr:hover td{background:rgba(201,169,110,0.03);}
 .alert-ok{background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.2);color:#4caf7d;}
 .dr-btn{padding:5px 10px;border-radius:6px;border:none;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);background:transparent;transition:all .15s;}
 .dr-btn:hover{color:var(--text);}
+
+.assign-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.assign-overlay.open{display:flex;}
+.assign-modal{background:var(--s1);border:1px solid var(--b1);border-radius:18px;padding:28px 32px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,0.5);}
+.assign-modal h3{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:.03em;}
+.assign-modal .sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.assign-lead-card{background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:10px;padding:12px 14px;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.assign-field{margin-bottom:14px;}
+.assign-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.assign-field input,.assign-field textarea,.assign-field select{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;transition:border-color .15s;}
+.assign-field input:focus,.assign-field textarea:focus,.assign-field select:focus{border-color:var(--violet-l);}
+.assign-field textarea{resize:none;height:70px;line-height:1.6;}
+.assign-type-row{display:flex;gap:8px;margin-bottom:14px;}
+.assign-type-btn{flex:1;padding:9px;border-radius:8px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-family:'Raleway',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;}
+.assign-type-btn.active{background:rgba(106,79,181,0.2);border-color:var(--violet-l);color:var(--violet-l);}
+.assign-datetime{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.assign-actions{display:flex;gap:10px;margin-top:20px;}
+.assign-actions button{flex:1;padding:11px;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none;}
+.btn-assign-cancel{background:rgba(255,255,255,0.06);color:var(--muted);}
+.btn-assign-submit{background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;box-shadow:0 4px 16px rgba(106,79,181,0.3);}
+.btn-assign-submit:disabled{opacity:.5;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -340,7 +361,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     </div>
     <table>
       <thead><tr>
-        <th>Name</th><th>Email</th><th>Score</th><th>Profile</th><th>Qualified</th><th>Date</th><th>Follow-up</th>
+        <th>Name</th><th>Email</th><th>Score</th><th>Profile</th><th>Qualified</th><th>Date</th><th>Follow-up</th><th>Action</th>
       </tr></thead>
       <tbody id="leadsTableBody"></tbody>
     </table>
@@ -2280,6 +2301,113 @@ function renderAll() {
   if (kanbanVisible) renderKanban();
 }
 
+
+// ── ASSIGN LEAD TO SESSION ─────────────────────────────────────────────
+let assigningLead = null;
+let assignType    = 'discovery';
+
+function openAssignModal(email) {
+  const lead = allLeads.find(l => l.email === email);
+  if (!lead) return;
+  assigningLead = lead;
+  assignType    = 'discovery';
+
+  // Pre-fill
+  document.getElementById('assignLeadName').textContent  = (lead.firstName + ' ' + (lead.lastName||'')).trim();
+  document.getElementById('assignLeadEmail').textContent = lead.email;
+  document.getElementById('assignAvatar').textContent    = initials(lead.firstName, lead.lastName);
+  const scoreBadge = document.getElementById('assignLeadScore');
+  scoreBadge.textContent = lead.score + '%';
+  scoreBadge.className   = 'badge ' + scoreClass(lead.score);
+
+  // Default date to tomorrow
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  document.getElementById('assignDate').value = tomorrow.toISOString().split('T')[0];
+  document.getElementById('assignTime').value = '10:00';
+  document.getElementById('assignLink').value  = '';
+  document.getElementById('assignNotes').value = '';
+  setAssignType('discovery');
+
+  document.getElementById('assignOverlay').classList.add('open');
+}
+
+function closeAssignModal() {
+  document.getElementById('assignOverlay').classList.remove('open');
+  assigningLead = null;
+}
+
+function setAssignType(type) {
+  assignType = type;
+  document.getElementById('typeDiscovery').classList.toggle('active', type === 'discovery');
+  document.getElementById('typeCoaching').classList.toggle('active', type === 'coaching');
+}
+
+async function submitAssignSession() {
+  if (!assigningLead) return;
+  const date = document.getElementById('assignDate').value;
+  const time = document.getElementById('assignTime').value;
+  if (!date || !time) { alert('Please select a date and time.'); return; }
+
+  const btn = document.getElementById('assignSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Assigning…';
+
+  const sessionType = assignType === 'discovery'
+    ? 'Introduction Session(Free)'
+    : 'Coaching Session';
+
+  const payload = {
+    sheet:        'sessions',
+    first_name:   assigningLead.firstName  || '',
+    last_name:    assigningLead.lastName   || '',
+    email:        assigningLead.email      || '',
+    phone:        assigningLead.phone      || '',
+    session_type: sessionType,
+    datetime:     date + 'T' + time + ':00',
+    meeting_link: document.getElementById('assignLink').value  || '',
+    notes:        document.getElementById('assignNotes').value || '',
+    status:       'confirmed',
+    source:       'manual',
+    outcome:      '',
+    created_at:   new Date().toISOString()
+  };
+
+  try {
+    await fetch(LEADS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    closeAssignModal();
+    // Show toast
+    showAssignToast(assigningLead.firstName);
+    // Refresh data
+    await refreshAll();
+  } catch(e) {
+    alert('Error saving session. Please try again.');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Assign to Sessions →';
+}
+
+function showAssignToast(name) {
+  let toast = document.getElementById('assignToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'assignToast';
+    toast.style.cssText = 'position:fixed;bottom:28px;right:28px;background:#4caf7d;color:#fff;padding:12px 20px;border-radius:10px;font-family:Raleway,sans-serif;font-size:13px;font-weight:600;z-index:400;box-shadow:0 8px 24px rgba(0,0,0,0.3);transition:opacity .3s;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = '✓ Session assigned for ' + name;
+  toast.style.opacity = '1';
+  setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+}
+
+// Close modal on overlay click
+document.getElementById('assignOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeAssignModal();
+});
+
 // ── INIT ──────────────────────────────────────────
 loadConfig();
 refreshAll();
@@ -2314,10 +2442,51 @@ function logout() {
   localStorage.removeItem('ao_lock_until');
   window.location.replace('login.html');
 }
-  localStorage.removeItem('ao_auth_session');
-  window.location.href = 'login.html';
-}
 </script>
+
+
+<!-- ASSIGN TO SESSION MODAL -->
+<div class="assign-overlay" id="assignOverlay">
+  <div class="assign-modal">
+    <h3>Assign Lead to Session</h3>
+    <p class="sub">Creates a manual session for this lead in the Sessions Manager.</p>
+    <div class="assign-lead-card">
+      <div class="avatar" id="assignAvatar">?</div>
+      <div>
+        <div style="font-weight:600;color:var(--text);font-size:13px;" id="assignLeadName">—</div>
+        <div style="font-size:11px;color:var(--muted);" id="assignLeadEmail">—</div>
+      </div>
+      <span id="assignLeadScore" class="badge" style="margin-left:auto;"></span>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Session Type</div>
+    <div class="assign-type-row">
+      <button class="assign-type-btn active" id="typeDiscovery" onclick="setAssignType('discovery')">📞 Discovery</button>
+      <button class="assign-type-btn" id="typeCoaching" onclick="setAssignType('coaching')">🔥 Coaching</button>
+    </div>
+    <div class="assign-datetime">
+      <div class="assign-field">
+        <label>Date</label>
+        <input type="date" id="assignDate">
+      </div>
+      <div class="assign-field">
+        <label>Time</label>
+        <input type="time" id="assignTime" value="10:00">
+      </div>
+    </div>
+    <div class="assign-field">
+      <label>Meeting Link (optional)</label>
+      <input type="url" id="assignLink" placeholder="https://zoom.us/j/…">
+    </div>
+    <div class="assign-field">
+      <label>Notes (optional)</label>
+      <textarea id="assignNotes" placeholder="Any context for this session…"></textarea>
+    </div>
+    <div class="assign-actions">
+      <button class="btn-assign-cancel" onclick="closeAssignModal()">Cancel</button>
+      <button class="btn-assign-submit" id="assignSubmitBtn" onclick="submitAssignSession()">Assign to Sessions →</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

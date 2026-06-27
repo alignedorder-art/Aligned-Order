@@ -439,28 +439,65 @@ function fmtDateTime(iso) {
 }
 
 // ── FETCH ──────────────────────────────────────────
+function normaliseSession(row, defaultSource) {
+  return {
+    id:           row.calendly_id || row.created_at || ('manual_' + row.email + '_' + row.datetime),
+    first_name:   String(row.first_name   || ''),
+    last_name:    String(row.last_name    || ''),
+    email:        String(row.email        || ''),
+    phone:        String(row.phone        || ''),
+    session_type: String(row.session_type || row.type || ''),
+    datetime:     String(row.datetime     || ''),
+    meeting_link: String(row.meeting_link || row.link || ''),
+    status:       String(row.status       || 'pending'),
+    notes:        String(row.notes        || ''),
+    outcome:      String(row.outcome      || ''),
+    calendly_id:  String(row.calendly_id  || ''),
+    created_at:   String(row.created_at   || ''),
+    source:       row.calendly_id ? 'calendly' : (row.source || defaultSource || 'manual')
+  };
+}
+
 async function fetchSessions() {
   try {
-    const r = await fetch(SESSIONS_API, { cache: 'no-store' });
-    if(!r.ok) return null;
-    const rows = await r.json();
-    if(!Array.isArray(rows)) return [];
-    return rows.map(row => ({
-      id:           row.calendly_id || row.created_at || String(Math.random()),
-      first_name:   String(row.first_name || ''),
-      last_name:    String(row.last_name  || ''),
-      email:        String(row.email      || ''),
-      phone:        String(row.phone      || ''),
-      session_type: String(row.session_type || row.type || ''),
-      datetime:     String(row.datetime   || ''),
-      meeting_link: String(row.meeting_link || row.link || ''),
-      status:       String(row.status     || 'pending'),
-      notes:        String(row.notes      || ''),
-      outcome:      String(row.outcome    || ''),
-      calendly_id:  String(row.calendly_id|| ''),
-      created_at:   String(row.created_at || ''),
-      source:       row.calendly_id ? 'calendly' : 'manual'
-    })).filter(s => s.first_name || s.email);
+    // Fetch Calendly sessions + manual GAS sessions in parallel
+    const [calRes, gasRes] = await Promise.allSettled([
+      fetch(SESSIONS_API, { cache: 'no-store' }),
+      fetch(LEADS_API + '?sheet=sessions', { cache: 'no-store' })
+    ]);
+
+    const calendlySessions = [];
+    if (calRes.status === 'fulfilled' && calRes.value.ok) {
+      const rows = await calRes.value.json();
+      if (Array.isArray(rows)) rows.forEach(r => calendlySessions.push(normaliseSession(r, 'calendly')));
+    }
+
+    const manualSessions = [];
+    if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
+      const text = await gasRes.value.text();
+      try {
+        const rows = JSON.parse(text);
+        if (Array.isArray(rows)) {
+          rows.forEach(r => {
+            // Only include sessions that are not already from Calendly (no calendly_id)
+            if (!r.calendly_id) manualSessions.push(normaliseSession(r, 'manual'));
+          });
+        }
+      } catch(_) {}
+    }
+
+    // Merge and deduplicate: prefer Calendly version if same email+date
+    const calKeys = new Set(calendlySessions.map(s => s.email + '|' + s.datetime.slice(0,10)));
+    const uniqueManual = manualSessions.filter(s => {
+      const key = s.email + '|' + (s.datetime||'').slice(0,10);
+      return !calKeys.has(key);
+    });
+
+    const all = [...calendlySessions, ...uniqueManual]
+      .filter(s => s.first_name || s.email)
+      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
+
+    return all;
   } catch(e) {
     console.error('fetchSessions error:', e);
     return null;
@@ -655,7 +692,7 @@ function openNotes(id) {
       <div class="detail-block"><div class="detail-lbl">Email</div><div class="detail-val">${s.email}</div></div>
       <div class="detail-block"><div class="detail-lbl">Phone</div><div class="detail-val">${s.phone || '—'}</div></div>
       <div class="detail-block"><div class="detail-lbl">Meeting Link</div><div class="detail-val"><a href="${s.meeting_link}" target="_blank" style="color:#5b8dd9;">${s.meeting_link ? 'Open Link' : '—'}</a></div></div>
-      <div class="detail-block"><div class="detail-lbl">Source</div><div class="detail-val" style="color:${s.source==='calendly'?'#4caf7d':'#4a3ab5'}">${s.source === 'calendly' ? '📅 Calendly' : '✋ Manual'}</div></div>
+      <div class="detail-block"><div class="detail-lbl">Source</div><div class="detail-val" style="color:${s.source==='calendly'?'#4caf7d':'#4a3ab5'}">${s.source === 'calendly' ? '📅 Calendly' : '👤 Assigned'}</div></div>
     </div>
     <div class="modal-actions">
       <button class="modal-btn gold" onclick="closeDetail()">Cancel</button>
