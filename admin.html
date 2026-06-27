@@ -2367,9 +2367,10 @@ async function submitAssignSession() {
     meeting_link: document.getElementById('assignLink').value  || '',
     notes:        document.getElementById('assignNotes').value || '',
     status:       'confirmed',
-    source:       'manual',
-    outcome:      '',
-    created_at:   new Date().toISOString()
+    source:            'manual',
+    assigned_by_admin: true,
+    outcome:           '',
+    created_at:        new Date().toISOString()
   };
 
   try {

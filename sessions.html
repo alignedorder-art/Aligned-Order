@@ -460,44 +460,48 @@ function normaliseSession(row, defaultSource) {
 
 async function fetchSessions() {
   try {
-    // Fetch Calendly sessions + manual GAS sessions in parallel
+    // Run both fetches in parallel — Calendly API + admin-assigned from GAS
     const [calRes, gasRes] = await Promise.allSettled([
       fetch(SESSIONS_API, { cache: 'no-store' }),
       fetch(LEADS_API + '?sheet=sessions', { cache: 'no-store' })
     ]);
 
+    // 1. Calendly sessions — all bookings made via Calendly
     const calendlySessions = [];
     if (calRes.status === 'fulfilled' && calRes.value.ok) {
       const rows = await calRes.value.json();
       if (Array.isArray(rows)) rows.forEach(r => calendlySessions.push(normaliseSession(r, 'calendly')));
     }
 
-    const manualSessions = [];
+    // 2. Admin-assigned sessions ONLY — GAS sessions sheet, gated by assigned_by_admin flag
+    //    This prevents raw assessment leads and Calendly webhook entries from bleeding through
+    const adminAssigned = [];
     if (gasRes.status === 'fulfilled' && gasRes.value.ok) {
       const text = await gasRes.value.text();
       try {
         const rows = JSON.parse(text);
         if (Array.isArray(rows)) {
           rows.forEach(r => {
-            // Only include sessions that are not already from Calendly (no calendly_id)
-            if (!r.calendly_id) manualSessions.push(normaliseSession(r, 'manual'));
+            // ONLY include if explicitly assigned by admin — never auto-populated leads
+            if (r.assigned_by_admin === true || r.assigned_by_admin === 'true') {
+              adminAssigned.push(normaliseSession(r, 'manual'));
+            }
           });
         }
       } catch(_) {}
     }
 
-    // Merge and deduplicate: prefer Calendly version if same email+date
+    // Deduplicate: if same person already booked via Calendly, skip the admin entry
     const calKeys = new Set(calendlySessions.map(s => s.email + '|' + s.datetime.slice(0,10)));
-    const uniqueManual = manualSessions.filter(s => {
-      const key = s.email + '|' + (s.datetime||'').slice(0,10);
-      return !calKeys.has(key);
+    const uniqueAssigned = adminAssigned.filter(s => {
+      return !calKeys.has(s.email + '|' + (s.datetime||'').slice(0,10));
     });
 
-    const all = [...calendlySessions, ...uniqueManual]
+    // Merge and sort newest first
+    return [...calendlySessions, ...uniqueAssigned]
       .filter(s => s.first_name || s.email)
       .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
-    return all;
   } catch(e) {
     console.error('fetchSessions error:', e);
     return null;
