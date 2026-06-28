@@ -188,6 +188,8 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
         <div class="topbar-title">Sessions</div>
         <div class="topbar-sub" id="topbarSub">Loading…</div>
       </div>
+      <!-- DEBUG: shows server response count - remove once working -->
+      <div id="debugMsg" style="display:none;font-size:11px;color:#a0a0c0;padding:4px 12px;background:rgba(0,0,0,0.1);border-radius:6px;font-family:monospace;"></div>
       <div class="topbar-actions">
         <button class="btn" onclick="refresh()">↺ Refresh</button>
         <button class="btn green" onclick="openCalendly('discovery')">📞 Discovery Call</button>
@@ -458,22 +460,66 @@ function normaliseSession(row, defaultSource) {
 }
 
 async function fetchSessions() {
+  const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
+  const results   = [];
+
+  // ── FETCH 1: Calendly sessions via sessions.js ──────────────────────────
   try {
-    // sessions.js now returns BOTH Calendly sessions AND admin-assigned from GAS
-    const res = await fetch(SESSIONS_API, { cache: 'no-store' });
-    if (!res.ok) { console.error('Sessions fetch failed:', res.status); return null; }
-    const rows = await res.json();
-    if (!Array.isArray(rows)) return [];
-    console.log('[Sessions] Received', rows.length, 'sessions from server');
-    const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
-    return rows.map(row => {
-      const key = row.calendly_id || row.email;
-      return normaliseSession({ ...row, status: overrides[key] || row.status }, row.source || 'calendly');
-    }).filter(s => s.first_name || s.email);
-  } catch(e) {
-    console.error('fetchSessions error:', e);
-    return null;
-  }
+    const r = await fetch(SESSIONS_API, { cache:'no-store' });
+    if (r.ok) {
+      const rows = await r.json();
+      if (Array.isArray(rows)) {
+        rows.forEach(row => {
+          const s = normaliseSession(row, 'calendly');
+          const key = s.calendly_id || s.email;
+          if (overrides[key]) s.status = overrides[key];
+          results.push(s);
+        });
+      }
+    }
+  } catch(e) { console.warn('Calendly fetch failed:', e.message); }
+
+  // ── FETCH 2: Admin-assigned sessions from GAS sessions sheet ────────────
+  // Uses the same leads.js endpoint the admin dashboard already uses successfully
+  try {
+    const r = await fetch(LEADS_API + '?sheet=sessions', { cache:'no-store' });
+    if (r.ok) {
+      const text = await r.text();
+      let rows = [];
+      try { rows = JSON.parse(text); } catch(_) {}
+
+      const calIds = new Set(results.map(s => s.email + '|' + (s.datetime||'').slice(0,10)));
+
+      if (Array.isArray(rows)) {
+        rows.forEach(row => {
+          // Only admin-assigned rows (no calendly_id)
+          if (row.calendly_id) return;              // skip Calendly webhook entries
+          if (!row.email && !row.first_name) return; // skip empty rows
+          if (!row.datetime) return;                 // must have a date
+
+          // Skip duplicates already covered by Calendly
+          const key = row.email + '|' + (row.datetime||'').slice(0,10);
+          if (calIds.has(key)) return;
+
+          const s = normaliseSession(row, 'manual');
+          const oKey = s.calendly_id || s.email;
+          if (overrides[oKey]) s.status = overrides[oKey];
+          results.push(s);
+        });
+      }
+
+      // ── DEBUG: visible on page ──
+      const dbg = document.getElementById('debugMsg');
+      if (dbg) {
+        const cal    = results.filter(s => s.source === 'calendly').length;
+        const manual = results.filter(s => s.source === 'manual').length;
+        dbg.textContent = `${results.length} total · ${cal} Calendly · ${manual} assigned · GAS rows: ${rows.length}`;
+        dbg.style.display = 'block';
+      }
+    }
+  } catch(e) { console.warn('GAS sessions fetch failed:', e.message); }
+
+  return results.sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
 }
 
 async function load() {
