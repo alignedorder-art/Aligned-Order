@@ -188,8 +188,7 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
         <div class="topbar-title">Sessions</div>
         <div class="topbar-sub" id="topbarSub">Loading…</div>
       </div>
-      <!-- DEBUG: shows server response count - remove once working -->
-      <div id="debugMsg" style="display:none;font-size:11px;color:#a0a0c0;padding:4px 12px;background:rgba(0,0,0,0.1);border-radius:6px;font-family:monospace;"></div>
+
       <div class="topbar-actions">
         <button class="btn" onclick="refresh()">↺ Refresh</button>
         <button class="btn green" onclick="openCalendly('discovery')">📞 Discovery Call</button>
@@ -461,9 +460,9 @@ function normaliseSession(row, defaultSource) {
 
 async function fetchSessions() {
   const overrides = JSON.parse(localStorage.getItem('ao_sess_overrides') || '{}');
-  const results   = [];
+  const results = [];
 
-  // ── FETCH 1: Calendly sessions via sessions.js ──────────────────────────
+  // FETCH 1: Calendly sessions
   try {
     const r = await fetch(SESSIONS_API, { cache:'no-store' });
     if (r.ok) {
@@ -479,42 +478,25 @@ async function fetchSessions() {
     }
   } catch(e) { console.warn('Calendly fetch failed:', e.message); }
 
-  // ── FETCH 2: Admin-assigned sessions from GAS sessions sheet ────────────
-  // Uses the same leads.js endpoint the admin dashboard already uses successfully
+  // FETCH 2: Admin-assigned sessions from GAS (via leads.js, same as admin dashboard uses)
   try {
     const r = await fetch(LEADS_API + '?sheet=sessions', { cache:'no-store' });
     if (r.ok) {
       const text = await r.text();
       let rows = [];
       try { rows = JSON.parse(text); } catch(_) {}
-
-      const calIds = new Set(results.map(s => s.email + '|' + (s.datetime||'').slice(0,10)));
-
+      const calKeys = new Set(results.map(s => s.email + '|' + (s.datetime||'').slice(0,10)));
       if (Array.isArray(rows)) {
         rows.forEach(row => {
-          // Only admin-assigned rows (no calendly_id)
-          if (row.calendly_id) return;              // skip Calendly webhook entries
+          if (row.calendly_id) return;               // skip Calendly webhook entries
           if (!row.email && !row.first_name) return; // skip empty rows
-          if (!row.datetime) return;                 // must have a date
-
-          // Skip duplicates already covered by Calendly
-          const key = row.email + '|' + (row.datetime||'').slice(0,10);
-          if (calIds.has(key)) return;
-
+          const dayKey = row.email + '|' + (row.datetime||'').slice(0,10);
+          if (calKeys.has(dayKey)) return;            // skip duplicates
           const s = normaliseSession(row, 'manual');
-          const oKey = s.calendly_id || s.email;
-          if (overrides[oKey]) s.status = overrides[oKey];
+          const key = s.email;
+          if (overrides[key]) s.status = overrides[key];
           results.push(s);
         });
-      }
-
-      // ── DEBUG: visible on page ──
-      const dbg = document.getElementById('debugMsg');
-      if (dbg) {
-        const cal    = results.filter(s => s.source === 'calendly').length;
-        const manual = results.filter(s => s.source === 'manual').length;
-        dbg.textContent = `${results.length} total · ${cal} Calendly · ${manual} assigned · GAS rows: ${rows.length}`;
-        dbg.style.display = 'block';
       }
     }
   } catch(e) { console.warn('GAS sessions fetch failed:', e.message); }
@@ -827,7 +809,7 @@ let calDate = new Date();
 const BLOCKS_KEY = 'ao_cal_blocks';
 
 // Available hours: Mon–Fri 9am–6pm
-const AVAIL_DAYS  = [1,2,3,4,5]; // Mon=1 … Fri=5
+const AVAIL_DAYS  = [0,1,2,3,4,5,6]; // All days available
 const AVAIL_START = 9;
 const AVAIL_END   = 18;
 
@@ -921,7 +903,7 @@ function renderMonth() {
     const blockList = blocksOnDate(dateStr);
     const isWeekend = dayOfWeek===0||dayOfWeek===6;
 
-    let bg = isWeekend ? '#fafafa' : avail && !blockList.length ? '#f8fff8' : '#fff';
+    let bg = avail && !blockList.length ? '#f8fff8' : '#fff';
     let border = isToday ? '2px solid #4a3ab5' : '1px solid #f0f0f8';
 
     html += `<div style="min-height:80px;padding:6px;border-right:1px solid #f0f0f8;border-bottom:1px solid #f0f0f8;background:${bg};border:${border};position:relative;cursor:pointer;" onclick="calDayClick('${dateStr}')">`;

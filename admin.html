@@ -2448,10 +2448,6 @@ function openAssignModal(email) {
   scoreBadge.textContent = lead.score + '%';
   scoreBadge.className   = 'badge ' + scoreClass(lead.score);
 
-  // Default date to tomorrow
-  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
-  document.getElementById('assignDate').value = tomorrow.toISOString().split('T')[0];
-  document.getElementById('assignTime').value = '10:00';
   document.getElementById('assignLink').value  = '';
   document.getElementById('assignNotes').value = '';
   setAssignType('discovery');
@@ -2472,9 +2468,6 @@ function setAssignType(type) {
 
 async function submitAssignSession() {
   if (!assigningLead) return;
-  const date = document.getElementById('assignDate').value;
-  const time = document.getElementById('assignTime').value;
-  if (!date || !time) { alert('Please select a date and time.'); return; }
 
   const btn = document.getElementById('assignSubmitBtn');
   btn.disabled = true;
@@ -2484,30 +2477,37 @@ async function submitAssignSession() {
     ? 'Introduction Session(Free)'
     : 'Coaching Session';
 
+  // Physician picks the actual date/time from the sessions page
+  // We send a placeholder datetime 7 days from now so it appears upcoming
+  const placeholder = new Date(Date.now() + 7*86400000).toISOString();
+
   const payload = {
-    sheet:        'sessions',
-    first_name:   assigningLead.firstName  || '',
-    last_name:    assigningLead.lastName   || '',
-    email:        assigningLead.email      || '',
-    phone:        assigningLead.phone      || '',
-    session_type: sessionType,
-    datetime:     date + 'T' + time + ':00',
-    meeting_link: document.getElementById('assignLink').value  || '',
-    notes:        document.getElementById('assignNotes').value || '',
-    status:       'pending',
+    first_name:        assigningLead.firstName  || '',
+    last_name:         assigningLead.lastName   || '',
+    email:             assigningLead.email      || '',
+    phone:             assigningLead.phone      || '',
+    session_type:      sessionType,
+    datetime:          placeholder,
+    meeting_link:      document.getElementById('assignLink').value  || '',
+    notes:             document.getElementById('assignNotes').value || '',
+    status:            'pending',
     source:            'manual',
-    assigned_by_admin: true,
+    assigned_by_admin: 'true',
     outcome:           '',
+    calendly_id:       '',
     created_at:        new Date().toISOString()
   };
 
   try {
-    await fetch(LEADS_API, {
+    // Use SESSIONS_API (same path as Calendly webhook) - guaranteed to write to GAS sessions sheet
+    const res = await fetch(SESSIONS_API, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
-    const savedName = assigningLead.firstName;  // save before closeAssignModal nulls it
+    const text = await res.text();
+    console.log('Assign response:', text);
+    const savedName = assigningLead.firstName;
     closeAssignModal();
     showAssignToast(savedName);
     await refreshAll();
@@ -2587,28 +2587,21 @@ function logout() {
       </div>
       <span id="assignLeadScore" class="badge" style="margin-left:auto;"></span>
     </div>
-    <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Session Type</div>
+    <div style="font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Session Type</div>
     <div class="assign-type-row">
       <button class="assign-type-btn active" id="typeDiscovery" onclick="setAssignType('discovery')">📞 Discovery</button>
       <button class="assign-type-btn" id="typeCoaching" onclick="setAssignType('coaching')">🔥 Coaching</button>
     </div>
-    <div class="assign-datetime">
-      <div class="assign-field">
-        <label>Date</label>
-        <input type="date" id="assignDate">
-      </div>
-      <div class="assign-field">
-        <label>Time</label>
-        <input type="time" id="assignTime" value="10:00">
-      </div>
+    <div style="background:rgba(106,79,181,0.08);border:1px solid rgba(106,79,181,0.2);border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px;color:var(--muted);">
+      📅 The physician will confirm the date and time from the Sessions page.
     </div>
     <div class="assign-field">
       <label>Meeting Link (optional)</label>
       <input type="url" id="assignLink" placeholder="https://zoom.us/j/…">
     </div>
     <div class="assign-field">
-      <label>Notes (optional)</label>
-      <textarea id="assignNotes" placeholder="Any context for this session…"></textarea>
+      <label>Notes for physician (optional)</label>
+      <textarea id="assignNotes" placeholder="Any context about this client…"></textarea>
     </div>
     <div class="assign-actions">
       <button class="btn-assign-cancel" onclick="closeAssignModal()">Cancel</button>
