@@ -262,6 +262,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   <div class="nav-tab" onclick="showPage('growth',this)">📈 Growth</div>
   <div class="nav-tab" onclick="showPage('blog',this)">✦ Blog</div>
   <div class="nav-tab" onclick="showPage('courses',this)">🎓 Courses</div>
+  <div class="nav-tab" onclick="showPage('referrals',this)">🔗 Referrals</div>
 </div>
 
 <!-- ═══════════════ OVERVIEW ═══════════════ -->
@@ -707,6 +708,39 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     <div id="feedbackTableEmpty" class="empty-state" style="display:none;">No feedback submitted yet. Share the feedback link after completed sessions.</div>
   </div>
 
+</div>
+
+<!-- REFERRALS PAGE -->
+<div class="page" id="page-referrals">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;">
+    <div class="metric gold"><div class="metric-icon">🔗</div><div class="metric-label">Total Referrers</div><div class="metric-value" id="ref-total">—</div><div class="metric-sub">people with links</div></div>
+    <div class="metric green"><div class="metric-icon">✓</div><div class="metric-label">Verified Referrals</div><div class="metric-value" id="ref-verified">—</div><div class="metric-sub">completed all steps</div></div>
+    <div class="metric purple"><div class="metric-icon">🏆</div><div class="metric-label">Top Referrer</div><div class="metric-value" id="ref-top" style="font-size:16px;">—</div><div class="metric-sub" id="ref-top-count">most referrals</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;">
+    <div class="table-card">
+      <div class="table-head"><div class="table-title">🏆 Referrer Leaderboard</div></div>
+      <table><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Code</th><th>Verified</th><th>Points</th></tr></thead>
+      <tbody id="refLeaderBody"></tbody></table>
+      <div id="refLeaderEmpty" class="empty-state" style="display:none;">No referrers yet. Share the referral page!</div>
+    </div>
+    <div class="table-card">
+      <div class="table-head"><div class="table-title">📋 Recent Completions</div></div>
+      <table><thead><tr><th>Referred by</th><th>New member</th><th>Date</th><th>Steps</th></tr></thead>
+      <tbody id="refRecentBody"></tbody></table>
+      <div id="refRecentEmpty" class="empty-state" style="display:none;">No completed referrals yet.</div>
+    </div>
+  </div>
+  <div style="background:rgba(212,168,75,0.08);border:1px solid rgba(212,168,75,0.2);border-radius:14px;padding:18px 22px;margin-top:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Referral Generator Link</div>
+      <div style="font-size:12px;color:var(--muted);">Share this with your live audience so they can generate their referral links.</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:12px;color:var(--gold);font-weight:600;">alignedorder.netlify.app/referral.html</span>
+      <button onclick="navigator.clipboard.writeText('https://alignedorder.netlify.app/referral.html')" style="padding:7px 14px;background:rgba(212,168,75,0.2);border:1px solid rgba(212,168,75,0.3);border-radius:7px;color:var(--gold);font-family:'Raleway',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">Copy</button>
+    </div>
+  </div>
 </div>
 
 <!-- COURSES MANAGER -->
@@ -1892,7 +1926,8 @@ function showPage(page, tab) {
   if(page==='growth') renderGrowthPage();
   if(page==='blog') loadBlogPosts();
   if(page==='courses') loadAdminCourses();
-  const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager',courses:'Course Manager'};
+  if(page==='referrals') loadReferrals();
+  const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager',courses:'Course Manager',referrals:'Referral Program'};
   document.getElementById('pageTitle').textContent = allTitles[page]||'';
 }
 
@@ -1989,6 +2024,77 @@ async function publishCustomLesson(courseId) {
   if (msg) { msg.style.display='block'; setTimeout(()=>msg.style.display='none',3000); }
   ['new-lesson-title','new-lesson-content'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const sel = document.getElementById('new-lesson-module'); if(sel) sel.value='';
+}
+
+async function loadReferrals() {
+  const [refRes, completedRes] = await Promise.allSettled([
+    fetch(LEADS_API + '?sheet=referrers'),
+    fetch(LEADS_API + '?sheet=referrals')
+  ]);
+
+  let referrers = [], referrals = [];
+  if (refRes.status==='fulfilled' && refRes.value.ok) { try { referrers = JSON.parse(await refRes.value.text()); } catch(_){} }
+  if (completedRes.status==='fulfilled' && completedRes.value.ok) { try { referrals = JSON.parse(await completedRes.value.text()); } catch(_){} }
+
+  const verified = referrals.filter(r => r.completed === 'true' || r.completed === true);
+  document.getElementById('ref-total').textContent    = referrers.length || '—';
+  document.getElementById('ref-verified').textContent = verified.length  || '—';
+
+  // Build leaderboard: count verified referrals per code
+  const counts = {};
+  verified.forEach(r => { counts[r.referrer_code] = (counts[r.referrer_code]||0)+1; });
+
+  // Sort referrers by verified count
+  const sorted = [...referrers].sort((a,b) => (counts[b.ref_code]||0) - (counts[a.ref_code]||0));
+
+  if (sorted.length) {
+    const top = sorted[0];
+    document.getElementById('ref-top').textContent       = top.name || '—';
+    document.getElementById('ref-top-count').textContent = (counts[top.ref_code]||0) + ' verified referrals';
+  }
+
+  // Render leaderboard
+  const lb = document.getElementById('refLeaderBody');
+  const lbE = document.getElementById('refLeaderEmpty');
+  if (!sorted.length) { lb.innerHTML=''; lbE.style.display='block'; }
+  else {
+    lbE.style.display='none';
+    lb.innerHTML = sorted.map((r, i) => {
+      const v = counts[r.ref_code]||0;
+      const pts = v * 10;
+      return `<tr>
+        <td><strong style="color:${i===0?'var(--gold)':i===1?'rgba(240,236,255,0.6)':i===2?'var(--gold-l)':'var(--muted)'}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</strong></td>
+        <td style="font-weight:600">${r.name||'—'}</td>
+        <td style="color:var(--muted);font-size:12px">${r.email||'—'}</td>
+        <td><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;background:rgba(106,79,181,0.15);color:var(--violet-l)">${r.ref_code||'—'}</span></td>
+        <td style="font-weight:700;color:#4caf7d">${v}</td>
+        <td style="font-weight:700;color:var(--gold)">${pts} pts</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Render recent completions
+  const rb = document.getElementById('refRecentBody');
+  const rbE = document.getElementById('refRecentEmpty');
+  const recent = [...referrals].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,10);
+  if (!recent.length) { rb.innerHTML=''; rbE.style.display='block'; }
+  else {
+    rbE.style.display='none';
+    rb.innerHTML = recent.map(r => {
+      const date = r.created_at ? new Date(r.created_at).toLocaleDateString() : '—';
+      const steps = [
+        r.subscribed==='true'?'<span title="Subscribed" style="color:#4caf7d">✓Sub</span>':'<span style="color:var(--muted)">Sub</span>',
+        r.liked==='true'?'<span title="Liked" style="color:#4caf7d">✓Like</span>':'<span style="color:var(--muted)">Like</span>',
+        r.shared==='true'?'<span title="Shared" style="color:#4caf7d">✓Share</span>':'<span style="color:var(--muted)">Share</span>'
+      ].join(' ');
+      return `<tr>
+        <td style="font-size:12px;color:var(--muted)">${r.referrer_name||r.referrer_code||'—'}</td>
+        <td><div style="font-weight:600;font-size:13px">${r.referred_name||'—'}</div><div style="font-size:11px;color:var(--muted)">${r.referred_email||''}</div></td>
+        <td style="font-size:11px;color:var(--muted)">${date}</td>
+        <td style="font-size:11px">${steps}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 async function loadBlogPosts() {

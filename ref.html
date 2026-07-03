@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — You've Been Invited</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --violet:#6a4fb5;--violet-l:#9b7fd4;--violet-d:#4a3490;
+  --gold:#a87a28;--gold-l:#c99a3e;
+  --dark:#0d0b1a;
+  --text:#f0ecff;--muted:rgba(240,236,255,0.6);--muted2:rgba(240,236,255,0.35);
+  --card:rgba(255,255,255,0.06);--border:rgba(106,79,181,0.25);
+  --green:#4caf7d;
+}
+body{font-family:'Raleway',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;}
+
+/* HERO BANNER */
+.hero{background:linear-gradient(135deg,#1a0f3d,#3d2075);border-bottom:1px solid var(--border);padding:32px 24px;text-align:center;}
+.hero-invite{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-l);margin-bottom:12px;}
+.hero-name{font-family:'Cinzel',serif;font-size:clamp(22px,4vw,32px);font-weight:700;margin-bottom:8px;}
+.hero-name span{color:var(--gold-l);}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.7;}
+.hero-logo{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:18px;}
+
+/* ABOUT STRIP */
+.about{display:flex;align-items:center;gap:16px;padding:18px 24px;background:rgba(106,79,181,0.08);border-bottom:1px solid var(--border);}
+.about-text{font-size:13px;color:var(--muted);line-height:1.6;flex:1;}
+.yt-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:#FF0000;color:#fff;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap;text-decoration:none;flex-shrink:0;}
+
+/* MAIN */
+.main{max-width:520px;margin:0 auto;padding:36px 20px 60px;}
+.section-title{font-family:'Cinzel',serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+.section-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+.check-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .2s,background .2s;}
+.check-item.done{background:rgba(76,175,125,0.08);border-color:rgba(76,175,125,0.3);}
+.check-box{width:24px;height:24px;border-radius:6px;border:2px solid rgba(106,79,181,0.4);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;cursor:pointer;}
+.check-box.checked{background:var(--green);border-color:var(--green);}
+.check-box.checked::after{content:'✓';font-size:13px;font-weight:700;color:#fff;}
+.check-content{flex:1;}
+.check-label{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.check-desc{font-size:12px;color:var(--muted);}
+.check-action{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:99px;background:rgba(106,79,181,0.15);border:1px solid rgba(106,79,181,0.25);color:var(--violet-l);font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .15s;}
+.check-action:hover{background:rgba(106,79,181,0.25);}
+
+/* FORM */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.field input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(106,79,181,0.3);border-radius:9px;padding:11px 14px;color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--violet-l);}
+
+/* CONFIRM */
+.confirm-check{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:rgba(212,168,75,0.06);border:1px solid rgba(212,168,75,0.2);border-radius:10px;margin-bottom:20px;cursor:pointer;}
+.confirm-check input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold);flex-shrink:0;margin-top:2px;}
+.confirm-check span{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* SUBMIT */
+.submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.02em;box-shadow:0 6px 20px rgba(106,79,181,0.35);transition:transform .15s;}
+.submit-btn:hover:not(:disabled){transform:translateY(-2px);}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* SUCCESS */
+.success{display:none;text-align:center;padding:40px 20px;}
+.success-icon{font-size:48px;margin-bottom:20px;}
+.success h2{font-family:'Cinzel',serif;font-size:24px;font-weight:700;margin-bottom:10px;color:var(--green);}
+.success p{font-size:14px;color:var(--muted);line-height:1.8;max-width:360px;margin:0 auto 24px;}
+.success .share-own{padding:12px 24px;background:rgba(212,168,75,0.15);border:1px solid rgba(212,168,75,0.3);border-radius:99px;color:var(--gold-l);font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+
+/* ALREADY DONE */
+.already{display:none;text-align:center;padding:30px 20px;}
+.already h2{font-family:'Cinzel',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.already p{font-size:14px;color:var(--muted);}
+
+@media(max-width:480px){.about{flex-direction:column;align-items:flex-start;}.check-action{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-logo">✦ Aligned Order</div>
+  <div class="hero-invite">You've been personally invited by</div>
+  <h1 class="hero-name"><span id="referrerName">a friend</span></h1>
+  <p class="hero-sub">Join our live streams on emotional intelligence,<br>shadow work & nervous system regulation.</p>
+</div>
+
+<div class="about">
+  <div class="about-text">We run live sessions on YouTube covering Jungian psychology, triggers, and how the unconscious mind shapes your behaviour. It's free, deep, and practical.</div>
+  <a href="https://youtube.com/@alignedorder" target="_blank" class="yt-btn">
+    <svg width="14" height="10" viewBox="0 0 18 14" fill="white"><path d="M17.1 2.2s-.2-1.4-.8-2C15.6-.5 14.6-.5 14.1 0 11.7.1 9 .1 9 .1S6.3.1 3.9 0C3.4-.5 2.4-.5 1.7.2 1.1.8.9 2.2.9 2.2S.7 3.7.7 5.4v1.6C.7 8.6.9 10.3.9 10.3s.2 1.4.8 2c.7.8 1.7.8 2.2.9 1.6.2 6.1.2 6.1.2s3.1 0 5.5-.1c.5-.1 1.5-.2 2.2-.9.6-.6.8-2 .8-2S18.3 8.7 18.3 7V5.4C18.3 3.7 17.1 2.2 17.1 2.2zM7.1 8.9V3.6l4.9 2.7-4.9 2.6z"/></svg>
+    Subscribe on YouTube
+  </a>
+</div>
+
+<div class="main">
+
+  <!-- Success state -->
+  <div class="success" id="successState">
+    <div class="success-icon">🎉</div>
+    <h2>You're verified!</h2>
+    <p>Your referral has been recorded. <span id="referrerNameSuccess">Your friend</span> has earned a point for bringing you in. Welcome to the community.</p>
+    <a href="/referral.html" class="share-own">Get your own referral link →</a>
+  </div>
+
+  <!-- Already submitted state -->
+  <div class="already" id="alreadyState">
+    <h2>Already verified ✓</h2>
+    <p>You've already completed this referral. You're in the community!</p>
+  </div>
+
+  <!-- Main form (default) -->
+  <div id="mainForm">
+    <div class="section-title">Complete these to be verified</div>
+    <div class="section-sub">These steps confirm your referral and unlock rewards for <strong id="referrerInForm">your inviter</strong>.</div>
+
+    <div class="checklist">
+      <div class="check-item" id="ci-1">
+        <div class="check-box" id="cb-1" onclick="toggleCheck(1)"></div>
+        <div class="check-content">
+          <div class="check-label">Subscribe to @AlignedOrder</div>
+          <div class="check-desc">Subscribe to our YouTube channel</div>
+        </div>
+        <a href="https://youtube.com/@alignedorder?sub_confirmation=1" target="_blank" class="check-action" onclick="markCheck(1)">Subscribe ↗</a>
+      </div>
+      <div class="check-item" id="ci-2">
+        <div class="check-box" id="cb-2" onclick="toggleCheck(2)"></div>
+        <div class="check-content">
+          <div class="check-label">Like a video</div>
+          <div class="check-desc">Give a thumbs up on our latest video</div>
+        </div>
+        <a href="https://youtube.com/@alignedorder/videos" target="_blank" class="check-action" onclick="markCheck(2)">Like ↗</a>
+      </div>
+      <div class="check-item" id="ci-3">
+        <div class="check-box" id="cb-3" onclick="toggleCheck(3)"></div>
+        <div class="check-content">
+          <div class="check-label">Share with one person</div>
+          <div class="check-desc">Send this page or our channel to someone</div>
+        </div>
+        <button class="check-action" onclick="shareNow(); markCheck(3)">Share ↗</button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="section-title" style="margin-bottom:16px;">Your details</div>
+      <div class="field">
+        <label>Your Name</label>
+        <input type="text" id="joinName" placeholder="First and last name" autocomplete="name">
+      </div>
+      <div class="field">
+        <label>Your Email</label>
+        <input type="email" id="joinEmail" placeholder="your@email.com" autocomplete="email">
+      </div>
+    </div>
+
+    <div class="confirm-check" onclick="toggleConfirm()">
+      <input type="checkbox" id="confirmCheck">
+      <span>I confirm I've subscribed, liked, and shared. I'm joining the Aligned Order community and agree to receive updates about live sessions and content.</span>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitReferral()">Confirm my referral →</button>
+  </div>
+</div>
+
+<script>
+const LEADS_API = 'https://thealignedorder.netlify.app/.netlify/functions/leads';
+const params    = new URLSearchParams(window.location.search);
+const refCode   = params.get('r') || '';
+const refName   = decodeURIComponent(params.get('n') || 'Your friend');
+const checks    = {1:false,2:false,3:false};
+
+// Set referrer name in UI
+document.getElementById('referrerName').textContent = refName;
+document.getElementById('referrerInForm').textContent = refName;
+document.getElementById('referrerNameSuccess').textContent = refName;
+
+// Check if already submitted (localStorage flag)
+if (localStorage.getItem('ao_ref_done_' + refCode + '_' + (params.get('e') || ''))) {
+  document.getElementById('mainForm').style.display = 'none';
+  document.getElementById('alreadyState').style.display = 'block';
+}
+
+function toggleCheck(n) {
+  checks[n] = !checks[n];
+  const box  = document.getElementById('cb-' + n);
+  const item = document.getElementById('ci-' + n);
+  box.classList.toggle('checked', checks[n]);
+  item.classList.toggle('done', checks[n]);
+}
+
+function markCheck(n) {
+  checks[n] = true;
+  const box  = document.getElementById('cb-' + n);
+  const item = document.getElementById('ci-' + n);
+  box.classList.add('checked');
+  item.classList.add('done');
+}
+
+function toggleConfirm() {
+  const cb = document.getElementById('confirmCheck');
+  cb.checked = !cb.checked;
+}
+
+async function shareNow() {
+  const url = window.location.href;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Join Aligned Order Lives', url }); } catch(e) {}
+  } else {
+    await navigator.clipboard.writeText(url).catch(()=>{});
+  }
+}
+
+async function submitReferral() {
+  const name    = document.getElementById('joinName').value.trim();
+  const email   = document.getElementById('joinEmail').value.trim();
+  const confirm = document.getElementById('confirmCheck').checked;
+
+  if (!name)    { alert('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+  if (!confirm) { alert('Please confirm you have completed the steps above.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const payload = {
+    sheet:          'referrals',
+    referrer_code:  refCode,
+    referrer_name:  refName,
+    referred_name:  name,
+    referred_email: email,
+    subscribed:     checks[1] ? 'true' : 'false',
+    liked:          checks[2] ? 'true' : 'false',
+    shared:         checks[3] ? 'true' : 'false',
+    completed:      'true',
+    created_at:     new Date().toISOString()
+  };
+
+  try {
+    await fetch(LEADS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+
+    // Mark locally as done
+    localStorage.setItem('ao_ref_done_' + refCode + '_' + email, '1');
+
+    // Show success
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('successState').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch(e) {
+    alert('Something went wrong. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Confirm my referral →';
+  }
+}
+</script>
+</body>
+</html>

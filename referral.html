@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aligned Order — Refer & Earn</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --violet:#6a4fb5;--violet-l:#9b7fd4;--violet-d:#4a3490;
+  --gold:#a87a28;--gold-l:#c99a3e;
+  --dark:#0d0b1a;--dark2:#130c2e;
+  --text:#f0ecff;--muted:rgba(240,236,255,0.55);--muted2:rgba(240,236,255,0.35);
+  --card:rgba(255,255,255,0.06);--border:rgba(106,79,181,0.25);
+}
+body{font-family:'Raleway',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;}
+a{color:var(--violet-l);text-decoration:none;}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,11,26,0.95);backdrop-filter:blur(12px);z-index:10;}
+.nav-logo{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--text);}
+.nav-back{font-size:12px;color:var(--muted);font-weight:600;}
+
+/* HERO */
+.hero{text-align:center;padding:70px 24px 50px;max-width:600px;margin:0 auto;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;background:rgba(212,168,75,0.12);border:1px solid rgba(212,168,75,0.25);font-size:11px;font-weight:700;color:var(--gold-l);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px;}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,42px);font-weight:700;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,#f0ecff,#d4a84b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:15px;color:var(--muted);line-height:1.8;max-width:440px;margin:0 auto 36px;}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:680px;margin:0 auto 60px;padding:0 24px;}
+.step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 16px;text-align:center;}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--violet),var(--violet-d));font-family:'Cinzel',serif;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.step h3{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.step p{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* MAIN CARD */
+.main{max-width:540px;margin:0 auto;padding:0 20px 60px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;}
+.card-title{font-family:'Cinzel',serif;font-size:18px;font-weight:700;margin-bottom:6px;}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.field input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(106,79,181,0.3);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'Raleway',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--violet-l);}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.02em;box-shadow:0 6px 20px rgba(106,79,181,0.35);transition:transform .15s,box-shadow .15s;margin-top:4px;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(106,79,181,0.45);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* RESULT */
+.result{display:none;margin-top:28px;border-top:1px solid var(--border);padding-top:24px;}
+.result-label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+.link-box{display:flex;align-items:center;gap:8px;background:rgba(212,168,75,0.08);border:1px solid rgba(212,168,75,0.3);border-radius:10px;padding:10px 14px;}
+.link-text{flex:1;font-size:13px;color:var(--gold-l);word-break:break-all;line-height:1.4;}
+.copy-btn{padding:7px 14px;border-radius:7px;background:rgba(212,168,75,0.2);border:1px solid rgba(212,168,75,0.3);color:var(--gold-l);font-family:'Raleway',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.share-row{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.share-btn{flex:1;min-width:100px;padding:11px;border-radius:99px;border:none;font-family:'Raleway',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.share-wa{background:#25D366;color:#fff;}
+.share-tw{background:#1DA1F2;color:#fff;}
+.share-link{background:rgba(106,79,181,0.2);border:1px solid rgba(106,79,181,0.3);color:var(--violet-l);}
+
+/* STATS */
+.stats-card{background:rgba(106,79,181,0.08);border:1px solid rgba(106,79,181,0.2);border-radius:14px;padding:18px 20px;margin-top:16px;display:none;}
+.stats-row{display:flex;gap:16px;}
+.stat{flex:1;text-align:center;}
+.stat-num{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--violet-l);}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* REWARDS */
+.rewards{max-width:680px;margin:0 auto 60px;padding:0 24px;}
+.rewards h2{font-family:'Cinzel',serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:8px;}
+.rewards-sub{text-align:center;font-size:14px;color:var(--muted);margin-bottom:28px;}
+.reward-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
+.reward-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 16px;text-align:center;}
+.reward-icon{font-size:28px;margin-bottom:10px;}
+.reward-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.reward-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+.reward-pts{font-size:11px;font-weight:700;color:var(--gold-l);margin-top:8px;}
+
+/* FOOTER */
+.footer{text-align:center;padding:30px;font-size:12px;color:var(--muted2);border-top:1px solid var(--border);}
+
+@media(max-width:500px){
+  .steps{grid-template-columns:1fr;}
+  .share-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">✦ Aligned Order</div>
+  <a href="/" class="nav-back">← Back to site</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🎁 Referral Program</div>
+  <h1>Share the Work.<br>Earn Rewards.</h1>
+  <p>Invite people to our live streams. When they subscribe, engage and join — you get rewarded. Every referral counts.</p>
+</section>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <h3>Get your link</h3>
+    <p>Enter your name and email to generate a unique referral link.</p>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <h3>Share it</h3>
+    <p>Send your link to anyone watching our lives or following the brand.</p>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <h3>Earn rewards</h3>
+    <p>When they subscribe, engage and submit — your referral is verified and you earn.</p>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card">
+    <div class="card-title">Generate your link</div>
+    <div class="card-sub">Your code is unique to your email. You can come back anytime to retrieve your link.</div>
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" id="refName" placeholder="e.g. Jordan Smith" autocomplete="name">
+    </div>
+    <div class="field">
+      <label>Your Email</label>
+      <input type="email" id="refEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <button class="btn" id="genBtn" onclick="generateLink()">Generate my referral link →</button>
+
+    <div class="result" id="resultSection">
+      <div class="result-label">Your referral link</div>
+      <div class="link-box">
+        <div class="link-text" id="linkDisplay"></div>
+        <button class="copy-btn" onclick="copyLink()">Copy</button>
+      </div>
+      <div class="share-row">
+        <button class="share-btn share-wa" onclick="shareWhatsApp()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </button>
+        <button class="share-btn share-tw" onclick="shareTwitter()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X / Twitter
+        </button>
+        <button class="share-btn share-link" onclick="nativeShare()">↗ Share</button>
+      </div>
+    </div>
+
+    <div class="stats-card" id="statsCard">
+      <div class="result-label" style="margin-bottom:14px;">Your referrals</div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-lbl">Total referred</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statVerified">0</div>
+          <div class="stat-lbl">Verified</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="statPoints">0</div>
+          <div class="stat-lbl">Points earned</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="rewards">
+  <h2>How Rewards Work</h2>
+  <div class="rewards-sub">Each verified referral earns you points toward exclusive rewards.</div>
+  <div class="reward-grid">
+    <div class="reward-card">
+      <div class="reward-icon">⭐</div>
+      <div class="reward-title">1 Referral</div>
+      <div class="reward-desc">Your first referral lands — you're in the game.</div>
+      <div class="reward-pts">10 points</div>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">🔥</div>
+      <div class="reward-title">5 Referrals</div>
+      <div class="reward-desc">Free live session ticket + shoutout in the next live.</div>
+      <div class="reward-pts">50 points</div>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">💎</div>
+      <div class="reward-title">10 Referrals</div>
+      <div class="reward-desc">Free 1-on-1 coaching session with Matyyx.</div>
+      <div class="reward-pts">100 points</div>
+    </div>
+    <div class="reward-card">
+      <div class="reward-icon">👑</div>
+      <div class="reward-title">20+ Referrals</div>
+      <div class="reward-desc">VIP status — exclusive early access and community role.</div>
+      <div class="reward-pts">200+ points</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  © 2026 Aligned Order · <a href="/">alignedorder.com</a>
+</footer>
+
+<script>
+const LEADS_API = 'https://thealignedorder.netlify.app/.netlify/functions/leads';
+const BASE_URL  = window.location.origin;
+let currentCode = '';
+let currentLink = '';
+
+function genCode(email) {
+  const str = email.toLowerCase().trim();
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+  }
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  let n = Math.abs(h);
+  for (let i = 0; i < 6; i++) {
+    code += chars[n % chars.length];
+    n = Math.floor(n / chars.length);
+  }
+  return code;
+}
+
+async function generateLink() {
+  const name  = document.getElementById('refName').value.trim();
+  const email = document.getElementById('refEmail').value.trim();
+  if (!name)  { alert('Please enter your name.'); return; }
+  if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+
+  currentCode = genCode(email);
+  currentLink = BASE_URL + '/ref.html?r=' + currentCode + '&n=' + encodeURIComponent(name.split(' ')[0]);
+
+  // Save referrer to GAS
+  try {
+    await fetch(LEADS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        sheet: 'referrers',
+        name, email,
+        ref_code: currentCode,
+        ref_link: currentLink,
+        points: 0,
+        created_at: new Date().toISOString()
+      })
+    });
+  } catch(e) {}
+
+  // Show link
+  document.getElementById('linkDisplay').textContent = currentLink;
+  document.getElementById('resultSection').style.display = 'block';
+
+  // Fetch stats
+  loadStats(currentCode);
+
+  btn.textContent = '✓ Link generated';
+  setTimeout(() => { btn.disabled = false; btn.textContent = 'Regenerate link'; }, 2000);
+}
+
+async function loadStats(code) {
+  try {
+    const r = await fetch(LEADS_API + '?sheet=referrals');
+    if (!r.ok) return;
+    const text = await r.text();
+    const rows = JSON.parse(text);
+    if (!Array.isArray(rows)) return;
+    const mine     = rows.filter(r => r.referrer_code === code);
+    const verified = mine.filter(r => r.completed === 'true' || r.completed === true);
+    document.getElementById('statTotal').textContent   = mine.length;
+    document.getElementById('statVerified').textContent = verified.length;
+    document.getElementById('statPoints').textContent  = verified.length * 10;
+    document.getElementById('statsCard').style.display = 'block';
+  } catch(e) {}
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(currentLink).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function shareWhatsApp() {
+  const msg = encodeURIComponent('Join me at Aligned Order lives — psychology, shadow work and emotional intelligence. Register here: ' + currentLink);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function shareTwitter() {
+  const msg = encodeURIComponent('Joining @AlignedOrder lives on emotional intelligence and shadow work. Join through my link: ' + currentLink);
+  window.open('https://x.com/intent/tweet?text=' + msg, '_blank');
+}
+
+async function nativeShare() {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Join Aligned Order Lives',
+        text: 'Emotional intelligence, shadow work and nervous system regulation — live.',
+        url: currentLink
+      });
+    } catch(e) {}
+  } else {
+    copyLink();
+  }
+}
+</script>
+</body>
+</html>
