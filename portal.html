@@ -464,7 +464,7 @@ h1,h2,h3{font-family:'Cinzel',serif}
   </a>
   <a class="nav-item" data-page="progress" onclick="showPage('progress',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    My Progress<span class="soon">soon</span>
+    My Progress
   </a>
 
   <div class="sidebar-spacer"></div>
@@ -503,6 +503,34 @@ h1,h2,h3{font-family:'Cinzel',serif}
       <div class="metric-card"><div class="metric-label">Journey phase</div><div class="metric-value" id="m-phase" style="font-size:15px;padding-top:4px">—</div><div class="metric-sub">based on sessions</div></div>
     </div>
     <div id="next-session-banner"></div>
+
+    <!-- Streak + weekly summary -->
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:14px;margin-bottom:20px;">
+      <div class="section-card" style="text-align:center;padding:22px;">
+        <div style="font-size:34px;margin-bottom:6px;" id="streak-flame">🔥</div>
+        <div style="font-family:'Cinzel',serif;font-size:30px;font-weight:700;color:var(--ink);" id="streak-count">0</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px;">day streak</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5;" id="streak-msg">Check in or journal today to start your streak</div>
+      </div>
+      <div class="section-card" style="padding:22px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px;">This week</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--sage,#6a4fb5);" id="wk-checkins">0</div>
+            <div style="font-size:11px;color:var(--muted);">check-ins</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--sage,#6a4fb5);" id="wk-journal">0</div>
+            <div style="font-size:11px;color:var(--muted);">journal entries</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--sage,#6a4fb5);" id="wk-lessons">0</div>
+            <div style="font-size:11px;color:var(--muted);">lessons done</div>
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.6;text-align:center;" id="wk-msg"></div>
+      </div>
+    </div>
     <div class="two-col">
       <div class="section-card"><div class="card-header"><div class="card-title">Recent sessions</div><a href="#" onclick="showPage('sessions',document.querySelector('[data-page=sessions]'))" style="font-size:11px;color:var(--sage);text-decoration:none">View all →</a></div><div class="card-body" id="recent-sessions"><div class="loading-text">Loading…</div></div></div>
       <div class="section-card"><div class="card-header"><div class="card-title">Quick access</div></div>
@@ -877,10 +905,37 @@ h1,h2,h3{font-family:'Cinzel',serif}
   <div class="page" id="page-progress">
     <h2 style="font-family:'Cinzel',serif;font-size:22px;margin-bottom:6px">My Progress</h2>
     <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Your transformation arc — where you started, where you are, where you're going.</p>
-    <div class="progress-coming">
-      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--violet-l)" stroke-width="1.5" stroke-linecap="round" style="margin-bottom:16px;opacity:.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      <h3 style="font-family:'Cinzel',serif;font-size:18px;margin-bottom:8px">Coming soon</h3>
-      <p style="font-size:13px;color:var(--muted);line-height:1.65">Your Hero's Journey map, trigger score trend line, and milestone tracker will live here.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;">
+      <div class="section-card" style="text-align:center;padding:20px;">
+        <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--sage,#6a4fb5);" id="pg-journal">0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">journal entries</div>
+      </div>
+      <div class="section-card" style="text-align:center;padding:20px;">
+        <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--sage,#6a4fb5);" id="pg-checkins">0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">emotional check-ins</div>
+      </div>
+      <div class="section-card" style="text-align:center;padding:20px;">
+        <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--sage,#6a4fb5);" id="pg-triggers">0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">triggers logged</div>
+      </div>
+      <div class="section-card" style="text-align:center;padding:20px;">
+        <div style="font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--sage,#6a4fb5);" id="pg-streak">0</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">day streak</div>
+      </div>
+    </div>
+
+    <div class="section-card" style="padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:700;margin-bottom:4px;">Export my data</div>
+        <div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Download all your journal entries, check-ins and trigger logs as a text file. Your reflections belong to you.</div>
+      </div>
+      <button onclick="exportMyData()" style="padding:11px 22px;background:linear-gradient(135deg,#6a4fb5,#4a3490);color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">⬇ Download my data</button>
+    </div>
+
+    <div class="progress-coming" style="margin-top:24px;">
+      <h3 style="font-family:'Cinzel',serif;font-size:16px;margin-bottom:8px">Coming next</h3>
+      <p style="font-size:13px;color:var(--muted);line-height:1.65">Your Hero's Journey map, trigger score trend line, and milestone tracker.</p>
     </div>
   </div>
 </div>
@@ -2033,6 +2088,128 @@ function showCert(courseId) {
 
 /* ── BOOT ── */
 loadSessions();
+
+// ── STREAK & WEEKLY SUMMARY ────────────────────────────────────
+function getActivityDates() {
+  const journal  = JSON.parse(localStorage.getItem('journal_'+clientEmail)  || '[]');
+  const checkins = JSON.parse(localStorage.getItem('checkins_'+clientEmail) || '[]');
+  const triggers = JSON.parse(localStorage.getItem('triggers_'+clientEmail) || '[]');
+  const dates = new Set();
+  [...journal, ...checkins, ...triggers].forEach(e => {
+    const d = e.date || (e.timestamp ? new Date(e.timestamp).toISOString() : null);
+    if (d) dates.add(d.slice(0,10));
+  });
+  return dates;
+}
+
+function computeStreak() {
+  const dates = getActivityDates();
+  let streak = 0;
+  const today = new Date();
+  // Allow streak to count from today OR yesterday (grace)
+  let cursor = new Date(today);
+  if (!dates.has(cursor.toISOString().slice(0,10))) {
+    cursor.setDate(cursor.getDate()-1); // start from yesterday if nothing today
+    if (!dates.has(cursor.toISOString().slice(0,10))) return 0;
+  }
+  while (dates.has(cursor.toISOString().slice(0,10))) {
+    streak++;
+    cursor.setDate(cursor.getDate()-1);
+  }
+  return streak;
+}
+
+function renderStreakAndWeek() {
+  const streak = computeStreak();
+  const el = document.getElementById('streak-count');
+  if (!el) return;
+  el.textContent = streak;
+  const flame = document.getElementById('streak-flame');
+  const msg   = document.getElementById('streak-msg');
+  if (streak === 0)      { flame.textContent = '🌱'; msg.textContent = 'Check in or journal today to start your streak'; }
+  else if (streak < 3)   { flame.textContent = '🔥'; msg.textContent = 'Nice — keep the momentum going!'; }
+  else if (streak < 7)   { flame.textContent = '🔥'; msg.textContent = 'Solid consistency. The nervous system loves rhythm.'; }
+  else if (streak < 14)  { flame.textContent = '⚡'; msg.textContent = 'A full week+ of showing up for yourself.'; }
+  else                   { flame.textContent = '👑'; msg.textContent = 'Exceptional dedication to your inner work.'; }
+
+  // Weekly counts (last 7 days)
+  const weekAgo = Date.now() - 7*86400000;
+  const journal  = JSON.parse(localStorage.getItem('journal_'+clientEmail)  || '[]');
+  const checkins = JSON.parse(localStorage.getItem('checkins_'+clientEmail) || '[]');
+  const inWeek = arr => arr.filter(e => {
+    const t = e.timestamp || (e.date ? new Date(e.date).getTime() : 0);
+    return t >= weekAgo;
+  }).length;
+  const wkC = inWeek(checkins), wkJ = inWeek(journal);
+
+  // Lessons completed this week from LMS progress
+  let wkL = 0;
+  try {
+    const lms = JSON.parse(localStorage.getItem('lms_'+clientEmail) || '{}');
+    Object.values(lms).forEach(course => {
+      if (course && course.completedAt) {
+        Object.values(course.completedAt || {}).forEach(ts => { if (ts >= weekAgo) wkL++; });
+      }
+    });
+    // fallback: count total completed lessons if timestamps unavailable
+    if (!wkL) {
+      Object.values(lms).forEach(course => {
+        if (course && Array.isArray(course.done)) wkL += 0; // no timestamps: leave 0
+      });
+    }
+  } catch(e) {}
+
+  document.getElementById('wk-checkins').textContent = wkC;
+  document.getElementById('wk-journal').textContent  = wkJ;
+  document.getElementById('wk-lessons').textContent  = wkL;
+
+  const total = wkC + wkJ + wkL;
+  const wkMsg = document.getElementById('wk-msg');
+  if (total === 0)     wkMsg.textContent = 'A fresh week. One small check-in is enough to begin.';
+  else if (total < 4)  wkMsg.textContent = 'Good start. Small consistent actions rewire deepest.';
+  else                 wkMsg.textContent = 'Strong week of inner work. Your future self thanks you.';
+}
+
+// ── DATA EXPORT ────────────────────────────────────────────────
+function exportMyData() {
+  const journal  = JSON.parse(localStorage.getItem('journal_'+clientEmail)  || '[]');
+  const checkins = JSON.parse(localStorage.getItem('checkins_'+clientEmail) || '[]');
+  const triggers = JSON.parse(localStorage.getItem('triggers_'+clientEmail) || '[]');
+
+  let out = 'ALIGNED ORDER — MY DATA EXPORT\n';
+  out += 'Exported: ' + new Date().toLocaleString() + '\n';
+  out += 'Account: ' + clientEmail + '\n';
+  out += '\n══════════════════════════════════\n SHADOW WORK JOURNAL (' + journal.length + ' entries)\n══════════════════════════════════\n\n';
+  journal.forEach(e => {
+    out += '— ' + new Date(e.date || e.timestamp).toLocaleDateString() + ' —\n';
+    if (e.prompt) out += 'Prompt: ' + e.prompt + '\n';
+    out += (e.response || '') + '\n\n';
+  });
+  out += '\n══════════════════════════════════\n EMOTIONAL CHECK-INS (' + checkins.length + ')\n══════════════════════════════════\n\n';
+  checkins.forEach(e => {
+    out += new Date(e.date || e.timestamp).toLocaleString() + ' · ' + (e.emotion || '') + (e.note ? ' — ' + e.note : '') + '\n';
+  });
+  out += '\n══════════════════════════════════\n TRIGGER LOG (' + triggers.length + ')\n══════════════════════════════════\n\n';
+  triggers.forEach(e => {
+    out += new Date(e.date || e.timestamp).toLocaleString() + ' · ' + (e.trigger || e.situation || '') + (e.reaction ? ' → ' + e.reaction : '') + '\n';
+  });
+
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([out], {type:'text/plain'}));
+  a.download = 'aligned-order-my-data.txt';
+  a.click();
+}
+
+renderStreakAndWeek();
+
+// Fill progress page stats
+(function(){
+  const j = JSON.parse(localStorage.getItem('journal_'+clientEmail)  || '[]').length;
+  const c = JSON.parse(localStorage.getItem('checkins_'+clientEmail) || '[]').length;
+  const t = JSON.parse(localStorage.getItem('triggers_'+clientEmail) || '[]').length;
+  const ids = {'pg-journal':j,'pg-checkins':c,'pg-triggers':t,'pg-streak':computeStreak()};
+  Object.entries(ids).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.textContent=v;});
+})();
 </script>
 </body>
 </html>

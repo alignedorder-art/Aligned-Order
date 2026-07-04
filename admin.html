@@ -219,6 +219,9 @@ tr:hover td{background:rgba(201,169,110,0.03);}
 .btn-assign-cancel{background:rgba(255,255,255,0.06);color:var(--muted);}
 .btn-assign-submit{background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;box-shadow:0 4px 16px rgba(106,79,181,0.3);}
 .btn-assign-submit:disabled{opacity:.5;cursor:not-allowed;}
+
+.site-link{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none;transition:background .12s;font-family:'Raleway',sans-serif;}
+.site-link:hover{background:rgba(106,79,181,0.15);}
 </style>
 </head>
 <body>
@@ -246,7 +249,35 @@ tr:hover td{background:rgba(201,169,110,0.03);}
       <div class="live-dot"></div>
       <span id="lastUpdated">Loading…</span>
     </div>
-    <button class="btn" id="refreshBtn" onclick="refreshAll()">↺ Refresh</button>
+    <div style="position:relative;margin-right:8px;" id="sitesMenuWrap">
+  <button onclick="toggleSitesMenu()" style="padding:7px 14px;border-radius:8px;border:1px solid rgba(76,175,125,0.3);background:rgba(76,175,125,0.1);color:#4caf7d;font-family:'Raleway',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;">🌐 My Sites <span style="font-size:9px;">▼</span></button>
+  <div id="sitesMenu" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:8px;min-width:250px;box-shadow:0 16px 48px rgba(0,0,0,0.5);z-index:200;">
+    <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:8px 12px 6px;">Public sites</div>
+    <a href="https://alignedorder.netlify.app" target="_blank" class="site-link">🌍 Marketing Website</a>
+    <a href="https://alignedorder.netlify.app/referral.html" target="_blank" class="site-link">🎁 Referral Generator</a>
+    <a href="https://alignedorder.netlify.app/obs-overlay.html" target="_blank" class="site-link">📺 OBS Stream Overlay</a>
+    <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px 6px;border-top:1px solid var(--b1);margin-top:6px;">App platform</div>
+    <a href="https://thealignedorder.netlify.app" target="_blank" class="site-link">📋 Assessment (Survey)</a>
+    <a href="https://thealignedorder.netlify.app/sessions" target="_blank" class="site-link">◷ Sessions Manager</a>
+    <a href="https://thealignedorder.netlify.app/booking" target="_blank" class="site-link">📅 Booking Page</a>
+    <a href="https://thealignedorder.netlify.app/portal" target="_blank" class="site-link">👤 Client Portal</a>
+    <a href="https://thealignedorder.netlify.app/feedback" target="_blank" class="site-link">⭐ Feedback Form</a>
+    <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px 6px;border-top:1px solid var(--b1);margin-top:6px;">Content tools</div>
+    <a href="https://socioj.netlify.app/" target="_blank" class="site-link">📱 Socio</a>
+    <a href="https://orderscript.netlify.app/" target="_blank" class="site-link">✍️ Undertow Script Lab</a>
+    <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;padding:10px 12px 6px;border-top:1px solid var(--b1);margin-top:6px;">External tools</div>
+    <a href="https://calendly.com/alignedorder" target="_blank" class="site-link">🗓 Calendly</a>
+    <a href="https://matyyx-t.mykajabi.com" target="_blank" class="site-link">🎓 Kajabi</a>
+    <a href="https://youtube.com/@alignedorder" target="_blank" class="site-link">▶️ YouTube Channel</a>
+  </div>
+</div>
+<div style="display:flex;gap:4px;margin-right:8px;" id="rangePills">
+  <button class="range-pill" data-days="7"  onclick="setRange(7,this)"  style="padding:5px 11px;border-radius:99px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">7d</button>
+  <button class="range-pill" data-days="30" onclick="setRange(30,this)" style="padding:5px 11px;border-radius:99px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">30d</button>
+  <button class="range-pill" data-days="90" onclick="setRange(90,this)" style="padding:5px 11px;border-radius:99px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">90d</button>
+  <button class="range-pill active-range" data-days="0" onclick="setRange(0,this)" style="padding:5px 11px;border-radius:99px;border:1px solid var(--violet-l);background:rgba(106,79,181,0.2);color:var(--violet-l);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">All</button>
+</div>
+<button class="btn" id="refreshBtn" onclick="refreshAll()">↺ Refresh</button>
     <a href="dashboard.html" class="btn ghost">← Dashboard</a>
     <a href="https://alignedorder.com/members" class="btn ghost" style="font-size:11px;">&#127968; Website</a>
     <button class="btn ghost" onclick="logout()" style="margin-left:4px;">⎋ Logout</button>
@@ -354,6 +385,11 @@ tr:hover td{background:rgba(201,169,110,0.03);}
   <div class="table-card">
     <div class="table-head">
       <div class="table-title">All Leads</div>
+      <div id="bulkBar" style="display:none;align-items:center;gap:10px;background:rgba(106,79,181,0.12);border:1px solid rgba(106,79,181,0.3);border-radius:8px;padding:6px 12px;">
+        <span id="bulkCount" style="font-size:11px;font-weight:700;color:var(--violet-l);">0 selected</span>
+        <button onclick="bulkEmailSelected()" style="padding:4px 10px;background:rgba(212,168,75,0.15);border:1px solid rgba(212,168,75,0.3);border-radius:6px;color:var(--gold);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">✉️ Email all</button>
+        <button onclick="bulkExportSelected()" style="padding:4px 10px;background:rgba(76,175,125,0.15);border:1px solid rgba(76,175,125,0.3);border-radius:6px;color:#4caf7d;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">⬇ Export selected</button>
+      </div>
       <div style="display:flex;gap:6px;align-items:center;">
         <button onclick="exportCSV('leads')" style="padding:6px 12px;background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.25);border-radius:7px;color:#4caf7d;font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">⬇ Export CSV</button>
         <button onclick="toggleKanban()" id="kanbanToggleBtn" style="padding:6px 12px;background:rgba(106,79,181,0.1);border:1px solid rgba(106,79,181,0.25);border-radius:7px;color:var(--violet-l);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;">⊞ Pipeline</button>
@@ -362,7 +398,7 @@ tr:hover td{background:rgba(201,169,110,0.03);}
     </div>
     <table>
       <thead><tr>
-        <th>Name</th><th>Email</th><th>Score</th><th>Profile</th><th>Qualified</th><th>Date</th><th>Follow-up</th><th>Action</th>
+        <th style="width:30px"><input type="checkbox" id="selectAllLeads" onchange="toggleSelectAll(this)" style="accent-color:var(--violet);cursor:pointer;"></th><th>Name</th><th>Email</th><th>Score</th><th>Profile</th><th>Qualified</th><th>Date</th><th>Follow-up</th><th>Action</th>
       </tr></thead>
       <tbody id="leadsTableBody"></tbody>
     </table>
@@ -1019,6 +1055,46 @@ async function fetchFeedback() {
 
 function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
 
+
+
+// ── MY SITES MENU ──────────────────────────────────────────────
+function toggleSitesMenu() {
+  const m = document.getElementById('sitesMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('sitesMenuWrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const m = document.getElementById('sitesMenu');
+    if (m) m.style.display = 'none';
+  }
+});
+
+// ── DATE RANGE FILTER ──────────────────────────────────────────
+let dateRangeDays = parseInt(localStorage.getItem('ao_range_days') || '0');
+
+function setRange(days, btn) {
+  dateRangeDays = days;
+  localStorage.setItem('ao_range_days', String(days));
+  document.querySelectorAll('.range-pill').forEach(p => {
+    p.style.border = '1px solid var(--b1)';
+    p.style.background = 'transparent';
+    p.style.color = 'var(--muted)';
+  });
+  btn.style.border = '1px solid var(--violet-l)';
+  btn.style.background = 'rgba(106,79,181,0.2)';
+  btn.style.color = 'var(--violet-l)';
+  renderAll();
+  renderAlerts();
+}
+
+function inDateRange(dateStr) {
+  if (!dateRangeDays) return true;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return true;
+  return (Date.now() - d.getTime()) <= dateRangeDays * 86400000;
+}
+
 // ── DATA CACHE ────────────────────────────────────
 const CACHE_KEY = 'ao_dash_cache_v1';
 
@@ -1235,19 +1311,25 @@ function renderLeadsPage() {
 function renderLeadsTable() {
   const q = (document.getElementById('leadSearch').value||'').toLowerCase();
   const rows = allLeads.filter(l =>
-    !q || (l.firstName+' '+l.lastName).toLowerCase().includes(q) || l.email.toLowerCase().includes(q)
+    inDateRange(l.date) &&
+    (!q || (l.firstName+' '+l.lastName).toLowerCase().includes(q) || l.email.toLowerCase().includes(q))
   );
   const body  = document.getElementById('leadsTableBody');
   const empty = document.getElementById('leadsTableEmpty');
   if(!rows.length){ body.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
-  body.innerHTML = rows.map(l => {
+  body.innerHTML = rows.map((l, ri) => {
     const flag = getFollowUpFlag(l);
+    const did  = 'ld_' + ri;
+    const mailSubject = encodeURIComponent('Your Aligned Order assessment — next steps');
+    const mailBody = encodeURIComponent(`Hi ${l.firstName},\n\nThank you for taking the Aligned Order emotional trigger assessment. Your results show real potential for growth, and I'd love to walk you through them personally.\n\nYou can book a free discovery call here: https://calendly.com/alignedorder/30min\n\nLooking forward to connecting,\nMatyyx — Aligned Order`);
     return `
     <tr>
-      <td><div style="display:flex;align-items:center;gap:9px;">
+      <td><input type="checkbox" class="lead-check" data-email="${l.email}" style="accent-color:var(--violet);cursor:pointer;"></td>
+      <td><div style="display:flex;align-items:center;gap:9px;cursor:pointer;" onclick="toggleLeadDetail('${did}')">
         <div class="avatar">${initials(l.firstName,l.lastName)}</div>
         <div><div style="font-weight:600;color:var(--text)">${l.firstName} ${l.lastName}</div></div>
+        <span style="font-size:9px;color:var(--muted);">▼</span>
       </div></td>
       <td style="color:var(--muted);font-size:12px">${l.email}</td>
       <td><span class="badge ${scoreClass(l.score)}">${l.score}%</span></td>
@@ -1255,8 +1337,27 @@ function renderLeadsTable() {
       <td><span class="badge ${l.qualified?'green':'grey'}">${l.qualified?'✦ Qualified':'–'}</span></td>
       <td style="font-size:11px;color:var(--muted)">${fmtDate(l.date)}</td>
       <td>${flag ? `<span title="${flag.tip}" style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:${flag.bg};color:${flag.color}">${flag.label}</span>` : ''}</td>
-      <td><button onclick="openAssignModal('${l.email}')" style="padding:5px 10px;background:rgba(106,79,181,0.15);border:1px solid rgba(106,79,181,0.3);border-radius:7px;color:var(--violet-l);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Assign</button></td>
-    </tr>`;
+      <td><div style="display:flex;gap:5px;">
+        <a href="mailto:${l.email}?subject=${mailSubject}&body=${mailBody}" title="Email ${l.firstName}" style="padding:5px 9px;background:rgba(212,168,75,0.12);border:1px solid rgba(212,168,75,0.25);border-radius:7px;color:var(--gold);font-size:11px;text-decoration:none;">✉️</a>
+        <button onclick="openAssignModal('${l.email}')" style="padding:5px 10px;background:rgba(106,79,181,0.15);border:1px solid rgba(106,79,181,0.3);border-radius:7px;color:var(--violet-l);font-family:'Raleway',sans-serif;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Assign</button>
+      </div></td>
+    </tr>
+    <tr id="${did}" style="display:none;"><td colspan="9" style="padding:0;">
+      <div style="background:rgba(106,79,181,0.05);border-top:1px solid var(--b1);padding:16px 22px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Contact</div>
+            <div style="font-size:12px;color:var(--text);line-height:1.9;">📧 ${l.email}<br>${l.phone ? '📱 ' + l.phone : '📱 No phone provided'}</div>
+            ${Object.keys(l.components||{}).length ? `<div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:14px 0 8px;">Score Components</div>
+            <div style="font-size:12px;color:var(--text);line-height:1.9;">${Object.entries(l.components).map(([k,v])=>`${k}: <strong>${v}</strong>`).join('<br>')}</div>` : ''}
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">AI Analysis</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.8;max-height:140px;overflow-y:auto;">${l.analysis || 'No analysis available for this lead.'}</div>
+          </div>
+        </div>
+      </div>
+    </td></tr>`;
   }).join('');
 }
 
@@ -2535,6 +2636,48 @@ function renderAll() {
   if (kanbanVisible) renderKanban();
 }
 
+
+
+// ── LEAD DETAIL + BULK ACTIONS ─────────────────────────────────
+function toggleLeadDetail(id) {
+  const row = document.getElementById(id);
+  if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+}
+
+function toggleSelectAll(cb) {
+  document.querySelectorAll('.lead-check').forEach(c => c.checked = cb.checked);
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.lead-check:checked').length;
+  const bar = document.getElementById('bulkBar');
+  if (bar) {
+    bar.style.display = checked ? 'flex' : 'none';
+    const cnt = document.getElementById('bulkCount');
+    if (cnt) cnt.textContent = checked + ' selected';
+  }
+}
+document.addEventListener('change', e => { if (e.target.classList && e.target.classList.contains('lead-check')) updateBulkBar(); });
+
+function bulkExportSelected() {
+  const emails = [...document.querySelectorAll('.lead-check:checked')].map(c => c.dataset.email);
+  const rows = allLeads.filter(l => emails.includes(l.email));
+  if (!rows.length) return;
+  const csv = ['Name,Email,Phone,Score,Profile,Qualified,Date'].concat(
+    rows.map(l => `"${l.firstName} ${l.lastName}","${l.email}","${l.phone||''}",${l.score},"${l.profile}",${l.qualified},"${l.date}"`)
+  ).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = 'selected-leads.csv';
+  a.click();
+}
+
+function bulkEmailSelected() {
+  const emails = [...document.querySelectorAll('.lead-check:checked')].map(c => c.dataset.email);
+  if (!emails.length) return;
+  window.location.href = 'mailto:?bcc=' + emails.join(',') + '&subject=' + encodeURIComponent('A note from Aligned Order');
+}
 
 // ── ASSIGN LEAD TO SESSION ─────────────────────────────────────────────
 let assigningLead = null;
