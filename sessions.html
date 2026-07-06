@@ -114,7 +114,7 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
 .modal-body{padding:24px;}
 .form-group{margin-bottom:16px;}
 .form-label{display:block;font-size:11px;font-weight:700;color:#8888b0;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:7px;}
-.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid #a0a0d0;border-radius:10px;padding:11px 14px;color:#e8e8f4;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;outline:none;transition:border-color 0.2s;-webkit-text-fill-color:#e8e8f4;}
+.form-input,.form-select,.form-textarea{width:100%;background:#fff;border:1.5px solid #a0a0d0;border-radius:10px;padding:11px 14px;color:#2a2550;font-family:'Raleway',sans-serif;font-size:13px;font-weight:500;outline:none;transition:border-color 0.2s;-webkit-text-fill-color:#2a2550;}
 .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#4a3ab5;}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-color:#fff;padding-right:36px;}
 .form-textarea{resize:vertical;min-height:90px;line-height:1.6;}
@@ -170,7 +170,8 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
       <div><div class="logo-name">Aligned Order</div><div class="logo-sub">Sessions</div></div>
     </div>
     <div class="nav">
-      <a class="nav-item active" href="sessions.html">◷ Sessions</a>
+      <a class="nav-item active" id="navSessions" onclick="showView('sessions')" style="cursor:pointer;">◷ Sessions</a>
+      <a class="nav-item" id="navClients" onclick="showView('clients')" style="cursor:pointer;">👥 Clients</a>
       <a class="nav-item" href="booking.html" target="_blank">↗ Booking Page</a>
     </div>
     <div style="flex:1;"></div>
@@ -193,17 +194,29 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
         <button class="btn" onclick="refresh()">↺ Refresh</button>
         <button class="btn green" onclick="openCalendly('discovery')">📞 Discovery Call</button>
         <button class="btn green" onclick="openCalendly('coaching')">🔥 Coaching Session</button>
+        <input type="text" id="sessionSearch" placeholder="🔍 Search client…" oninput="render()" style="background:#fff;border:1.5px solid #c5c0e8;border-radius:9px;padding:8px 14px;color:#2a2550;font-family:'Raleway',sans-serif;font-size:12.5px;outline:none;width:170px;transition:border-color .2s;" onfocus="this.style.borderColor='#4a3ab5'" onblur="this.style.borderColor='#c5c0e8'">
         <button class="btn" onclick="openScheduleModal()">+ Manual Schedule</button>
         <button class="btn ghost" onclick="logout()" style="margin-left:4px;">⎋ Logout</button>
       </div>
     </div>
 
     <div class="content">
+      <div id="sessionsView">
       <div class="metrics">
         <div class="metric gold"><div class="metric-label">Total</div><div class="metric-value" id="mTotal">0</div><div class="metric-sub">all sessions</div></div>
         <div class="metric amber"><div class="metric-label">Pending</div><div class="metric-value" id="mPending">0</div><div class="metric-sub">awaiting confirm</div></div>
         <div class="metric green"><div class="metric-label">Confirmed</div><div class="metric-value" id="mConfirmed">0</div><div class="metric-sub">upcoming</div></div>
         <div class="metric blue"><div class="metric-label">Completed</div><div class="metric-value" id="mCompleted">0</div><div class="metric-sub">done</div></div>
+      </div>
+
+      <!-- TODAY'S AGENDA -->
+      <div id="todayAgenda" style="display:none;background:linear-gradient(135deg,#f3effa,#ece5f8);border:1.5px solid #b8a5e8;border-radius:14px;padding:16px 20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:16px;">☀️</span>
+          <span style="font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#3a2d70;letter-spacing:.03em;">Today's Sessions</span>
+          <span id="todayCount" style="font-size:11px;font-weight:700;color:#6a4fb5;background:rgba(106,79,181,0.12);padding:2px 9px;border-radius:99px;"></span>
+        </div>
+        <div id="todayList" style="display:flex;flex-direction:column;gap:8px;"></div>
       </div>
 
       <!-- CALENDLY SYNC BANNER -->
@@ -298,6 +311,19 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
       <button class="modal-close" onclick="closeDetail()">✕</button>
       <div class="modal-title" id="dTitle">Session Details</div>
       <div class="modal-sub" id="dSub"></div>
+      </div><!-- /sessionsView -->
+
+      <!-- ═══ CLIENT DIRECTORY ═══ -->
+      <div id="clientsView" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#1a1a2e;">Client Directory</div>
+            <div style="font-size:12px;color:#8888b0;margin-top:2px;" id="clientDirCount">Loading…</div>
+          </div>
+          <input type="text" id="clientDirSearch" placeholder="🔍 Search name or email…" oninput="renderClientDir()" style="background:#fff;border:1.5px solid #c5c0e8;border-radius:9px;padding:9px 15px;color:#2a2550;font-family:'Raleway',sans-serif;font-size:12.5px;outline:none;width:230px;">
+        </div>
+        <div id="clientDirList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
     </div>
     <div class="modal-body" id="dBody"></div>
   </div>
@@ -350,23 +376,134 @@ const LEADS_API     = '/.netlify/functions/leads';
 let qualifiedLeads  = [];
 let selectedLead    = null;
 
+let allLeadsFull = [];   // full lead data for client directory
+
 async function loadQualifiedLeads() {
   try {
     const r = await fetch(LEADS_API, { cache: 'no-store' });
     if(!r.ok) return;
     const rows = await r.json();
     if(!Array.isArray(rows)) return;
-    qualifiedLeads = rows
-      .filter(row => row.qualified === 'true' || row.qualified === true)
-      .map(row => ({
-        firstName: String(row.first_name || ''),
-        lastName:  String(row.last_name  || ''),
-        email:     String(row.email      || ''),
-        phone:     String(row.phone      || ''),
-        score:     parseInt(row.score)   || 0
-      }));
-    console.log('Loaded', qualifiedLeads.length, 'qualified leads');
+
+    allLeadsFull = rows.map(row => ({
+      firstName: String(row.first_name || ''),
+      lastName:  String(row.last_name  || ''),
+      email:     String(row.email      || ''),
+      phone:     String(row.phone      || ''),
+      score:     parseInt(row.score)   || 0,
+      profile:   String(row.profile    || ''),
+      qualified: row.qualified === 'true' || row.qualified === true,
+      analysis:  String(row.analysis   || ''),
+      date:      String(row.created_at || row.date || ''),
+      components: (() => { try { return typeof row.components === 'string' ? JSON.parse(row.components) : (row.components || {}); } catch(e) { return {}; } })()
+    })).filter(l => l.email || l.firstName);
+
+    qualifiedLeads = allLeadsFull.filter(l => l.qualified);
+    console.log('Loaded', allLeadsFull.length, 'leads (', qualifiedLeads.length, 'qualified )');
+    renderClientDir();
   } catch(e) { console.warn('Lead load error:', e); }
+}
+
+// ── VIEW SWITCHING ─────────────────────────────────
+function showView(view) {
+  document.getElementById('sessionsView').style.display = view === 'sessions' ? 'block' : 'none';
+  document.getElementById('clientsView').style.display  = view === 'clients'  ? 'block' : 'none';
+  document.getElementById('navSessions').classList.toggle('active', view === 'sessions');
+  document.getElementById('navClients').classList.toggle('active',  view === 'clients');
+  if (view === 'clients') renderClientDir();
+}
+
+// ── CLIENT DIRECTORY ───────────────────────────────
+function scoreColor(score) {
+  return score >= 80 ? '#c0392b' : score >= 70 ? '#e67e22' : score >= 50 ? '#d4a84b' : '#8888b0';
+}
+
+function renderClientDir() {
+  const listEl = document.getElementById('clientDirList');
+  const cntEl  = document.getElementById('clientDirCount');
+  if (!listEl) return;
+
+  const q = ((document.getElementById('clientDirSearch')||{}).value || '').toLowerCase().trim();
+
+  // Merge: assessment leads + anyone with sessions
+  const dirMap = {};
+  allLeadsFull.forEach(l => { if (l.email) dirMap[l.email.toLowerCase()] = { ...l, sessions: [] }; });
+  sessions.forEach(s => {
+    const key = (s.email||'').toLowerCase();
+    if (!key) return;
+    if (!dirMap[key]) dirMap[key] = { firstName: s.first_name, lastName: s.last_name||'', email: s.email, phone: s.phone||'', score: 0, profile: '', qualified: false, analysis: '', components: {}, date: '', sessions: [] };
+    dirMap[key].sessions.push(s);
+  });
+
+  let clients = Object.values(dirMap);
+  if (q) clients = clients.filter(c => (c.firstName+' '+c.lastName).toLowerCase().includes(q) || c.email.toLowerCase().includes(q));
+
+  // Sort: clients with sessions first, then by score
+  clients.sort((a,b) => (b.sessions.length - a.sessions.length) || (b.score - a.score));
+
+  cntEl.textContent = clients.length + (clients.length === 1 ? ' client' : ' clients') + ' · ' + clients.filter(c=>c.sessions.length).length + ' with sessions';
+
+  if (!clients.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:40px;color:#8888b0;font-size:13px;">No clients found.</div>';
+    return;
+  }
+
+  listEl.innerHTML = clients.map((c, i) => {
+    const initials = ((c.firstName||'?')[0] + ((c.lastName||'')[0]||'')).toUpperCase();
+    const sessCount = c.sessions.length;
+    const nextSess = c.sessions.filter(s => new Date(s.datetime) > Date.now() && s.status !== 'cancelled').sort((a,b)=>new Date(a.datetime)-new Date(b.datetime))[0];
+    return `
+    <div style="background:#fff;border:1px solid #e0e0f0;border-radius:14px;overflow:hidden;">
+      <div onclick="toggleClientDetail(${i})" style="display:flex;align-items:center;gap:14px;padding:15px 18px;cursor:pointer;transition:background .12s;" onmouseover="this.style.background='#fafaff'" onmouseout="this.style.background='#fff'">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#6a4fb5,#4a3490);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;">${initials}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:14px;font-weight:700;color:#1a1a2e;">${c.firstName} ${c.lastName}</div>
+          <div style="font-size:11.5px;color:#8888b0;">${c.email}${c.phone ? ' · ' + c.phone : ''}</div>
+        </div>
+        ${c.score ? `<div style="text-align:center;flex-shrink:0;"><div style="font-size:16px;font-weight:800;color:${scoreColor(c.score)};">${c.score}%</div><div style="font-size:9.5px;color:#8888b0;">trigger score</div></div>` : ''}
+        <div style="text-align:center;flex-shrink:0;"><div style="font-size:16px;font-weight:800;color:#4a3ab5;">${sessCount}</div><div style="font-size:9.5px;color:#8888b0;">sessions</div></div>
+        ${c.qualified ? '<span style="font-size:10px;font-weight:700;color:#4caf7d;background:rgba(76,175,125,0.12);padding:3px 9px;border-radius:99px;flex-shrink:0;">✦ Qualified</span>' : ''}
+        <span style="font-size:10px;color:#c5c0e8;flex-shrink:0;">▼</span>
+      </div>
+      <div id="clientDetail_${i}" style="display:none;border-top:1px solid #ececf6;background:#fafaff;padding:18px 20px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div>
+            <div style="font-size:10px;font-weight:800;color:#8888b0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Assessment Report</div>
+            ${c.score ? `
+              <div style="font-size:12.5px;color:#2a2550;line-height:2;">
+                Score: <strong style="color:${scoreColor(c.score)};">${c.score}%</strong><br>
+                Profile: <strong>${c.profile || '—'}</strong><br>
+                Assessed: ${c.date ? new Date(c.date).toLocaleDateString() : '—'}
+              </div>
+              ${Object.keys(c.components).length ? `<div style="font-size:10px;font-weight:800;color:#8888b0;letter-spacing:.08em;text-transform:uppercase;margin:12px 0 6px;">Trigger Components</div>
+              <div style="font-size:12px;color:#2a2550;line-height:1.9;">${Object.entries(c.components).map(([k,v])=>`${k}: <strong>${v}</strong>`).join('<br>')}</div>` : ''}
+            ` : '<div style="font-size:12.5px;color:#8888b0;">No assessment on file — this client came via direct booking.</div>'}
+            <div style="margin-top:14px;display:flex;gap:8px;">
+              <a href="mailto:${c.email}" style="font-size:11px;font-weight:700;color:#4a3ab5;background:rgba(74,58,181,0.1);padding:6px 13px;border-radius:99px;text-decoration:none;">✉ Email</a>
+              ${c.phone ? `<a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" style="font-size:11px;font-weight:700;color:#25a55a;background:rgba(37,211,102,0.1);padding:6px 13px;border-radius:99px;text-decoration:none;">💬 WhatsApp</a>` : ''}
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:800;color:#8888b0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">AI Analysis</div>
+            <div style="font-size:12px;color:#5a5580;line-height:1.8;max-height:120px;overflow-y:auto;margin-bottom:14px;">${c.analysis || 'No AI analysis available.'}</div>
+            <div style="font-size:10px;font-weight:800;color:#8888b0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">Session History (${sessCount})</div>
+            ${sessCount ? `<div style="font-size:12px;color:#2a2550;line-height:2;max-height:110px;overflow-y:auto;">${c.sessions.sort((a,b)=>new Date(b.datetime)-new Date(a.datetime)).map(s => 
+              `${new Date(s.datetime).toLocaleDateString()} · ${s.session_type} · <span style="font-weight:700;color:${s.status==='completed'?'#4caf7d':s.status==='confirmed'?'#4a3ab5':s.status==='cancelled'?'#c0392b':'#e67e22'}">${s.status}</span>${s.notes ? '<br><span style=\'font-size:11px;color:#8888b0;\'>📝 ' + s.notes.slice(0,80) + '</span>' : ''}`
+            ).join('<br>')}</div>` : '<div style="font-size:12px;color:#8888b0;">No sessions yet.</div>'}
+            ${nextSess ? `<div style="margin-top:10px;font-size:11.5px;font-weight:700;color:#4a3ab5;">⏭ Next: ${new Date(nextSess.datetime).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Store for toggle access
+  window._dirClients = clients;
+}
+
+function toggleClientDetail(i) {
+  const el = document.getElementById('clientDetail_' + i);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function searchQualLeads() {
@@ -506,6 +643,7 @@ async function fetchSessions() {
 
 async function load() {
   setStatus('amber', 'Loading…');
+  loadQualifiedLeads();  // load client directory data in parallel
   const data = await fetchSessions();
   if(data === null) { setStatus('amber', 'Could not reach database'); return; }
   // Apply saved status overrides from localStorage
@@ -527,11 +665,57 @@ load();
 renderCal(); }
 
 // ── RENDER ─────────────────────────────────────────
+function copyLink(link, btn) {
+  navigator.clipboard.writeText(link).then(() => {
+    const t = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => btn.textContent = t, 1500);
+  });
+}
+
+function renderTodayAgenda(list) {
+  const wrap  = document.getElementById('todayAgenda');
+  const listE = document.getElementById('todayList');
+  const cnt   = document.getElementById('todayCount');
+  if (!wrap) return;
+  const todayStr = new Date().toISOString().slice(0,10);
+  const todays = list.filter(s =>
+    (s.datetime||'').slice(0,10) === todayStr &&
+    s.status !== 'cancelled' && s.status !== 'completed'
+  ).sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+
+  if (!todays.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  cnt.textContent = todays.length + (todays.length === 1 ? ' session' : ' sessions');
+  listE.innerHTML = todays.map(s => {
+    const time = new Date(s.datetime).toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+    const mins = Math.round((new Date(s.datetime) - Date.now()) / 60000);
+    const when = mins < 0 ? 'now' : mins < 60 ? 'in ' + mins + ' min' : 'in ' + Math.round(mins/60) + 'h';
+    return `<div style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:10px 14px;">
+      <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:#3a2d70;min-width:52px;">${time}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:700;color:#2a2550;">${s.first_name} ${s.last_name||''}</div>
+        <div style="font-size:11px;color:#8888b0;">${s.session_type} · ${when}</div>
+      </div>
+      ${s.meeting_link ? `<a href="${s.meeting_link}" target="_blank" style="background:#4a3ab5;color:#fff;font-size:11.5px;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;">▶ Join call</a>` : ''}
+    </div>`;
+  }).join('');
+}
+
 function render() {
-  const pend      = sessions.filter(s => s.status === 'pending');
-  const conf      = sessions.filter(s => s.status === 'confirmed');
-  const comp      = sessions.filter(s => s.status === 'completed');
-  const cancelled = sessions.filter(s => s.status === 'cancelled');
+  // Search filter
+  const q = ((document.getElementById('sessionSearch')||{}).value || '').toLowerCase().trim();
+  const visible = q
+    ? sessions.filter(s => (s.first_name+' '+(s.last_name||'')).toLowerCase().includes(q) || (s.email||'').toLowerCase().includes(q))
+    : sessions;
+
+  const pend      = visible.filter(s => s.status === 'pending');
+  const conf      = visible.filter(s => s.status === 'confirmed');
+  const comp      = visible.filter(s => s.status === 'completed');
+  const cancelled = visible.filter(s => s.status === 'cancelled');
+
+  // Today's agenda (always from full list, not filtered)
+  renderTodayAgenda(sessions);
 
   document.getElementById('mTotal').textContent     = sessions.length;
   document.getElementById('mPending').textContent   = pend.length;
@@ -582,7 +766,7 @@ function renderList(listId, items, status) {
           </span>
           <span>·</span>
           <span>${fmtDateTime(s.datetime)}</span>
-          ${s.meeting_link ? '<span style="color:#5b8dd9;font-size:11px;">🔗 Link</span>' : ''}
+          ${s.meeting_link ? `<a href="${s.meeting_link}" target="_blank" onclick="event.stopPropagation()" style="color:#fff;font-size:11px;font-weight:700;background:#5b8dd9;padding:2px 10px;border-radius:99px;text-decoration:none;">▶ Join</a> <button onclick="event.stopPropagation();copyLink('${s.meeting_link}',this)" style="background:none;border:1px solid #c5c0e8;border-radius:6px;padding:1px 7px;font-size:10px;color:#8888b0;cursor:pointer;">copy</button>` : ''}
           ${s.outcome ? `<span style="color:#4caf7d;font-size:11px;">✓ ${s.outcome}</span>` : ''}
         </div>
       </div>
