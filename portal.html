@@ -78,7 +78,7 @@ h1,h2,h3{font-family:'Cinzel',serif}
 .session-type{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px}
 .session-time{font-size:11px;color:var(--muted)}
 .badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;margin-top:4px}
-.badge-confirmed{background:rgba(76,175,125,0.15);color:#2e7d52;border:1px solid rgba(76,175,125,0.25)}
+.badge-confirmed{background:rgba(106,79,181,0.12);color:#6a4fb5;border:1px solid rgba(106,79,181,0.25)}
 .badge-completed{background:rgba(168,122,40,0.1);color:var(--gold);border:1px solid rgba(168,122,40,0.2)}
 .badge-cancelled{background:rgba(224,90,90,0.1);color:#c05a5a;border:1px solid rgba(224,90,90,0.2)}
 .next-card{background:linear-gradient(135deg,rgba(212,168,75,0.08),rgba(168,122,40,0.04));border:1px solid rgba(168,122,40,0.25);border-radius:14px;padding:18px 20px;margin-bottom:20px}
@@ -328,7 +328,7 @@ h1,h2,h3{font-family:'Cinzel',serif}
 .lms-lesson-nav{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--card-border);padding-top:20px;margin-top:8px}
 .lms-complete-btn{padding:12px 24px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:white;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(106,79,181,0.3);transition:transform .15s}
 .lms-complete-btn:hover{transform:translateY(-1px)}
-.lms-complete-btn.done{background:linear-gradient(135deg,#4caf7d,#2e7d52);box-shadow:0 4px 16px rgba(76,175,125,0.3)}
+.lms-complete-btn.done{background:linear-gradient(135deg,#6a4fb5,#4a3490);box-shadow:0 4px 16px rgba(106,79,181,0.3)}
 .lms-cert{background:linear-gradient(135deg,#1a0f3d,#3d2075);border:1px solid rgba(212,168,75,0.4);border-radius:18px;padding:40px;text-align:center;max-width:500px;margin:0 auto}
 .lms-cert-badge{font-size:48px;margin-bottom:20px}
 .lms-cert-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:#f0ecff;margin-bottom:10px}
@@ -785,6 +785,7 @@ h1,h2,h3{font-family:'Cinzel',serif}
       <div id="blog-featured-slot"></div>
       <div class="blog-filters" id="blog-filters">
         <button class="blog-filter active" onclick="filterBlogs('all',this)">All</button>
+        <button class="blog-filter" onclick="filterBlogs('__library',this)">❤ My Library</button>
         <button class="blog-filter" onclick="filterBlogs('Shadow Work',this)">Shadow Work</button>
         <button class="blog-filter" onclick="filterBlogs('Emotional Intelligence',this)">Emotional Intelligence</button>
         <button class="blog-filter" onclick="filterBlogs('Nervous System',this)">Nervous System</button>
@@ -1205,13 +1206,14 @@ function saveValues(){
 
 /* ── CLAUDE API ── */
 async function callClaude(messages,system,maxTokens=400){
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
+  const res=await fetch('/.netlify/functions/claude',{
     method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01','anthropic-dangerous-request-origin':'https://thealignedorder.netlify.app'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system,messages})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({messages,system,max_tokens:maxTokens})
   });
   const data=await res.json();
-  return(data.content&&data.content[0]&&data.content[0].text)||'';
+  if(!res.ok||data.error)throw new Error(data.error||'API error');
+  return data.text||'';
 }
 
 /* ── SHADOW DIALOGUE ── */
@@ -1355,11 +1357,11 @@ function nextGrounding(){
 /* ── READING SPACE — AI GENERATED ── */
 const CAT_COLORS={
   'Shadow Work':'106,79,181,0.15;color:#9b7fd4',
-  'Emotional Intelligence':'76,175,125,0.15;color:#2e8b57',
+  'Emotional Intelligence':'212,168,75,0.15;color:#a87a28',
   'Nervous System':'91,141,217,0.15;color:#3a6fa8',
   'Growth Mindset':'212,168,75,0.15;color:#a87a28',
   'Jungian Psychology':'155,90,200,0.15;color:#8b50b0',
-  'Mindfulness':'100,180,160,0.15;color:#2e7d6a',
+  'Mindfulness':'155,127,212,0.15;color:#7a5fc0',
   'Relationships':'200,90,120,0.15;color:#a03055'
 };
 
@@ -1427,13 +1429,14 @@ async function initReading(){
 
   try{
     const prompt=`Write a ${category} article for today. Make it genuinely insightful and memorable. Today's angle: explore an unexpected or counterintuitive truth about ${category.toLowerCase()} that most people haven't considered.`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/.netlify/functions/claude',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01','anthropic-dangerous-request-origin':'https://thealignedorder.netlify.app'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1500,system:BLOG_SYSTEM,messages:[{role:'user',content:prompt}]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:[{role:'user',content:prompt}],system:BLOG_SYSTEM,max_tokens:1500})
     });
     const data=await res.json();
-    const text=(data.content&&data.content[0]&&data.content[0].text)||'';
+    if(!res.ok||data.error)throw new Error(data.error||'gen failed');
+    const text=data.text||'';
     const clean=text.replace(/```json|```/g,'').trim();
     const parsed=JSON.parse(clean);
     const post={
@@ -1471,8 +1474,21 @@ async function initReading(){
   renderBlogList();
 }
 
+function getLibrary(){return JSON.parse(localStorage.getItem('library_'+clientEmail)||'[]');}
+function isSaved(b){return getLibrary().some(x=>x.title===b.title&&x.date===b.date);}
+function toggleSave(idx,ev){
+  if(ev)ev.stopPropagation();
+  const b=allBlogs[idx];if(!b)return;
+  let lib=getLibrary();
+  if(isSaved(b)){lib=lib.filter(x=>!(x.title===b.title&&x.date===b.date));}
+  else{lib.unshift(b);}
+  localStorage.setItem('library_'+clientEmail,JSON.stringify(lib.slice(0,100)));
+  renderBlogList();
+}
+
 function renderBlogList(generating=false){
-  const filtered=activeFilter==='all'?allBlogs:allBlogs.filter(b=>b.category===activeFilter);
+  const source=activeFilter==='__library'?getLibrary():allBlogs;
+  const filtered=(activeFilter==='all'||activeFilter==='__library')?source:source.filter(b=>b.category===activeFilter);
   const sorted=[...filtered].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
   const featuredEl=document.getElementById('blog-featured-slot');
   const gridEl=document.getElementById('blog-grid');
@@ -1494,7 +1510,9 @@ function renderBlogList(generating=false){
 
   if(!sorted.length){
     featuredEl.innerHTML='';
-    gridEl.innerHTML='<div class="blog-empty">No articles in this category yet.<br>New content generates daily — check back tomorrow.</div>';
+    gridEl.innerHTML=activeFilter==='__library'
+      ?'<div class="blog-empty">Your library is empty.<br>Tap the ❤ on any article to save it here.</div>'
+      :`<div class="blog-empty">No articles in this category yet.<br><button onclick="generateForCategory('${activeFilter}')" style="margin-top:12px;padding:9px 20px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;">✨ Generate a ${activeFilter} article now</button></div>`;
     return;
   }
 
@@ -1527,10 +1545,37 @@ function renderBlogList(generating=false){
           <span>Matyyx Z.</span>
           <span>${b.read_time||''}</span>
           <span>${new Date(b.created_at).toLocaleDateString('en',{month:'short',day:'numeric'})}</span>
+          <button onclick="toggleSave(${idx},event)" title="${isSaved(b)?'Remove from library':'Save to library'}" style="margin-left:auto;background:none;border:none;font-size:15px;cursor:pointer;padding:0;line-height:1;">${isSaved(b)?'❤️':'🤍'}</button>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+
+async function generateForCategory(category){
+  const gridEl=document.getElementById('blog-grid');
+  gridEl.innerHTML='<div class="blog-empty">✍️ Writing your '+category+' article…<br><span style="font-size:11px;opacity:.7">about 10 seconds</span></div>';
+  try{
+    const prompt=`Write a ${category} article. Make it genuinely insightful and memorable. Explore an unexpected or counterintuitive truth about ${category.toLowerCase()} that most people haven't considered.`;
+    const res=await fetch('/.netlify/functions/claude',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:[{role:'user',content:prompt}],system:BLOG_SYSTEM,max_tokens:1500})
+    });
+    const data=await res.json();
+    if(!res.ok||data.error)throw new Error(data.error||'gen failed');
+    const clean=(data.text||'').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(clean);
+    const post={title:parsed.title,excerpt:parsed.excerpt,content:parsed.content,category,read_time:parsed.read_time||'5 min read',author:'Matyyx Zander Tahero',date:getTodayKey(),created_at:new Date().toISOString()};
+    const history=JSON.parse(localStorage.getItem(getBlogHistoryKey())||'[]');
+    const updated=[post,...history].slice(0,30);
+    localStorage.setItem(getBlogHistoryKey(),JSON.stringify(updated));
+    allBlogs=updated;
+    renderBlogList();
+  }catch(e){
+    gridEl.innerHTML='<div class="blog-empty">Could not generate right now — please try again in a moment.</div>';
+  }
 }
 
 function filterBlogs(cat,btn){
@@ -1780,7 +1825,7 @@ const COURSES = [
   {
     id:'nervous', title:'Nervous System Regulation',
     subtitle:'Understanding and working with your biology',
-    color:'#0f6e56', catColor:'rgba(15,110,86,0.15)', catText:'#1d9e75',
+    color:'#3d5a99', catColor:'rgba(61,90,153,0.15)', catText:'#5b8dd9',
     category:'Nervous System', duration:'2.5 hrs', lessonCount:9,
     description:'The practical neuroscience of emotional regulation — understanding why your body responds the way it does and how to work with it.',
     modules:[
@@ -2038,7 +2083,7 @@ function openLesson(courseId, moduleId, lessonId) {
     <div class="lms-lesson-header">
       <div class="lms-lesson-breadcrumb">${mod.title} · Lesson ${lessonIdx+1} of ${mod.lessons.length}</div>
       <div class="lms-lesson-title-big">${lesson.title}</div>
-      <div class="lms-lesson-meta">${lesson.duration} · ${done?'<span style="color:#4caf7d;font-weight:600;">✓ Completed</span>':'Not yet completed'}</div>
+      <div class="lms-lesson-meta">${lesson.duration} · ${done?'<span style="color:#a87a28;font-weight:600;">✓ Completed</span>':'Not yet completed'}</div>
     </div>
     <hr class="lms-divider">
     <div class="lms-intro">${lesson.intro}</div>

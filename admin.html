@@ -434,6 +434,27 @@ tr:hover td{background:rgba(201,169,110,0.03);}
 </div>
 
 <!-- ═══════════════ SESSIONS ═══════════════ -->
+
+  <!-- CLIENT PORTAL ACCOUNTS -->
+  <div class="table-card" style="margin-top:16px;">
+    <div class="table-head">
+      <div class="table-title">👤 Client Portal Accounts</div>
+      <button onclick="loadPortalAccounts()" style="font-size:11px;color:var(--gold);background:none;border:none;cursor:pointer;font-family:Raleway,sans-serif">↺ Refresh</button>
+    </div>
+    <div style="padding:16px 20px;border-bottom:1px solid var(--b1);display:grid;grid-template-columns:1fr 1.3fr 1fr auto;gap:10px;align-items:end;">
+      <div><label style="display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;">Name</label>
+        <input id="acctName" placeholder="Client name" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;"></div>
+      <div><label style="display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;">Email</label>
+        <input id="acctEmail" type="email" placeholder="client@email.com" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;"></div>
+      <div><label style="display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;">Password</label>
+        <input id="acctPass" placeholder="Set a password" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--b1);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'Raleway',sans-serif;font-size:13px;outline:none;"></div>
+      <button onclick="createPortalAccount()" id="acctBtn" style="padding:10px 18px;background:linear-gradient(135deg,var(--violet),var(--violet-d));color:#fff;border:none;border-radius:99px;font-family:'Raleway',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Create account</button>
+    </div>
+    <table><thead><tr><th>Name</th><th>Email</th><th>Password</th><th>Created</th></tr></thead>
+    <tbody id="acctTableBody"></tbody></table>
+    <div id="acctEmpty" class="empty-state" style="display:none;">No portal accounts yet. Create one above — the client logs in at thealignedorder.netlify.app/client-login</div>
+  </div>
+
 <div class="page" id="page-sessions">
 
   <div class="metrics-4">
@@ -2028,6 +2049,7 @@ function showPage(page, tab) {
   if(page==='blog') loadBlogPosts();
   if(page==='courses') loadAdminCourses();
   if(page==='referrals') loadReferrals();
+  if(page==='leads') loadPortalAccounts();
   const allTitles = {overview:'Overview',leads:'Leads',sessions:'Sessions',revenue:'Revenue',growth:'Growth Metrics',blog:'Blog Manager',courses:'Course Manager',referrals:'Referral Program'};
   document.getElementById('pageTitle').textContent = allTitles[page]||'';
 }

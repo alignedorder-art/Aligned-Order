@@ -165,7 +165,7 @@ if (localStorage.getItem(KEY_AUTH) === 'true') {
   window.location.href = '/portal';
 }
 
-function handleLogin() {
+async function handleLogin() {
   const email    = document.getElementById('email').value.trim().toLowerCase();
   const password = document.getElementById('password').value;
   const errorEl  = document.getElementById('error-msg');
@@ -184,7 +184,24 @@ function handleLogin() {
     return;
   }
 
-  const client = CLIENTS[email];
+  // Check GAS clients sheet first (accounts added from admin dashboard)
+  let client = CLIENTS[email];
+  if (!client) {
+    try {
+      const r = await fetch('/.netlify/functions/leads?sheet=clients', { cache:'no-store' });
+      if (r.ok) {
+        const rows = JSON.parse(await r.text());
+        if (Array.isArray(rows)) {
+          const found = rows.find(c =>
+            (c.email||'').toLowerCase().trim() === email &&
+            (c.active === undefined || c.active === 'true' || c.active === true || c.active === 'TRUE' || c.active === '')
+          );
+          if (found) client = { password: String(found.password||''), name: String(found.name||email.split('@')[0]) };
+        }
+      }
+    } catch(e) {}
+  }
+
   if (client && client.password === password) {
     localStorage.removeItem(KEY_LOCKOUT);
     localStorage.removeItem(KEY_ATTEMPTS);
