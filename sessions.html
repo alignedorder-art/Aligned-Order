@@ -301,6 +301,19 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
       <div class="status-dot green" id="statusDot"></div>
       <span id="statusText">Loading sessions…</span>
     </div>
+    </div><!-- /sessionsView -->
+
+    <!-- ═══ CLIENT DIRECTORY ═══ -->
+    <div id="clientsView" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div style="font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#1a1a2e;">Client Directory</div>
+          <div style="font-size:12px;color:#8888b0;margin-top:2px;" id="clientDirCount">Loading…</div>
+        </div>
+        <input type="text" id="clientDirSearch" placeholder="🔍 Search name or email…" oninput="renderClientDir()" style="background:#fff;border:1.5px solid #c5c0e8;border-radius:9px;padding:9px 15px;color:#2a2550;font-family:'Raleway',sans-serif;font-size:12.5px;outline:none;width:230px;">
+      </div>
+      <div id="clientDirList" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
   </div>
 </div>
 
@@ -311,19 +324,6 @@ body{background:#ffffff;color:#1a1a2e;font-family:'Raleway',sans-serif;min-heigh
       <button class="modal-close" onclick="closeDetail()">✕</button>
       <div class="modal-title" id="dTitle">Session Details</div>
       <div class="modal-sub" id="dSub"></div>
-      </div><!-- /sessionsView -->
-
-      <!-- ═══ CLIENT DIRECTORY ═══ -->
-      <div id="clientsView" style="display:none;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
-          <div>
-            <div style="font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:#1a1a2e;">Client Directory</div>
-            <div style="font-size:12px;color:#8888b0;margin-top:2px;" id="clientDirCount">Loading…</div>
-          </div>
-          <input type="text" id="clientDirSearch" placeholder="🔍 Search name or email…" oninput="renderClientDir()" style="background:#fff;border:1.5px solid #c5c0e8;border-radius:9px;padding:9px 15px;color:#2a2550;font-family:'Raleway',sans-serif;font-size:12.5px;outline:none;width:230px;">
-        </div>
-        <div id="clientDirList" style="display:flex;flex-direction:column;gap:10px;"></div>
-      </div>
     </div>
     <div class="modal-body" id="dBody"></div>
   </div>
